@@ -1,6 +1,13 @@
-# ExtraItems 0.2.0
+# ExtraItems 0.2.1
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Behoben in 0.2.1
+
+- Die reife vierte Tomatenstufe verwendet jetzt eine sichere Vanilla-Blocktextur und erscheint nicht mehr als pink-schwarzes Fehlermodell.
+- Die Tomate besitzt ein echtes Quader-Modell für Inventar, Hand und gedroppte Items.
+- Die Tomaten-PNG hat jetzt die mipmap-taugliche Zweierpotenzgröße 256×256 statt 1254×1254.
+- Bei einer neuen Pack-Revision aktualisiert das Plugin seine mitgelieferten Standardassets automatisch. Geänderte alte Dateien werden vorher unter `resourcepack-backups/` gesichert.
 
 ## Neu in 0.2.0
 
@@ -8,7 +15,7 @@ ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items
 - `items.yml` ist nur noch der zentrale Index mit den Pfaden zu diesen Dateien.
 - Alte kombinierte `items.yml`-Dateien werden beim Start automatisch gesichert und aufgeteilt.
 - Definitionen melden Fehler mit dem genauen Dateipfad.
-- Die Typen `tool`, `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. 0.2.0 implementiert weiterhin `item`, `crop` und `recipe`.
+- Die Typen `tool`, `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. 0.2.1 implementiert weiterhin `item`, `crop` und `recipe`.
 - Ressourcenpaket-Modi sind jetzt eindeutig: `self-host`, `external` oder `disabled`.
 - `self-host` bildet die Downloadadresse automatisch aus dem Hostnamen bzw. der IP, mit der ein Spieler beitritt.
 - Administratoren können bei einer kaputten Pack-Konfiguration per Notfallzugang beitreten und `/ei status` verwenden.
@@ -99,9 +106,9 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.2.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.2.1.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
-4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert.
+4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
 6. Bei `self-host` die dort angezeigte Pack-URL von einem anderen Rechner öffnen; es muss direkt eine ZIP laden.
 7. Mit einem Nicht-OP-Spieler Ressourcenpaket, Rechte, Pflanzen und Rezepte testen.
@@ -135,6 +142,6 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.2.0.jar`.
+Ergebnis: `target/ExtraItems-0.2.1.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).

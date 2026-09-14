@@ -30,4 +30,9 @@ png=(pack/'assets/extraitems/textures/item/tomato.png').read_bytes()
 assert png[:8]==b'\x89PNG\r\n\x1a\n'
 width,height,depth,color=struct.unpack('>IIBB',png[16:26])
 assert width==height and color==6, 'RGBA-PNG erforderlich'
-print(f'OK: {len(actual)} Pack-Dateien, 6 Item-Definitionen, 4 Pflanzenmodelle, RGBA-Textur {width}×{height}.')
+assert width >= 16 and width <= 4096 and width & (width-1) == 0, 'Textur muss eine Zweierpotenz sein'
+item_model=json.loads((pack/'assets/extraitems/models/item/tomato.json').read_text())
+assert item_model.get('elements') and 'ground' in item_model.get('display',{}), '3D-Tomatenmodell fehlt'
+ripe_model=json.loads((pack/'assets/extraitems/models/block/tomato_stage_3.json').read_text())
+assert ripe_model['textures'].get('ripe') == 'minecraft:block/red_concrete', 'Reife Textur fehlt'
+print(f'OK: {len(actual)} Pack-Dateien, 6 Item-Definitionen, 4 Pflanzenmodelle, 3D-Tomate, RGBA-Textur {width}×{height}.')

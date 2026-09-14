@@ -1,6 +1,6 @@
 # Texturen und Modelle
 
-`src/main/resources/resourcepack/assets/extraitems/textures/item/tomato.png` ist die finale Tomatentextur mit echtem Alphakanal. Sie wurde mit dem eingebauten Imagegen-Werkzeug erstellt. Das Original bleibt unverändert im Paket. Es ist eine hochauflösende PNG mit grober Pixeloptik, keine handgezeichnete 16×16-Datei. Bei hohen Mipmap-Einstellungen kann Minecraft die Mipmap-Stufe für diesen Atlas reduzieren.
+`src/main/resources/resourcepack/assets/extraitems/textures/item/tomato.png` ist eine 256×256-PNG mit echtem Alphakanal und grober Pixeloptik. Die Zweierpotenzgröße ist mipmap- und atlas-tauglich. Die frühere 1254×1254-Datei konnte beim Laden des Texturatlas die pink-schwarze Fehlerdarstellung auslösen.
 
 Verwendeter Erzeugungsprompt:
 
@@ -8,4 +8,4 @@ Verwendeter Erzeugungsprompt:
 
 Eine spätere Exportvariante wurde wegen fehlender Transparenz verworfen und ist nicht enthalten.
 
-Die vier Pflanzenmodelle sind native Minecraft-JSON-Modelle. `tools/build_models.py` erzeugt ihre Stängel, Blätter und Früchte aus Quadern. Sie können in Blockbench als Java-Block-/Item-Modell geöffnet werden; `.obj`- oder `.fbx`-Dateien und Clientmods sind nicht nötig. Minecraft liefert die referenzierten Vanilla-Texturen selbst; diese werden nicht als kopierte Dateien mitgeliefert. Das Samensymbol verwendet zunächst die Vanilla-Weizensamentextur, mit eigener Item-ID und eigenem Namen.
+Die vier Pflanzenmodelle und die gedroppte Tomate sind native Minecraft-JSON-Quader-Modelle. Die reifen Früchte verwenden `minecraft:block/red_concrete`, damit die letzte Wachstumsstufe nicht von einer eigenen Atlastextur abhängig ist. `tools/build_models.py` erzeugt alle Geometrien reproduzierbar. Sie können in Blockbench als Java-Block-/Item-Modell geöffnet werden; `.obj`-, `.fbx`-Dateien und Clientmods sind nicht nötig. Das Samensymbol verwendet zunächst die Vanilla-Weizensamentextur, mit eigener Item-ID und eigenem Namen.

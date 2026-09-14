@@ -54,6 +54,39 @@ class PackDeliveryTest {
     }
 
     @Test
+    void bundledPackRevisionUpdatesOldDefaultsAndKeepsABackup() throws Exception {
+        Path target = directory.resolve("resourcepack/assets/extraitems/model.json");
+        Files.createDirectories(target.getParent());
+        Files.writeString(target, "old-or-custom");
+
+        var first = PackDefaults.sync(directory, List.of("assets/extraitems/model.json"), "2",
+                path -> "fixed".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        assertEquals(1, first.updated());
+        assertEquals("fixed", Files.readString(target));
+        assertEquals("old-or-custom", Files.readString(first.backup().resolve("assets/extraitems/model.json")));
+
+        Files.writeString(target, "server-customization");
+        var second = PackDefaults.sync(directory, List.of("assets/extraitems/model.json"), "2",
+                path -> "fixed".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        assertEquals(0, second.updated());
+        assertEquals("server-customization", Files.readString(target));
+    }
+
+    @Test
+    void bundledPackSyncInstallsMissingAssetsWithoutDiscardingCurrentRevisionChanges() throws Exception {
+        PackDefaults.sync(directory, List.of("pack.mcmeta"), "2", path -> "{}".getBytes());
+        Path custom = directory.resolve("resourcepack/pack.mcmeta");
+        Files.writeString(custom, "custom");
+
+        var result = PackDefaults.sync(directory, List.of("pack.mcmeta", "new.json"), "2",
+                path -> path.equals("pack.mcmeta") ? "{}".getBytes() : "new".getBytes());
+        assertEquals("custom", Files.readString(custom));
+        assertEquals("new", Files.readString(directory.resolve("resourcepack/new.json")));
+        assertEquals(1, result.installed());
+        assertEquals(0, result.updated());
+    }
+
+    @Test
     void httpServesExactBytesAndDoesNotExposeOtherPaths() throws Exception {
         byte[] bytes = {0x50, 0x4b, 3, 4, 1, 2, 3};
         try (var server = new PackHttpServer("127.0.0.1", 0, bytes,

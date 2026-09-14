@@ -26,15 +26,25 @@ final class PackService implements AutoCloseable {
     void start() {
         try {
             Path root = plugin.getDataFolder().toPath();
+            java.util.List<String> manifest;
             try (InputStream stream = plugin.getResource("pack-files.txt")) {
                 if (stream == null) throw new IOException("Pack-Manifest fehlt im JAR");
-                for (String relative : new String(stream.readAllBytes(), StandardCharsets.UTF_8).lines().toList()) {
-                    if (relative.isBlank()) continue;
-                    Path packRoot = root.resolve("resourcepack").normalize();
-                    Path target = packRoot.resolve(relative).normalize();
-                    if (!target.startsWith(packRoot)) throw new IOException("Ungültiger Manifestpfad");
-                    if (!Files.exists(target)) plugin.saveResource("resourcepack/" + relative, false);
+                manifest = new String(stream.readAllBytes(), StandardCharsets.UTF_8).lines().toList();
+            }
+            String revision;
+            try (InputStream stream = plugin.getResource("pack-revision.txt")) {
+                if (stream == null) throw new IOException("Pack-Revision fehlt im JAR");
+                revision = new String(stream.readAllBytes(), StandardCharsets.UTF_8).trim();
+            }
+            PackDefaults.Result defaults = PackDefaults.sync(root, manifest, revision, relative -> {
+                try (InputStream stream = plugin.getResource("resourcepack/" + relative)) {
+                    if (stream == null) throw new IOException("Pack-Ressource fehlt im JAR: " + relative);
+                    return stream.readAllBytes();
                 }
+            });
+            if (defaults.updated() > 0) {
+                plugin.getLogger().info(defaults.updated() + " Standard-Packdatei(en) auf Revision "
+                        + revision + " aktualisiert; Sicherung: " + defaults.backup());
             }
 
             byte[] bytes = PackArchive.build(root.resolve("resourcepack"));

@@ -54,7 +54,7 @@ ingredients:
   - extraitems:tomato
 ```
 
-Zutaten beginnen mit `minecraft:` oder `extraitems:`. In 0.2.0 sind formlose Rezepte mit 1–9 Zutaten implementiert.
+Zutaten beginnen mit `minecraft:` oder `extraitems:`. In 0.2.1 sind formlose Rezepte mit 1–9 Zutaten implementiert.
 
 ## Neue Definition registrieren
 
@@ -68,4 +68,4 @@ Eine Definition kann mit `enabled: false` vorübergehend übersprungen werden. B
 
 ## Erweiterungspunkte
 
-Die Loader-Pipeline verarbeitet Definitionen nach Typ. `tool`, `potion`, `effect`, `gui`, `tree` und `ore` sind reservierte Namen für spätere Module. Werden sie in 0.2.0 verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
+Die Loader-Pipeline verarbeitet Definitionen nach Typ. `tool`, `potion`, `effect`, `gui`, `tree` und `ore` sind reservierte Namen für spätere Module. Werden sie in 0.2.1 verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
