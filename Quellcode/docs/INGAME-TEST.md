@@ -1,0 +1,39 @@
+# Abnahme auf einem separaten Testserver
+
+Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die Komponententests. Für belastbare Freigabe dieselben Schritte auf Paper 1.21.11 und Paper 26.2 mit jeweils passendem Vanilla-Java-Client durchführen. Als zweiten Account einen Spieler ohne OP und ohne Wildcard-Rechte nutzen. Grundstücksschutz zusätzlich mit den auf dem Zielserver tatsächlich eingesetzten Plugins prüfen.
+
+| Test | Erwartung |
+|---|---|
+| Erstbeitritt, Paket annehmen | Tomate und Pflanzen korrekt dargestellt; Bewegung nach Ladebestätigung möglich. |
+| Paket ablehnen / in Serverliste deaktivieren | Kick; keine Freischaltung. |
+| URL unerreichbar / Download beschädigt | Kick mit Fehlermeldung; kein Weiterspielen. |
+| Client bestätigt innerhalb Timeout nicht | Kick spätestens nach konfigurierter Frist. |
+| Anderes Plugin lädt ein weiteres Pack | Dessen Status schaltet ExtraItems nicht frei. |
+| Erneuter Beitritt mit gleichem Pack | Clientcache verwendbar; ExtraItems wartet erneut auf erfolgreiche Meldung. |
+| `/ei pack` mehrmals / Neuverbindung | Alte Meldungen und Timeouttasks beeinflussen die neue Anfrage nicht. |
+| Samen ohne Pflanzrecht auf Acker verwenden | Keine Pflanze; Samenmenge unverändert. |
+| Samen mit Pflanzrecht, auch Nebenhand | Genau eine Pflanze; genau ein Samen verbraucht. |
+| Pflanze in verbotenem Claim / Spawnschutz | Kein Pflanzvorgang; keine verlorenen Samen oder zurückgelassenen Träger. |
+| Düngen ohne Pflanzrecht | Keine Stufenänderung; kein Knochenmehlverbrauch. |
+| Düngen mit Pflanzrecht | Genau eine Stufe und ein Knochenmehl pro Klick. |
+| Wachstum bei Licht und feuchtem Acker | Stufen 0 → 1 → 2 → 3; keine Stufe außerhalb der Modelle. |
+| Dunkelheit / trockener Acker | Fortschritt pausiert. |
+| Ernten, mehrere schnelle Klicks | Einmal 1–3 Tomaten; Rücksetzung auf Stufe 1; kein Doppel-Drop. |
+| Ernten/Abbauen im fremden Claim | Schutzplugin kann es verhindern; keine Drops. |
+| Survival-Abbau unreif / reif | Ein Samen; reif zusätzlich Tomaten; keine zurückbleibenden Entities. |
+| Creative-Abbau | Keine Drops. |
+| Normales Blocksetzen, Eimer, Kolben, TNT, Wasser, Zertrampeln | Pflanze/Acker nicht überschrieben; keine Duplikate. |
+| Samenrezept ohne Craftrecht | Kein Ergebnis und kein Craft, auch Shift-Klick, Zahlentaste und Rezeptbuch. |
+| Craftrecht zwischen Vorschau und Klick entziehen | Endgültiger Craft wird abgelehnt. |
+| Samenrezept mit Craftrecht | Exakte Zutaten und konfigurierte Menge. |
+| Automatischer Crafter mit beiden Samenrezepten | Kein Craft und kein Verbrauch. |
+| Tomate statt Apfel in Golden-Apple-Rezept | Kein Vanilla-Craft mit dem Custom-Item. |
+| Tomate essen ohne Anbau-/Craftrecht | Essen bei Hunger möglich, 4 Nahrungspunkte. |
+| Stop/Start mit unreifen Pflanzen und Samen im Inventar | IDs, Position, Stufe und Fortschritt bleiben erhalten. |
+| Chunk entladen und später laden | Eine Darstellung und eine Hitbox je Pflanze; keine Duplikate. |
+| Weltwechsel / zusätzliche Welt entladen und laden | Pflanzen werden dem richtigen Welt-UUID/Chunk zugeordnet. |
+| Chunklimit erreichen | Weitere Aussaat abgelehnt, ohne Samenverbrauch. |
+| `/ei give` bei vollem Inventar | Kein unkontrollierter Bodendrop; Meldung nennt nicht vergebene Menge. |
+| Originalmodelle und Tomaten auf beiden Clients | Keine Missing-Texture-Flächen, brauchbare Skalierung/Hitbox, transparenter Hintergrund. |
+
+Die echte Grafik, Client-Handanimation, Reihenfolge mit Drittplugins und Verhalten unter hoher Spielerlast lassen sich mit reinen Unit-Tests nicht abnehmen. Erst nach dieser Prüfung produktiv einsetzen.

@@ -1,0 +1,35 @@
+ExtraItems 0.1.0 — Tomaten für Vanilla-Minecraft Java Edition
+
+1. Server stoppen, ExtraItems-0.1.0.jar in den plugins-Ordner kopieren.
+2. Einmal starten und wieder stoppen, damit die Konfiguration entsteht.
+3. plugins/ExtraItems/config.yml öffnen:
+   resource-pack.public-url auf http://DEINE-SERVER-IP:8123/extraitems.zip setzen.
+4. TCP-Port 8123 zum Server freigeben/weiterleiten. Server neu starten.
+5. Die URL von einem anderen Rechner prüfen: direkte ZIP-Datei muss laden.
+6. Beitreten und das Server-Ressourcenpaket akzeptieren.
+
+Paper 1.21.11: Java 21. Paper 26.1/26.2: Java 25.
+Das Plugin-JAR selbst ist mit Java-21-Bytecode gebaut.
+
+Admin-Befehle im Spiel:
+  /ei give SPIELERNAME tomato_seeds 16
+  /ei give SPIELERNAME tomato 16
+  /ei status
+
+Rechte mit LuckPerms (Konsole):
+  lp creategroup farmer
+  lp group farmer permission set extraitems.plant.tomato true
+  lp group farmer permission set extraitems.craft.tomato_seeds true
+  lp user SPIELERNAME parent add farmer
+
+Tomaten essen und Ernten sind ohne Anbaurecht erlaubt. Grundstücksschutz gilt.
+Rechtsklick mit Samen oben auf feuchten Ackerboden: pflanzen.
+Rechtsklick mit Knochenmehl: eine Stufe wachsen (mit Pflanzrecht).
+Rechtsklick auf reife Pflanze: ernten. Linksklick: Pflanze entfernen.
+
+Ohne freie Downloadports: erzeugte ZIP auf eigenen HTTPS-Dateihost laden,
+http.enabled=false setzen und direkte Download-URL konfigurieren. Details: README.md.
+
+Alle 24 Komponententests und die Builds für 1.21.11 und 26.2 bestanden.
+Echte Minecraft-Client-/Server-Tests stehen aus: VALIDIERUNG.md lesen.
+Diese Version enthält Pflanzen; Baum- und Erzmodule sind noch nicht umgesetzt.

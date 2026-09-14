@@ -1,0 +1,23 @@
+# ExtraItems 0.1.0 — Änderungen benötigen einen vollständigen Serverneustart.
+resource-pack:
+  # Pflicht. Beispiele: http://play.example.org:8123/extraitems.zip
+  # oder die direkte HTTPS-URL der unveränderten, vom Plugin gebauten ZIP.
+  # Leere URL: kein Spieler wird freigeschaltet; Grund steht in der Konsole.
+  public-url: ''
+  prompt: 'Dieser Server benötigt ExtraItems für Pflanzen und Items. Bitte laden.'
+  timeout-seconds: 120
+  http:
+    enabled: true
+    bind: '0.0.0.0'
+    port: 8123
+limits:
+  plants-per-chunk: 64
+  loaded-plants-total: 10000
+messages:
+  no-permission: '&cDu hast dafür keine Berechtigung.'
+  pack-required: 'Bitte aktiviere das Server-Ressourcenpaket und verbinde dich erneut.'
+  pack-error: 'Das Pflicht-Ressourcenpaket konnte nicht geladen werden. Bitte erneut verbinden oder das Serverteam kontaktieren.'
+  pack-timeout: 'Das Ressourcenpaket wurde nicht rechtzeitig bestätigt. Bitte erneut verbinden.'
+  pack-unavailable: 'Das Server-Ressourcenpaket ist noch nicht eingerichtet. Bitte das Serverteam kontaktieren.'
+  pack-loaded: '&aExtraItems-Ressourcenpaket geladen. Viel Spaß!'
+  no-space: '&cHier ist kein Platz für eine Pflanze oder die Pflanzengrenze wurde erreicht.'
