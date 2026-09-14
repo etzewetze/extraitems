@@ -1,23 +1,42 @@
-# ExtraItems 0.1.0 — Änderungen benötigen einen vollständigen Serverneustart.
+# ExtraItems 0.2.0 — Änderungen benötigen einen vollständigen Serverneustart.
 resource-pack:
-  # Pflicht. Beispiele: http://play.example.org:8123/extraitems.zip
-  # oder die direkte HTTPS-URL der unveränderten, vom Plugin gebauten ZIP.
-  # Leere URL: kein Spieler wird freigeschaltet; Grund steht in der Konsole.
-  public-url: ''
+  # true: Ablehnung/Downloadfehler führt zum Kick. false: Paket ist nur optional.
+  required: true
+
+  # Administratoren dürfen bei einer fehlerhaften Pack-Konfiguration beitreten,
+  # damit /ei status und die Konfiguration erreichbar bleiben.
+  allow-admin-bypass-on-error: true
+
+  # self-host: Plugin erzeugt und hostet die ZIP selbst.
+  # external:   external-url muss direkt auf die ZIP zeigen.
+  # disabled:   keine Auslieferung; nur zusammen mit required: false zulässig.
+  mode: self-host
+  external-url: ''
+
   prompt: 'Dieser Server benötigt ExtraItems für Pflanzen und Items. Bitte laden.'
   timeout-seconds: 120
-  http:
-    enabled: true
+
+  self-host:
     bind: '0.0.0.0'
     port: 8123
+
+    # auto verwendet den Hostnamen/die IP, mit der der Spieler dem Server beitritt.
+    # Alternativ feste Domain oder öffentliche IP eintragen, ohne http:// und Port.
+    public-host: auto
+    scheme: http
+    advertised-port: 8123
+
 limits:
   plants-per-chunk: 64
   loaded-plants-total: 10000
+
 messages:
   no-permission: '&cDu hast dafür keine Berechtigung.'
   pack-required: 'Bitte aktiviere das Server-Ressourcenpaket und verbinde dich erneut.'
   pack-error: 'Das Pflicht-Ressourcenpaket konnte nicht geladen werden. Bitte erneut verbinden oder das Serverteam kontaktieren.'
   pack-timeout: 'Das Ressourcenpaket wurde nicht rechtzeitig bestätigt. Bitte erneut verbinden.'
-  pack-unavailable: 'Das Server-Ressourcenpaket ist noch nicht eingerichtet. Bitte das Serverteam kontaktieren.'
+  pack-unavailable: 'Das Server-Ressourcenpaket ist nicht erreichbar. Bitte das Serverteam kontaktieren.'
   pack-loaded: '&aExtraItems-Ressourcenpaket geladen. Viel Spaß!'
+  pack-admin-bypass: '&eNotfallzugang: Das Ressourcenpaket ist nicht bereit. Prüfe /ei status und die Serverkonsole.'
+  pack-optional: '&eDas ExtraItems-Ressourcenpaket wurde nicht geladen; eigene Modelle können falsch aussehen.'
   no-space: '&cHier ist kein Platz für eine Pflanze oder die Pflanzengrenze wurde erreicht.'

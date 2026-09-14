@@ -1,0 +1,59 @@
+name: ExtraItems CI
+
+on:
+  push:
+    branches: ["main", "codex/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - java: "21"
+            api: "1.21.11-R0.1-SNAPSHOT"
+          - java: "25"
+            api: "26.2-R0.1-SNAPSHOT"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+      - name: Test against Spigot API ${{ matrix.api }}
+        working-directory: Quellcode
+        run: mvn -B clean verify -Dspigot.version=${{ matrix.api }}
+
+  package:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Build release JAR
+        working-directory: Quellcode
+        run: mvn -B clean verify
+      - name: Assemble complete package
+        run: |
+          mkdir -p dist/Quellcode
+          cp Quellcode/target/ExtraItems-0.2.0.jar dist/
+          cp README.md SCHNELLSTART.txt ASSETS.md dist/
+          rsync -a --exclude target Quellcode/ dist/Quellcode/
+          cd dist
+          zip -r ExtraItems-0.2.0-Komplettpaket.zip ExtraItems-0.2.0.jar README.md SCHNELLSTART.txt ASSETS.md Quellcode
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ExtraItems-0.2.0-Komplettpaket
+          path: dist/ExtraItems-0.2.0-Komplettpaket.zip
+          if-no-files-found: error

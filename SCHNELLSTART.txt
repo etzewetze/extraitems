@@ -1,35 +1,44 @@
-ExtraItems 0.1.0 — Tomaten für Vanilla-Minecraft Java Edition
+ExtraItems 0.2.0 — Schnellstart
 
-1. Server stoppen, ExtraItems-0.1.0.jar in den plugins-Ordner kopieren.
-2. Einmal starten und wieder stoppen, damit die Konfiguration entsteht.
-3. plugins/ExtraItems/config.yml öffnen:
-   resource-pack.public-url auf http://DEINE-SERVER-IP:8123/extraitems.zip setzen.
-4. TCP-Port 8123 zum Server freigeben/weiterleiten. Server neu starten.
-5. Die URL von einem anderen Rechner prüfen: direkte ZIP-Datei muss laden.
-6. Beitreten und das Server-Ressourcenpaket akzeptieren.
+1. Server stoppen.
+2. ExtraItems-0.2.0.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
+3. Server starten.
+4. Standardmäßig nutzt das Plugin:
+     resource-pack.mode: self-host
+     resource-pack.self-host.public-host: auto
+     resource-pack.self-host.port: 8123
+5. TCP-Port 8123 beim Hoster/Firewall/Router freigeben.
+6. Als OP beitreten und /ei status ausführen.
+7. Die angezeigte Pack-URL von einem anderen Rechner testen.
+8. Mit einem Nicht-OP-Spieler Paket, Rechte, Pflanzen und Rezepte prüfen.
 
-Paper 1.21.11: Java 21. Paper 26.1/26.2: Java 25.
-Das Plugin-JAR selbst ist mit Java-21-Bytecode gebaut.
+Wichtig:
+- localhost funktioniert nur auf demselben Rechner wie der Minecraft-Client.
+- public-host: auto benutzt automatisch die Adresse, mit der der Spieler beitritt.
+- Vanilla benötigt trotzdem einen erreichbaren HTTP(S)-Endpunkt.
+- Wenn kein zusätzlicher Port möglich ist: mode: external und eine direkte HTTPS-ZIP-URL verwenden.
+- Nur zum Testen ohne Pack: required: false und mode: disabled.
+- Bei einer fehlerhaften Pack-Konfiguration haben Administratoren standardmäßig Notfallzugang.
 
-Admin-Befehle im Spiel:
+Neue Item-Struktur:
+  plugins/ExtraItems/items.yml
+  plugins/ExtraItems/items/tomato/item.yml
+  plugins/ExtraItems/items/tomato/crop.yml
+  plugins/ExtraItems/items/tomato_seeds/item.yml
+  plugins/ExtraItems/items/tomato_seeds/recipes/*.yml
+
+Beim Update von 0.1.0 wird die alte items.yml als items.legacy.yml gesichert
+und automatisch in einzelne Dateien aufgeteilt.
+
+Admin-Befehle:
+  /ei status
+  /ei pack
   /ei give SPIELERNAME tomato_seeds 16
   /ei give SPIELERNAME tomato 16
-  /ei status
 
-Rechte mit LuckPerms (Konsole):
-  lp creategroup farmer
+LuckPerms:
   lp group farmer permission set extraitems.plant.tomato true
   lp group farmer permission set extraitems.craft.tomato_seeds true
-  lp user SPIELERNAME parent add farmer
 
-Tomaten essen und Ernten sind ohne Anbaurecht erlaubt. Grundstücksschutz gilt.
-Rechtsklick mit Samen oben auf feuchten Ackerboden: pflanzen.
-Rechtsklick mit Knochenmehl: eine Stufe wachsen (mit Pflanzrecht).
-Rechtsklick auf reife Pflanze: ernten. Linksklick: Pflanze entfernen.
-
-Ohne freie Downloadports: erzeugte ZIP auf eigenen HTTPS-Dateihost laden,
-http.enabled=false setzen und direkte Download-URL konfigurieren. Details: README.md.
-
-Alle 24 Komponententests und die Builds für 1.21.11 und 26.2 bestanden.
-Echte Minecraft-Client-/Server-Tests stehen aus: VALIDIERUNG.md lesen.
-Diese Version enthält Pflanzen; Baum- und Erzmodule sind noch nicht umgesetzt.
+Tomaten essen und reife Pflanzen ernten sind ohne diese Rechte erlaubt.
+Vor Updates Welten und plugins/ExtraItems sichern. Kein /reload verwenden.

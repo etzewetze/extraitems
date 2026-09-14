@@ -1,8 +1,8 @@
 name: ExtraItems
-version: '0.1.0'
+version: '0.2.0'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
-description: Eigene Vanilla-Pflanzen, Pflicht-Ressourcenpaket und Item-Rechte
+description: Modulare Vanilla-Items, Pflanzen, Pflicht-Ressourcenpaket und Rechte
 author: ExtraItems
 softdepend: [LuckPerms, WorldGuard, GriefPrevention]
 commands:
@@ -12,7 +12,7 @@ commands:
     usage: /ei give <Spieler> <Item> [Anzahl] | pack | status
 permissions:
   extraitems.admin:
-    description: Items vergeben und Status abfragen
+    description: Items vergeben, Status abfragen und Notfallzugang bei Packfehlern
     default: op
   extraitems.plant.tomato:
     description: Tomatensamen pflanzen und Tomaten mit Knochenmehl düngen

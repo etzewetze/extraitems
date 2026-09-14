@@ -1,0 +1,7 @@
+type: recipe
+id: tomato_to_seeds
+result: tomato_seeds
+amount: 4
+permission: extraitems.craft.tomato_seeds
+ingredients:
+  - extraitems:tomato

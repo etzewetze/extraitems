@@ -1,40 +1,9 @@
+# Zentrale Dateiliste. Jede Definition liegt getrennt im angegebenen Ordner.
 # IDs bleiben dauerhaft gleich: Sie werden in Item-PDC und Welt-Chunks gespeichert.
-items:
-  tomato:
-    material: APPLE
-    name: '&cTomate'
-    model: extraitems:tomato
-    lore: ['&7Frisch vom Strauch.', '&7Auch ohne Anbaurecht essbar.']
-    # Natürliche APPLE-Konsumierbarkeit; nur Nährwerte werden geändert.
-    food:
-      nutrition: 4
-      saturation: 0.3
-  tomato_seeds:
-    material: PAPER
-    name: '&aTomatensamen'
-    model: extraitems:tomato_seeds
-    lore: ['&7Rechtsklick auf Ackerboden zum Pflanzen.']
-crops:
-  tomato:
-    seed: tomato_seeds
-    produce: tomato
-    plant-permission: extraitems.plant.tomato
-    models: [extraitems:tomato_stage_0, extraitems:tomato_stage_1, extraitems:tomato_stage_2, extraitems:tomato_stage_3]
-    seconds-per-stage: 180
-    regrow-stage: 1
-    minimum-light: 9
-    require-hydrated-farmland: true
-    bonemeal: true
-    harvest-min: 1
-    harvest-max: 3
-recipes:
-  tomato_seed_starter:
-    result: tomato_seeds
-    amount: 2
-    permission: extraitems.craft.tomato_seeds
-    ingredients: [minecraft:wheat_seeds, minecraft:beetroot]
-  tomato_to_seeds:
-    result: tomato_seeds
-    amount: 4
-    permission: extraitems.craft.tomato_seeds
-    ingredients: [extraitems:tomato]
+schema-version: 2
+sources:
+  - items/tomato/item.yml
+  - items/tomato/crop.yml
+  - items/tomato_seeds/item.yml
+  - items/tomato_seeds/recipes/starter.yml
+  - items/tomato_seeds/recipes/from_tomato.yml
