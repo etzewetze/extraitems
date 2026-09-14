@@ -94,6 +94,15 @@ class PackDeliveryTest {
     }
 
     @Test
+    void joiningAddressIsReducedToItsHost() {
+        assertEquals("play.example.org", PackService.joiningHost("play.example.org:25565"));
+        assertEquals("127.0.0.1", PackService.joiningHost("127.0.0.1:25565"));
+        assertEquals("[2001:db8::1]", PackService.joiningHost("[2001:db8::1]:25565"));
+        assertThrows(IllegalStateException.class, () -> PackService.joiningHost(""));
+        assertThrows(IllegalStateException.class, () -> PackService.joiningHost("0.0.0.0:25565"));
+    }
+
+    @Test
     void selfHostedUrlUsesJoiningHostAndOmitsDefaultPorts() {
         assertEquals("http://play.example.org/extraitems.zip?sha1=abc",
                 PackService.buildSelfHostedUrl("http", "play.example.org", 80, "abc"));

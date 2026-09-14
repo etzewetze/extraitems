@@ -83,7 +83,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
                     + " | Geladene Pflanzen: " + (crops == null ? 0 : crops.count()));
             if (sender instanceof Player player && pack.ready() && pack.deliveryEnabled()) {
                 try {
-                    sender.sendMessage("§7Deine Pack-URL: " + pack.url(player));
+                    sender.sendMessage("§7Deine Pack-URL: " + gate.resolvedUrl(player));
                 } catch (RuntimeException error) {
                     sender.sendMessage("§cPack-URL: " + error.getMessage());
                 }

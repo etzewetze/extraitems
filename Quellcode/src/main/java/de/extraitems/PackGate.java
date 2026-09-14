@@ -14,6 +14,7 @@ final class PackGate implements Listener {
     private final ExtraItemsPlugin plugin;
     private final PackService pack;
     private final Map<UUID, PackSession> sessions = new HashMap<>();
+    private final Map<UUID, String> joiningAddresses = new HashMap<>();
     private final Set<UUID> bypass = new HashSet<>();
 
     PackGate(ExtraItemsPlugin plugin, PackService pack) {
@@ -27,13 +28,20 @@ final class PackGate implements Listener {
         return session != null && session.state() == PackSession.State.LOADED;
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void login(PlayerLoginEvent event) {
+        joiningAddresses.put(event.getPlayer().getUniqueId(), event.getHostname());
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void join(PlayerJoinEvent event) { request(event.getPlayer()); }
 
     @EventHandler
     public void quit(PlayerQuitEvent event) {
-        sessions.remove(event.getPlayer().getUniqueId());
-        bypass.remove(event.getPlayer().getUniqueId());
+        UUID id = event.getPlayer().getUniqueId();
+        sessions.remove(id);
+        joiningAddresses.remove(id);
+        bypass.remove(id);
     }
 
     void request(Player player) {
@@ -61,8 +69,8 @@ final class PackGate implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!current(player, session)) return;
             try {
-                player.addResourcePack(session.id, pack.url(player), pack.hash(),
-                        plugin.getConfig().getString("resource-pack.prompt"), pack.required());
+                player.addResourcePack(session.id, pack.url(joiningAddresses.get(player.getUniqueId())),
+                        pack.hash(), plugin.getConfig().getString("resource-pack.prompt"), pack.required());
             } catch (RuntimeException error) {
                 plugin.getLogger().warning("Pack-URL für " + player.getName() + " fehlgeschlagen: " + error.getMessage());
                 emergencyOrKick(player);
@@ -77,6 +85,10 @@ final class PackGate implements Listener {
                 else allowOptional(player);
             }
         }, timeout);
+    }
+
+    String resolvedUrl(Player player) {
+        return pack.url(joiningAddresses.get(player.getUniqueId()));
     }
 
     private void emergencyOrKick(Player player) {

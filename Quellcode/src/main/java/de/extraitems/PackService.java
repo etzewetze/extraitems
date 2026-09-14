@@ -1,7 +1,6 @@
 package de.extraitems;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.net.*;
@@ -91,6 +90,7 @@ final class PackService implements AutoCloseable {
         String bind = config.getString("resource-pack.self-host.bind",
                 config.getString("resource-pack.http.bind", "0.0.0.0"));
         http = new PackHttpServer(bind, port, bytes, sha1());
+
         scheme = config.getString("resource-pack.self-host.scheme", "http").toLowerCase(java.util.Locale.ROOT);
         if (!scheme.equals("http") && !scheme.equals("https")) {
             throw new IllegalArgumentException("self-host.scheme muss http oder https sein");
@@ -101,24 +101,32 @@ final class PackService implements AutoCloseable {
                 1, 65535, "Öffentlicher HTTP-Port");
 
         String legacyUrl = config.getString("resource-pack.public-url", "");
-        if (!legacyUrl.isBlank() && !config.contains("resource-pack.mode")) {
-            fixedUrl = validateUrl(legacyUrl);
-        }
+        if (!legacyUrl.isBlank() && !config.contains("resource-pack.mode")) fixedUrl = validateUrl(legacyUrl);
     }
 
-    String url(Player player) {
+    String url(String joiningAddress) {
         if (fixedUrl != null) return fixedUrl;
         if (mode != Mode.SELF_HOST || http == null) throw new IllegalStateException("Keine Pack-Downloadadresse aktiv");
 
         String host = publicHost;
-        if (host.equalsIgnoreCase("auto")) {
-            InetSocketAddress virtualHost = player.getVirtualHost();
-            host = virtualHost == null ? "" : virtualHost.getHostString();
-            if (host.isBlank() || host.equals("0.0.0.0") || host.equals("::")) {
-                throw new IllegalStateException("Serveradresse konnte nicht automatisch erkannt werden; self-host.public-host setzen");
-            }
-        }
+        if (host.equalsIgnoreCase("auto")) host = joiningHost(joiningAddress);
         return buildSelfHostedUrl(scheme, host, advertisedPort, sha1());
+    }
+
+    static String joiningHost(String joiningAddress) {
+        if (joiningAddress == null || joiningAddress.isBlank()) {
+            throw new IllegalStateException("Serveradresse konnte nicht automatisch erkannt werden; self-host.public-host setzen");
+        }
+        try {
+            URI parsed = new URI("tcp://" + joiningAddress.trim());
+            String host = parsed.getHost();
+            if (host == null || host.isBlank() || host.equals("0.0.0.0") || host.equals("::")) {
+                throw new URISyntaxException(joiningAddress, "Host fehlt");
+            }
+            return host;
+        } catch (URISyntaxException error) {
+            throw new IllegalStateException("Serveradresse konnte nicht automatisch erkannt werden; self-host.public-host setzen", error);
+        }
     }
 
     static String buildSelfHostedUrl(String scheme, String host, int port, String sha1) {
