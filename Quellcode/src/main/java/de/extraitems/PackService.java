@@ -123,6 +123,7 @@ final class PackService implements AutoCloseable {
             if (host == null || host.isBlank() || host.equals("0.0.0.0") || host.equals("::")) {
                 throw new URISyntaxException(joiningAddress, "Host fehlt");
             }
+            if (host.startsWith("[") && host.endsWith("]")) host = host.substring(1, host.length() - 1);
             return host;
         } catch (URISyntaxException error) {
             throw new IllegalStateException("Serveradresse konnte nicht automatisch erkannt werden; self-host.public-host setzen", error);
