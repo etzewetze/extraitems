@@ -1,5 +1,5 @@
 name: ExtraItems
-version: '0.3.0'
+version: '0.3.1'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
 description: Modulare Vanilla-Items, Pflanzen, Küche, Pflicht-Ressourcenpaket und Rechte
@@ -40,6 +40,9 @@ permissions:
     default: op
   extraitems.craft.schlemmer_burger:
     description: Schlemmer-Burger herstellen
+    default: op
+  extraitems.craft.cheesy_schlemmer:
+    description: Cheesy Schlemmer herstellen
     default: op
   extraitems.craft.cheese_station:
     description: Käsestation herstellen

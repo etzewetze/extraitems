@@ -6,5 +6,5 @@ model: extraitems:onion
 lore:
   - '&7Kräftig im Geschmack.'
 food:
-  nutrition: 2
+  nutrition: 3
   saturation: 0.3

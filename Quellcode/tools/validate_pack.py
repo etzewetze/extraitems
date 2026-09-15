@@ -33,9 +33,13 @@ for png_path in pack.rglob('*.png'):
     width,height,depth,color=struct.unpack('>IIBB',png[16:26])
     assert width==height and color==6, f'RGBA-PNG erforderlich: {png_path}'
     assert 16 <= width <= 4096 and width & (width-1) == 0, f'Zweierpotenz erforderlich: {png_path}'
-for name in ('tomato','lettuce','onion','knife','burger_bun','schlemmer_burger','cheese_slice','cheese_station'):
+for name in ('tomato','lettuce','cheese_slice','cheese_station'):
     item_model=json.loads((pack/f'assets/extraitems/models/item/{name}.json').read_text())
     assert item_model.get('elements') and 'ground' in item_model.get('display',{}), f'3D-Modell fehlt: {name}'
+for name in ('onion','knife','burger_bun','schlemmer_burger','cheesy_schlemmer'):
+    item_model=json.loads((pack/f'assets/extraitems/models/item/{name}.json').read_text())
+    assert item_model.get('parent') == 'minecraft:item/generated', f'Robustes extrudiertes Modell fehlt: {name}'
+    assert item_model.get('textures',{}).get('layer0') == f'extraitems:item/{name}'
 for crop in ('tomato','lettuce','onion'):
     for stage in range(4):
         assert (pack/f'assets/extraitems/models/block/{crop}_stage_{stage}.json').exists()
@@ -43,4 +47,4 @@ for bites in range(10):
     assert (pack/f'assets/extraitems/models/block/cheese_wheel_{bites}.json').exists()
 ripe_model=json.loads((pack/'assets/extraitems/models/block/tomato_stage_3.json').read_text())
 assert ripe_model['textures'].get('ripe') == 'minecraft:block/red_concrete', 'Reife Textur fehlt'
-print(f'OK: {len(actual)} Pack-Dateien, 3 Saat-Sprites, 3 Pflanzen mit je 4 Stufen, 10 Käsestufen und 8 3D-Itemmodelle.')
+print(f'OK: {len(actual)} Pack-Dateien, 3 Saat-Sprites, 3 Pflanzen mit je 4 Stufen, 10 Käsestufen und 5 robuste Küchen-Sprites.')

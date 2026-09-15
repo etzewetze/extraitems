@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "extraitems:item/onion"
+    "layer0": "extraitems:item/cheesy_schlemmer"
   }
 }

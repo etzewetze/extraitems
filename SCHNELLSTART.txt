@@ -1,7 +1,7 @@
-ExtraItems 0.3.0 — Schnellstart
+ExtraItems 0.3.1 — Schnellstart
 
 1. Server stoppen.
-2. ExtraItems-0.3.0.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
+2. ExtraItems-0.3.1.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
 3. Server starten.
 4. Standardmäßig nutzt das Plugin:
      resource-pack.mode: self-host
@@ -41,6 +41,7 @@ Admin-Befehle:
   /ei give SPIELERNAME onion_seeds 16
   /ei give SPIELERNAME knife 1
   /ei give SPIELERNAME cheese_station 1
+  /ei give SPIELERNAME cheesy_schlemmer 1
 
 LuckPerms:
   lp group farmer permission set extraitems.plant.tomato true
@@ -50,11 +51,14 @@ LuckPerms:
   lp group cook permission set extraitems.craft.knife true
   lp group cook permission set extraitems.craft.burger_bun true
   lp group cook permission set extraitems.craft.schlemmer_burger true
+  lp group cook permission set extraitems.craft.cheesy_schlemmer true
   lp group cook permission set extraitems.use.cheese_station true
 
 Käsestation automatisieren:
   Kiste -> Hopper oben/seitlich -> Käsestation -> Hopper direkt darunter
   Eingabe: Milcheimer. Nach 60 Sekunden: 1 Käserad + 1 leerer Eimer.
+  Rezept: [leer,Fass,leer] / [Bretter,Werkbank,Bretter] / [Stock,leer,Stock]
+  Jede Holzbrettart ist erlaubt.
 
 Messer:
   192 Schnitte; Haltbarkeit I/II/III = 256/320/384 Schnitte.

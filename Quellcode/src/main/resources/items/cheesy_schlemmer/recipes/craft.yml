@@ -1,0 +1,11 @@
+type: recipe
+id: cheesy_schlemmer
+result: cheesy_schlemmer
+amount: 1
+permission: extraitems.craft.cheesy_schlemmer
+ingredients:
+  - extraitems:burger_bun
+  - extraitems:cheese_slice
+  - extraitems:tomato
+  - extraitems:lettuce
+  - minecraft:cooked_beef

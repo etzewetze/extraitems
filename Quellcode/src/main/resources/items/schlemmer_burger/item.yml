@@ -6,5 +6,5 @@ model: extraitems:schlemmer_burger
 lore:
   - '&7Buns, Salat, Zwiebeln und Rindersteak.'
 food:
-  nutrition: 14
-  saturation: 1.2
+  nutrition: 18
+  saturation: 1.8

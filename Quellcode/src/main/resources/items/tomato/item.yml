@@ -7,5 +7,5 @@ lore:
   - '&7Frisch vom Strauch.'
   - '&7Auch ohne Anbaurecht essbar.'
 food:
-  nutrition: 4
+  nutrition: 3
   saturation: 0.3

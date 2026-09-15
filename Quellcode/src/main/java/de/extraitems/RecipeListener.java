@@ -18,7 +18,9 @@ final class RecipeListener implements Listener {
 
     boolean allowed(Player player, CraftingInventory inventory, Recipe recipe) {
         var spec = items.recipe(recipe);
-        var actual = Arrays.stream(inventory.getMatrix()).map(items::ingredientId).toList();
+        var actual = Arrays.stream(inventory.getMatrix())
+                .map(item -> spec == null ? items.ingredientId(item) : items.ingredientId(item, spec.ingredients()))
+                .toList();
         if (spec == null) return actual.stream().noneMatch(s -> s != null && s.startsWith("extraitems:"));
         return CraftPolicy.mayCraft(plugin.gate().ready(player), player.hasPermission(spec.permission()), spec.ingredients(), actual);
     }

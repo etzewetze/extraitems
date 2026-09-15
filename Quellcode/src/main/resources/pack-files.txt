@@ -12,6 +12,7 @@ assets/extraitems/items/cheese_wheel_6.json
 assets/extraitems/items/cheese_wheel_7.json
 assets/extraitems/items/cheese_wheel_8.json
 assets/extraitems/items/cheese_wheel_9.json
+assets/extraitems/items/cheesy_schlemmer.json
 assets/extraitems/items/knife.json
 assets/extraitems/items/lettuce.json
 assets/extraitems/items/lettuce_seeds.json
@@ -58,6 +59,7 @@ assets/extraitems/models/block/tomato_stage_3.json
 assets/extraitems/models/item/burger_bun.json
 assets/extraitems/models/item/cheese_slice.json
 assets/extraitems/models/item/cheese_station.json
+assets/extraitems/models/item/cheesy_schlemmer.json
 assets/extraitems/models/item/knife.json
 assets/extraitems/models/item/lettuce.json
 assets/extraitems/models/item/lettuce_seeds.json
@@ -66,8 +68,13 @@ assets/extraitems/models/item/onion_seeds.json
 assets/extraitems/models/item/schlemmer_burger.json
 assets/extraitems/models/item/tomato.json
 assets/extraitems/models/item/tomato_seeds.json
+assets/extraitems/textures/item/burger_bun.png
+assets/extraitems/textures/item/cheesy_schlemmer.png
+assets/extraitems/textures/item/knife.png
 assets/extraitems/textures/item/lettuce_seeds.png
+assets/extraitems/textures/item/onion.png
 assets/extraitems/textures/item/onion_seeds.png
+assets/extraitems/textures/item/schlemmer_burger.png
 assets/extraitems/textures/item/tomato.png
 assets/extraitems/textures/item/tomato_seeds.png
 pack.mcmeta

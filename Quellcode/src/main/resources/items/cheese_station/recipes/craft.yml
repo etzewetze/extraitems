@@ -4,11 +4,11 @@ result: cheese_station
 amount: 1
 permission: extraitems.craft.cheese_station
 shape:
-  - 'ICI'
-  - 'BHB'
-  - 'III'
+  - ' B '
+  - 'PCP'
+  - 'S S'
 keys:
-  I: minecraft:iron_ingot
-  C: minecraft:copper_ingot
   B: minecraft:barrel
-  H: minecraft:hopper
+  P: 'minecraft:#planks'
+  C: minecraft:crafting_table
+  S: minecraft:stick

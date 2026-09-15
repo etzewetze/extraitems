@@ -54,7 +54,7 @@ ingredients:
   - extraitems:tomato
 ```
 
-Zutaten beginnen mit `minecraft:` oder `extraitems:`. Seit 0.3.0 sind formlose und geformte Rezepte mit 1–9 Zutaten implementiert. Ein formloses Schneiderezept kann zusätzlich `tool: knife` und `tool-damage: 1` angeben; das Werkzeug bleibt im Feld und verliert pro Herstellung exakt diese Zahl an Einsätzen.
+Zutaten beginnen mit `minecraft:` oder `extraitems:`. Seit 0.3.0 sind formlose und geformte Rezepte mit 1–9 Zutaten implementiert. Für beliebige Holzbrettarten kann `minecraft:#planks` als Zutat verwendet werden. Ein formloses Schneiderezept kann zusätzlich `tool: knife` und `tool-damage: 1` angeben; das Werkzeug bleibt im Feld und verliert pro Herstellung exakt diese Zahl an Einsätzen.
 
 ## Neue Definition registrieren
 

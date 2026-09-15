@@ -1,6 +1,15 @@
-# ExtraItems 0.3.0
+# ExtraItems 0.3.1
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Neu in 0.3.1
+
+- Neues Käsestationsrezept: oben mittig Fass; mittlere Reihe beliebige Holzbretter, Werkbank, beliebige Holzbretter; unten links und rechts je ein Stock.
+- Moderne Käsestations-GUI mit dunklem Rahmen, markiertem Eingang, zwei Ausgängen, fünfteiliger Fortschrittsanzeige, Prozentwert und Restzeit.
+- Neuer `Cheesy Schlemmer` aus Buns, Käsescheibe, Tomate, Salat und gebratenem Rindfleisch.
+- Angepasste Nahrung: Tomate/Salat/Zwiebel je 1,5 Keulen, Buns 0,5 Keule und Schlemmer Burger 9 Keulen.
+- Zwiebel, Buns, Messer und beide Burger verwenden eigene, zuverlässig extrudierte Pixelmodelle ohne externe Vanilla-Texturverweise.
+- Der Cheesy Schlemmer füllt die vollständige Vanilla-Leiste und gibt zusätzliche Sättigung. Mehr als zehn sichtbare Hungerkeulen kann Minecraft nicht darstellen.
 
 ## Neu in 0.3.0
 
@@ -122,7 +131,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.3.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.3.1.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -147,6 +156,7 @@ Vor dem Update Welten und `plugins/ExtraItems/` sichern. `/reload` und Hot-Unloa
 | `extraitems.craft.burger_bun` | Burger Buns schneiden |
 | `extraitems.craft.cheese_slice` | Käserad schneiden |
 | `extraitems.craft.schlemmer_burger` | Schlemmer-Burger herstellen |
+| `extraitems.craft.cheesy_schlemmer` | Cheesy Schlemmer herstellen |
 | `extraitems.craft.cheese_station` | Käsestation herstellen |
 | `extraitems.craft.old_but_gold` | Old-but-Gold-Buch herstellen |
 | `extraitems.use.cheese_station` | Käsestation öffnen |
@@ -161,6 +171,8 @@ Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstückssch
 - Käse schneiden: ein Käserad und ein Messer ergeben zehn Scheiben.
 - `Old but Gold`: das hergestellte Buch im Amboss rechts neben das Messer legen; Kosten: 5 Level.
 - Käsestation: Milcheimer manuell in den Eingang legen. Alternativ eine Kiste über einen Hopper stellen und den Hopper oben oder seitlich an die Station setzen. Ein Hopper direkt darunter zieht Käseräder und leere Eimer heraus.
+- Stationsrezept: `· Fass ·` / `Bretter Werkbank Bretter` / `Stock · Stock`; jede Holzbrettart ist erlaubt.
+- Cheesy Schlemmer: Buns + Käsescheibe + Tomate + Salat + gebratenes Rindfleisch.
 - Das Käserad mit Rechtsklick auf einen soliden Block stellen und mit leerer Hand essen. Jede der zehn Portionen füllt eine Hungerkeule. Beim Abbauen gibt es keinen Drop.
 
 ## Versionen und Build
@@ -177,6 +189,6 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.3.0.jar`.
+Ergebnis: `target/ExtraItems-0.3.1.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).

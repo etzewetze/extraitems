@@ -21,6 +21,7 @@ import java.util.*;
 /** Barrel-backed cheese stations: real inventories make vanilla hoppers reliable. */
 final class CheeseStationService implements Listener {
     private static final int INPUT = 10, PROGRESS = 13, CHEESE = 15, BUCKET = 16;
+    private static final List<Integer> PROGRESS_BAR = List.of(2, 3, 4, 5, 6);
     private static final Set<Integer> OPEN_SLOTS = Set.of(INPUT, PROGRESS, CHEESE, BUCKET);
     private final ExtraItemsPlugin plugin;
     private final ItemRegistry items;
@@ -83,27 +84,61 @@ final class CheeseStationService implements Listener {
             if (current == null || current.getType().isAir()) inventory.setItem(slot, filler());
         }
         long ready = barrel.getPersistentDataContainer().getOrDefault(readyKey, PersistentDataType.LONG, 0L);
-        inventory.setItem(PROGRESS, progress(ready));
+        renderGui(inventory, ready, station(block));
     }
 
-    private ItemStack filler() {
-        ItemStack item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+    private ItemStack filler() { return decoration(Material.BLACK_STAINED_GLASS_PANE, "§8Käsestation", List.of()); }
+
+    private ItemStack decoration(Material material, String name, List<String> lore) {
+        ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(" ");
+        meta.setDisplayName(name);
+        meta.setLore(lore);
         meta.getPersistentDataContainer().set(fillerKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
     }
 
-    private ItemStack progress(long readyAt) {
-        if (readyAt <= 0) return filler();
+    private ItemStack progress(long readyAt, ItemRegistry.Station station) {
+        if (readyAt <= 0 || station == null) return decoration(Material.LIME_DYE, "§a§lBereit",
+                List.of("§7Lege links einen Milcheimer ein.", "§7Rechts erscheinen Käse und Eimer."));
         long seconds = Math.max(0, (readyAt - System.currentTimeMillis() + 999) / 1000);
+        int percent = progressPercent(readyAt, station.processSeconds());
         ItemStack item = new ItemStack(Material.CLOCK);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§eReift noch " + seconds + " Sekunden");
+        meta.setDisplayName(seconds == 0 ? "§6§lAusgabe wird vorbereitet" : "§e§lKäse reift: " + percent + "%");
+        meta.setLore(List.of("§7Verbleibend: §f" + seconds + " Sekunden", "§8Fortschritt wird jede Sekunde aktualisiert."));
         meta.getPersistentDataContainer().set(fillerKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
+    }
+
+    private int progressPercent(long readyAt, int processSeconds) {
+        if (readyAt <= 0) return 0;
+        long remaining = Math.max(0, readyAt - System.currentTimeMillis());
+        return Math.max(0, Math.min(100, (int) (100 - remaining * 100 / (processSeconds * 1000L))));
+    }
+
+    private void renderGui(Inventory inventory, long readyAt, ItemRegistry.Station station) {
+        int percent = station == null ? 0 : progressPercent(readyAt, station.processSeconds());
+        int lit = readyAt <= 0 ? 0 : (percent + 19) / 20;
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            if (OPEN_SLOTS.contains(slot)) continue;
+            ItemStack current = inventory.getItem(slot);
+            if (current != null && !current.getType().isAir() && !filler(current)) continue;
+            if (PROGRESS_BAR.contains(slot)) {
+                int segment = PROGRESS_BAR.indexOf(slot) + 1;
+                inventory.setItem(slot, decoration(segment <= lit ? Material.LIME_STAINED_GLASS_PANE : Material.GRAY_STAINED_GLASS_PANE,
+                        readyAt <= 0 ? "§7Fortschritt" : "§aFortschritt: " + percent + "%", List.of()));
+            } else if (slot == 9 || slot == 11) {
+                inventory.setItem(slot, decoration(Material.CYAN_STAINED_GLASS_PANE, "§bEingang",
+                        List.of("§7Milcheimer in Feld 11")));
+            } else if (slot == 14 || slot == 17) {
+                inventory.setItem(slot, decoration(Material.YELLOW_STAINED_GLASS_PANE, "§eAusgänge",
+                        List.of("§7Käserad und leerer Eimer")));
+            } else inventory.setItem(slot, filler());
+        }
+        inventory.setItem(PROGRESS, progress(readyAt, station));
     }
 
     private boolean filler(ItemStack item) {
@@ -159,7 +194,7 @@ final class CheeseStationService implements Listener {
                 block.getWorld().playSound(block.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .9f, .8f);
                 block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation().add(.5, 1.1, .5), 8, .25, .1, .25, .01);
             }
-            inventory.setItem(PROGRESS, progress(ready));
+            renderGui(inventory, ready, definition);
             ensureDisplay(block);
         }
     }
@@ -213,7 +248,7 @@ final class CheeseStationService implements Listener {
         ItemRegistry.Station definition = items.stationForItem(event.getItemInHand());
         if (definition == null || !(event.getBlockPlaced().getState() instanceof Barrel barrel)) return;
         barrel.getPersistentDataContainer().set(stationKey, PersistentDataType.STRING, definition.id());
-        barrel.setCustomName("§eKäsestation");
+        barrel.setCustomName("§3§lKäsestation §8• §fKäserei");
         barrel.update(true, false);
         register(event.getBlockPlaced());
         event.getBlockPlaced().getWorld().playSound(event.getBlockPlaced().getLocation(), Sound.BLOCK_BARREL_OPEN, .8f, 1.2f);

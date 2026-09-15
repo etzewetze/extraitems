@@ -6,5 +6,5 @@ model: extraitems:burger_bun
 lore:
   - '&7Aufgeschnitten und bereit zum Belegen.'
 food:
-  nutrition: 5
+  nutrition: 1
   saturation: 0.6

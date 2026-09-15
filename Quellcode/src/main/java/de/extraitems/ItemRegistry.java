@@ -253,6 +253,7 @@ public final class ItemRegistry {
 
     private RecipeChoice choice(String id, String flexibleTool) {
         if (id == null) throw new IllegalArgumentException("Leere Rezeptzutat");
+        if (id.equals("minecraft:#planks")) return new RecipeChoice.MaterialChoice(Tag.PLANKS);
         if (id.startsWith("extraitems:")) {
             String custom = requireItem(id.substring(11));
             return custom.equals(flexibleTool)
@@ -274,6 +275,13 @@ public final class ItemRegistry {
         if (item == null || item.getType().isAir()) return null;
         String custom = id(item);
         return custom == null ? item.getType().getKey().toString() : "extraitems:" + custom;
+    }
+
+    public String ingredientId(ItemStack item, Collection<String> expected) {
+        String exact = ingredientId(item);
+        if (exact != null && expected.contains("minecraft:#planks")
+                && item != null && Tag.PLANKS.isTagged(item.getType())) return "minecraft:#planks";
+        return exact;
     }
 
     public ItemStack create(String id, int amount) {

@@ -46,7 +46,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.3.0 • Pflanzen, Burger & Käse • 1.21.11–26.2',
+    'description': 'ExtraItems 0.3.1 • Pflanzen, Burger & Käse • 1.21.11–26.2',
     'min_format': [75, 0], 'max_format': [88, 0]
 }})
 
@@ -73,38 +73,12 @@ geometry(ASSETS / 'models/item/lettuce.json', [
     'leaf': 'minecraft:block/green_wool', 'lime': 'minecraft:block/lime_concrete',
     'heart': 'minecraft:block/lime_wool'}, ITEM_DISPLAY)
 
-item('onion', 'item/onion')
-geometry(ASSETS / 'models/item/onion.json', [
-    cube([4, 3, 4], [12, 12, 12], 'bulb'), cube([3, 5, 5], [13, 10, 11], 'skin'),
-    cube([5, 5, 3], [11, 10, 13], 'bulb'), cube([6, 1, 6], [10, 3, 10], 'root'),
-    cube([6.5, 12, 6.5], [8, 16, 8], 'green'), cube([8, 12, 8], [9.5, 16, 9.5], 'green')
-], {'particle': 'minecraft:block/calcite', 'bulb': 'minecraft:block/calcite',
-    'skin': 'minecraft:block/smooth_sandstone', 'root': 'minecraft:block/brown_terracotta',
-    'green': 'minecraft:block/lime_terracotta'}, ITEM_DISPLAY)
-
-item('knife', 'item/knife')
-geometry(ASSETS / 'models/item/knife.json', [
-    cube([1, 6, 6.5], [6, 10, 9.5], 'handle'), cube([5.5, 7, 7], [14, 9, 9], 'blade'),
-    cube([13.5, 7.25, 7.25], [16, 8.75, 8.75], 'edge'), cube([5, 5.5, 6], [6.5, 10.5, 10], 'guard')
-], {'particle': 'minecraft:block/iron_block', 'handle': 'minecraft:block/dark_oak_planks',
-    'blade': 'minecraft:block/iron_block', 'edge': 'minecraft:block/quartz_block',
-    'guard': 'minecraft:block/polished_blackstone'}, ITEM_DISPLAY)
-
-item('burger_bun', 'item/burger_bun')
-geometry(ASSETS / 'models/item/burger_bun.json', [
-    cube([3, 3, 3], [13, 6, 13], 'crust'), cube([4, 6, 4], [12, 8, 12], 'bread'),
-    cube([3, 10, 3], [13, 13, 13], 'crust'), cube([4, 13, 4], [12, 15, 12], 'bread')
-], {'particle': 'minecraft:block/smooth_sandstone', 'crust': 'minecraft:block/yellow_terracotta',
-    'bread': 'minecraft:block/smooth_sandstone'}, ITEM_DISPLAY)
-
-item('schlemmer_burger', 'item/schlemmer_burger')
-geometry(ASSETS / 'models/item/schlemmer_burger.json', [
-    cube([3, 2, 3], [13, 5, 13], 'bun'), cube([2.5, 5, 2.5], [13.5, 7, 13.5], 'beef'),
-    cube([2, 7, 2], [14, 8, 14], 'lettuce'), cube([3, 8, 3], [13, 9, 13], 'onion'),
-    cube([3, 9, 3], [13, 12, 13], 'bun'), cube([4, 12, 4], [12, 15, 12], 'top')
-], {'particle': 'minecraft:block/yellow_terracotta', 'bun': 'minecraft:block/yellow_terracotta',
-    'top': 'minecraft:block/smooth_sandstone', 'beef': 'minecraft:block/brown_terracotta',
-    'lettuce': 'minecraft:block/lime_concrete', 'onion': 'minecraft:block/calcite'}, ITEM_DISPLAY)
+# Reliable extruded sprites: every referenced texture is bundled with the pack.
+generated('onion', 'extraitems:item/onion')
+generated('knife', 'extraitems:item/knife')
+generated('burger_bun', 'extraitems:item/burger_bun')
+generated('schlemmer_burger', 'extraitems:item/schlemmer_burger')
+generated('cheesy_schlemmer', 'extraitems:item/cheesy_schlemmer')
 
 item('cheese_slice', 'item/cheese_slice')
 geometry(ASSETS / 'models/item/cheese_slice.json', [
@@ -203,4 +177,4 @@ item('cheese_wheel', 'block/cheese_wheel_0')
 
 paths = sorted(str(path.relative_to(PACK)).replace('\\', '/') for path in PACK.rglob('*') if path.is_file())
 (ROOT / 'pack-files.txt').write_text('\n'.join(paths) + '\n', encoding='utf-8')
-print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 10 Käsestufen, 3D-Küchenmodelle, 3 eigene Saat-Sprites.')
+print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 10 Käsestufen und robuste extrudierte Küchen-Sprites.')

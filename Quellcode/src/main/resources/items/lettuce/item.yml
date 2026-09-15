@@ -6,5 +6,5 @@ model: extraitems:lettuce
 lore:
   - '&7Knackig und frisch.'
 food:
-  nutrition: 2
+  nutrition: 3
   saturation: 0.3

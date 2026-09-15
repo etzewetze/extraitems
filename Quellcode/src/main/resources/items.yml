@@ -23,6 +23,8 @@ sources:
   - items/burger_bun/recipes/cut_bread.yml
   - items/schlemmer_burger/item.yml
   - items/schlemmer_burger/recipes/craft.yml
+  - items/cheesy_schlemmer/item.yml
+  - items/cheesy_schlemmer/recipes/craft.yml
   - items/cheese_station/item.yml
   - items/cheese_station/station.yml
   - items/cheese_station/recipes/craft.yml

@@ -28,7 +28,8 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Samenrezept mit Craftrecht | Exakte Zutaten und konfigurierte Menge. |
 | Automatischer Crafter mit beiden Samenrezepten | Kein Craft und kein Verbrauch. |
 | Tomate statt Apfel in Golden-Apple-Rezept | Kein Vanilla-Craft mit dem Custom-Item. |
-| Tomate essen ohne Anbau-/Craftrecht | Essen bei Hunger möglich, 4 Nahrungspunkte. |
+| Tomate/Salat/Zwiebel essen | Jeweils 3 Nahrungspunkte = 1,5 Hungerkeulen. |
+| Burger Buns essen | 1 Nahrungspunkt = 0,5 Hungerkeule. |
 | Stop/Start mit unreifen Pflanzen und Samen im Inventar | IDs, Position, Stufe und Fortschritt bleiben erhalten. |
 | Chunk entladen und später laden | Eine Darstellung und eine Hitbox je Pflanze; keine Duplikate. |
 | Weltwechsel / zusätzliche Welt entladen und laden | Pflanzen werden dem richtigen Welt-UUID/Chunk zugeordnet. |
@@ -43,8 +44,11 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Mending-Messer mit Erfahrung reparieren | Schaden sinkt, eigenes Modell und ID bleiben erhalten. |
 | Old-but-Gold-Buch auf anderes Item | Amboss zeigt kein Ergebnis. |
 | Old-but-Gold-Buch auf Messer | Kostet 5 Level; Messer bleibt dauerhaft unzerstörbar. |
-| Schlemmer-Burger herstellen und droppen | Rezept benötigt nur Buns, Salat, Zwiebel und gebratenes Rind; 3D-Modell sichtbar. |
+| Schlemmer-Burger herstellen und droppen | Rezept benötigt nur Buns, Salat, Zwiebel und gebratenes Rind; extrudiertes Pixelmodell sichtbar; füllt 9 Keulen. |
+| Cheesy Schlemmer herstellen und droppen | Buns, Käsescheibe, Tomate, Salat und gebratenes Rind; kein Zwiebelbedarf; eigene Textur; füllt maximal die zehn Vanilla-Keulen plus Sättigung. |
 | Käsestation manuell | Milcheimer im Eingang startet 60 Sekunden; Käserad und leerer Eimer erscheinen getrennt. |
+| Käsestations-GUI | Dunkler Rahmen, farbig markierter Eingang/Ausgang, fünfteiliger Balken, Prozent und Restzeit aktualisieren sich. |
+| Käsestationsrezept mit verschiedenen Brettern | Positionen entsprechen `·Fass· / Bretter-Werkbank-Bretter / Stock-·-Stock`; alle Brettarten funktionieren. |
 | Kiste → Hopper → Station → Hopper | Milcheimer wird oben/seitlich eingezogen; beide Ausgaben landen ausschließlich unten. |
 | Neustart während der Reifezeit | Verbleibende Reifezeit und Station bleiben erhalten. |
 | Käserad in der Hand benutzen | Nicht essbar. |

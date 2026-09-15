@@ -12,7 +12,8 @@ class ResourcePackAssetsTest {
 
     @Test
     void customTexturesAreSquarePowerOfTwoRgba() throws Exception {
-        for (String name : new String[]{"tomato", "tomato_seeds", "lettuce_seeds", "onion_seeds"}) {
+        for (String name : new String[]{"tomato", "tomato_seeds", "lettuce_seeds", "onion_seeds",
+                "onion", "knife", "burger_bun", "schlemmer_burger", "cheesy_schlemmer"}) {
             var image = ImageIO.read(PACK.resolve("assets/extraitems/textures/item/" + name + ".png").toFile());
             assertNotNull(image, name);
             assertEquals(image.getWidth(), image.getHeight(), name);
@@ -38,12 +39,20 @@ class ResourcePackAssetsTest {
     }
 
     @Test
-    void allNewItemsHaveCuboidsAndDroppedItemTransform() throws Exception {
-        for (String name : new String[]{"lettuce", "onion", "knife", "burger_bun",
-                "schlemmer_burger", "cheese_slice", "cheese_station"}) {
+    void blockyItemsHaveCuboidsAndDroppedItemTransform() throws Exception {
+        for (String name : new String[]{"lettuce", "cheese_slice", "cheese_station"}) {
             String model = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + ".json"));
             assertTrue(model.contains("\"elements\""), name);
             assertTrue(model.contains("\"ground\""), name);
+        }
+    }
+
+    @Test
+    void repairedKitchenItemsUseBundledExtrudedSprites() throws Exception {
+        for (String name : new String[]{"onion", "knife", "burger_bun", "schlemmer_burger", "cheesy_schlemmer"}) {
+            String model = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + ".json"));
+            assertTrue(model.contains("minecraft:item/generated"), name);
+            assertTrue(model.contains("extraitems:item/" + name), name);
         }
     }
 
