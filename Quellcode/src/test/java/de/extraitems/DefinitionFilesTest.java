@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.*;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,5 +36,14 @@ class DefinitionFilesTest {
         Files.createSymbolicLink(link, real);
         assertThrows(IllegalArgumentException.class,
                 () -> DefinitionFiles.resolve(directory.toAbsolutePath(), "linked.yml"));
+    }
+
+    @Test
+    void updateAddsBundledSourcesWithoutRemovingOrDuplicatingCustomOnes() {
+        var merged = DefinitionFiles.mergeSources(
+                List.of("items/server_custom/item.yml", "items/tomato/item.yml"),
+                List.of("items/tomato/item.yml", "items/lettuce/item.yml", "items/onion/item.yml"));
+        assertEquals(List.of("items/server_custom/item.yml", "items/tomato/item.yml",
+                "items/lettuce/item.yml", "items/onion/item.yml"), merged);
     }
 }

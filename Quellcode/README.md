@@ -124,7 +124,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 1. Server vollständig stoppen.
 2. `ExtraItems-0.3.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
-4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
+4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
 6. Bei `self-host` die dort angezeigte Pack-URL von einem anderen Rechner öffnen; es muss direkt eine ZIP laden.
 7. Mit einem Nicht-OP-Spieler Ressourcenpaket, Rechte, Pflanzen und Rezepte testen.

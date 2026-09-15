@@ -29,6 +29,8 @@ Neue Item-Struktur:
 
 Beim Update von 0.1.0 wird die alte items.yml als items.legacy.yml gesichert
 und automatisch in einzelne Dateien aufgeteilt.
+Beim Update von 0.2.x bleiben eigene Indexeinträge erhalten; neue Standardpfade
+werden ergänzt. Die vorherige Datei liegt als items.before-bundled-update.yml bereit.
 
 Admin-Befehle:
   /ei status

@@ -26,6 +26,7 @@ final class DefinitionFiles {
         if (!Files.exists(index)) plugin.saveResource("items.yml", false);
         migrateLegacy(index);
         installBundled(plugin);
+        mergeBundledIndex(plugin, index);
     }
 
     static List<Definition> load(ExtraItemsPlugin plugin) {
@@ -112,6 +113,36 @@ final class DefinitionFiles {
                 if (!Files.exists(target)) plugin.saveResource(source, false);
             }
         }
+    }
+
+    /** Adds new bundled definitions to an existing modular index without removing server-owned entries. */
+    private static void mergeBundledIndex(ExtraItemsPlugin plugin, Path indexFile) throws IOException {
+        YamlConfiguration current;
+        YamlConfiguration bundled = new YamlConfiguration();
+        try {
+            current = read(indexFile);
+            try (InputStream stream = plugin.getResource("items.yml")) {
+                if (stream == null) throw new IOException("items.yml fehlt im JAR");
+                bundled.loadFromString(new String(stream.readAllBytes(), StandardCharsets.UTF_8));
+            }
+        } catch (InvalidConfigurationException error) {
+            throw new IOException("items.yml ist kein gültiges YAML", error);
+        }
+        if (current.getInt("schema-version", 0) != SCHEMA_VERSION) return; // load() reports the precise schema error.
+        List<String> before = current.getStringList("sources");
+        List<String> merged = mergeSources(before, bundled.getStringList("sources"));
+        if (merged.equals(before)) return;
+
+        Path backup = indexFile.resolveSibling("items.before-bundled-update.yml");
+        if (!Files.exists(backup)) Files.copy(indexFile, backup, StandardCopyOption.COPY_ATTRIBUTES);
+        current.set("sources", merged);
+        saveAtomic(indexFile, current);
+    }
+
+    static List<String> mergeSources(List<String> current, List<String> bundled) {
+        LinkedHashSet<String> result = new LinkedHashSet<>(current);
+        result.addAll(bundled);
+        return List.copyOf(result);
     }
 
     private static void migrateLegacy(Path indexFile) throws IOException {
