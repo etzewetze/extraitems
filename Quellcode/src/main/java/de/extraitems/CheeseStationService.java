@@ -189,7 +189,7 @@ final class CheeseStationService implements Listener {
             for (int slot = 0; slot < source.getSize(); slot++) {
                 ItemStack stack = source.getItem(slot);
                 if (stack != null && stack.getType() == input) {
-                    target.setItem(INPUT, stack.asOne());
+                    ItemStack one = stack.clone(); one.setAmount(1); target.setItem(INPUT, one);
                     if (stack.getAmount() <= 1) source.setItem(slot, null);
                     else { stack.setAmount(stack.getAmount() - 1); source.setItem(slot, stack); }
                     return;
@@ -202,7 +202,8 @@ final class CheeseStationService implements Listener {
         if (!(station.getRelative(BlockFace.DOWN).getState() instanceof Hopper hopper)) return;
         ItemStack stack = source.getItem(slot);
         if (stack == null || stack.getType().isAir()) return;
-        if (!hopper.getInventory().addItem(stack.asOne()).isEmpty()) return;
+        ItemStack one = stack.clone(); one.setAmount(1);
+        if (!hopper.getInventory().addItem(one).isEmpty()) return;
         if (stack.getAmount() <= 1) source.setItem(slot, null);
         else { stack.setAmount(stack.getAmount() - 1); source.setItem(slot, stack); }
     }

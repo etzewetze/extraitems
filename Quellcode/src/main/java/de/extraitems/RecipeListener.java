@@ -67,7 +67,8 @@ final class RecipeListener implements Listener {
             ItemStack stack = matrix[slot];
             if (stack == null || stack.getType().isAir() || slot == toolSlot) continue;
             int remaining = stack.getAmount() - crafts;
-            matrix[slot] = remaining <= 0 ? null : stack.asQuantity(remaining);
+            if (remaining <= 0) matrix[slot] = null;
+            else { ItemStack reduced = stack.clone(); reduced.setAmount(remaining); matrix[slot] = reduced; }
         }
         if (!tools.damage(knife, Math.multiplyExact(crafts, spec.toolDamage()), player)) matrix[toolSlot] = null;
         else matrix[toolSlot] = knife;
