@@ -256,9 +256,11 @@ public final class ItemRegistry {
         if (id.equals("minecraft:#planks")) return new RecipeChoice.MaterialChoice(Tag.PLANKS);
         if (id.startsWith("extraitems:")) {
             String custom = requireItem(id.substring(11));
-            return custom.equals(flexibleTool)
-                    ? new RecipeChoice.MaterialChoice(templates.get(custom).getType())
-                    : new RecipeChoice.ExactChoice(create(custom, 1));
+            // ExactChoice compares every component. Food-value migrations, lore changes and
+            // current tool damage can therefore hide an otherwise valid recipe before our
+            // listener can check it. Bukkit preselects by base material; RecipeListener then
+            // requires the exact namespaced ExtraItems id in each occupied slot.
+            return new RecipeChoice.MaterialChoice(templates.get(custom).getType());
         }
         if (!id.startsWith("minecraft:")) throw new IllegalArgumentException("Zutat benötigt minecraft: oder extraitems: " + id);
         Material material = Material.matchMaterial(id);
@@ -322,6 +324,22 @@ public final class ItemRegistry {
     }
 
     public RecipeSpec recipe(Recipe recipe) { return recipe instanceof Keyed keyed ? recipes.get(keyed.getKey()) : null; }
+
+    /** Resolves registered recipes and repairs a missing Bukkit match for shapeless custom recipes. */
+    public RecipeSpec recipe(Recipe recipe, ItemStack[] matrix) {
+        RecipeSpec keyed = recipe(recipe);
+        if (keyed != null) return keyed;
+        boolean containsCustom = Arrays.stream(matrix).anyMatch(item -> id(item) != null);
+        if (!containsCustom) return null;
+        for (RecipeSpec candidate : recipes.values()) {
+            if (candidate.shaped()) continue;
+            List<String> actual = Arrays.stream(matrix)
+                    .map(item -> ingredientId(item, candidate.ingredients()))
+                    .toList();
+            if (CraftPolicy.ingredientsMatch(candidate.ingredients(), actual)) return candidate;
+        }
+        return null;
+    }
     public Set<NamespacedKey> recipeKeys() { return Collections.unmodifiableSet(recipes.keySet()); }
 
     private String requireItem(String id) {

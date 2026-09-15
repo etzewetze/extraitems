@@ -1,6 +1,19 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "extraitems:item/knife"
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": "gui",
+        "model": {
+          "type": "minecraft:model",
+          "model": "extraitems:item/knife_icon"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "extraitems:item/knife_3d"
+    }
   }
 }

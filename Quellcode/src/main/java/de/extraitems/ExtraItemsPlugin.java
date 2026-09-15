@@ -45,7 +45,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
             stations.start();
             placeableFoods.start();
             operational = true;
-            getLogger().info("ExtraItems 0.3.1 bereit. Server " + Bukkit.getBukkitVersion()
+            getLogger().info("ExtraItems 0.3.2 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
                     + "; Definitionen " + items.sourceCount());
         } catch (Exception error) {
@@ -89,7 +89,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.3.1 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.3.2 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));

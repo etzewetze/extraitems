@@ -1,7 +1,7 @@
-ExtraItems 0.3.1 — Schnellstart
+ExtraItems 0.3.2 — Schnellstart
 
 1. Server stoppen.
-2. ExtraItems-0.3.1.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
+2. ExtraItems-0.3.2.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
 3. Server starten.
 4. Standardmäßig nutzt das Plugin:
      resource-pack.mode: self-host

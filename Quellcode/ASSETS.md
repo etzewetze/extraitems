@@ -8,7 +8,7 @@ Verwendeter Erzeugungsprompt:
 
 Eine spätere Exportvariante wurde wegen fehlender Transparenz verworfen und ist nicht enthalten.
 
-Pflanzen, Käsescheibe, Käsestation und Käseräder sind native Minecraft-JSON-Quader-Modelle. Die reifen Tomaten verwenden `minecraft:block/red_concrete`, damit die letzte Wachstumsstufe nicht von einer eigenen Atlastextur abhängig ist. Zwiebel, Messer, Buns, Schlemmer Burger und Cheesy Schlemmer verwenden ab 0.3.1 eigene transparente Pixel-Sprites mit `minecraft:item/generated`; Minecraft extrudiert diese automatisch leicht in die Tiefe. Dadurch hängen diese fünf Items nicht mehr von fehleranfälligen externen Texturverweisen ab. `tools/build_models.py` erzeugt alle Modellverknüpfungen reproduzierbar; Clientmods sind nicht nötig.
+Pflanzen, Käsescheibe, Käsestation und Käseräder sind native Minecraft-JSON-Quader-Modelle. Die reifen Tomaten verwenden `minecraft:block/red_concrete`, damit die letzte Wachstumsstufe nicht von einer eigenen Atlastextur abhängig ist. Zwiebel, Messer, Buns, Schlemmer Burger und Cheesy Schlemmer behalten ab 0.3.2 ihre vorhandenen transparenten Sprites im Inventar; per `minecraft:display_context` wechseln Hand, Drop und Itemrahmen auf echte native Quader-Modelle. `tools/build_models.py` erzeugt alle Modellverknüpfungen reproduzierbar; Clientmods sind nicht nötig.
 
 Tomaten-, Salat- und Zwiebelsamen besitzen jeweils eine eigene 256×256-RGBA-PNG. Sie wurden im Modus `stylized-concept` als grobe Minecraft-Pixelgrafik auf transparentem Hintergrund erzeugt: Tomatensamen mit rotem Frucht-/Blatt-Hinweis, dunkle Salatsamen mit grünem Blatt und schwarze Zwiebelsamen mit heller Zwiebel und grünem Austrieb. Die Dateien liegen unter `assets/extraitems/textures/item/*_seeds.png`.
 

@@ -6,7 +6,10 @@ import java.util.*;
 final class CraftPolicy {
     private CraftPolicy() {}
     static boolean mayCraft(boolean packLoaded, boolean hasPermission, List<String> expected, List<String> actual) {
-        return packLoaded && hasPermission && counts(expected).equals(counts(actual));
+        return packLoaded && hasPermission && ingredientsMatch(expected, actual);
+    }
+    static boolean ingredientsMatch(List<String> expected, List<String> actual) {
+        return counts(expected).equals(counts(actual));
     }
     private static Map<String, Integer> counts(List<String> values) {
         Map<String, Integer> counts = new HashMap<>();

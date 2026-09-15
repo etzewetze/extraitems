@@ -179,24 +179,36 @@ final class CheeseStationService implements Listener {
             pushOutput(block, inventory, BUCKET);
             long ready = barrel.getPersistentDataContainer().getOrDefault(readyKey, PersistentDataType.LONG, 0L);
             if (ready <= 0 && has(inventory.getItem(INPUT), definition.input())) {
-                takeOne(inventory, INPUT);
                 ready = now + definition.processSeconds() * 1000L;
                 barrel.getPersistentDataContainer().set(readyKey, PersistentDataType.LONG, ready);
                 barrel.update(true, false);
+                // update() writes the Container snapshot. Reacquire its live inventory afterwards
+                // so the snapshot cannot restore the milk bucket that is consumed here.
+                inventory = liveInventory(block);
+                takeOne(inventory, INPUT);
                 block.getWorld().playSound(block.getLocation(), Sound.ITEM_BUCKET_EMPTY, .7f, .9f);
             } else if (ready > 0 && now >= ready && fits(inventory.getItem(CHEESE), items.create(definition.output(), 1))
                     && fits(inventory.getItem(BUCKET), new ItemStack(definition.byproduct()))) {
-                add(inventory, CHEESE, items.create(definition.output(), 1));
-                add(inventory, BUCKET, new ItemStack(definition.byproduct()));
                 ready = 0;
                 barrel.getPersistentDataContainer().remove(readyKey);
                 barrel.update(true, false);
+                // Persist machine metadata before writing the outputs for the same reason.
+                inventory = liveInventory(block);
+                add(inventory, CHEESE, items.create(definition.output(), 1));
+                add(inventory, BUCKET, new ItemStack(definition.byproduct()));
                 block.getWorld().playSound(block.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .9f, .8f);
                 block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation().add(.5, 1.1, .5), 8, .25, .1, .25, .01);
             }
             renderGui(inventory, ready, definition);
             ensureDisplay(block);
         }
+    }
+
+    private Inventory liveInventory(Block block) {
+        if (!(block.getState() instanceof Barrel current)) {
+            throw new IllegalStateException("Käsestation ist kein Fass mehr: " + position(block));
+        }
+        return current.getInventory();
     }
 
     private boolean has(ItemStack item, Material material) { return item != null && item.getType() == material && item.getAmount() > 0; }

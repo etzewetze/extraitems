@@ -38,6 +38,24 @@ def generated(name, texture):
         'parent': 'minecraft:item/generated', 'textures': {'layer0': texture}
     })
 
+def contextual_geometry(name, elements, textures, display=None):
+    """Keep the established sprite in inventories, but use real cuboids elsewhere."""
+    write(ASSETS / 'items' / f'{name}.json', {'model': {
+        'type': 'minecraft:select',
+        'property': 'minecraft:display_context',
+        'cases': [{
+            'when': 'gui',
+            'model': {'type': 'minecraft:model', 'model': f'extraitems:item/{name}_icon'}
+        }],
+        'fallback': {'type': 'minecraft:model', 'model': f'extraitems:item/{name}_3d'}
+    }})
+    write(ASSETS / 'models/item' / f'{name}_icon.json', {
+        'parent': 'minecraft:item/generated',
+        'textures': {'layer0': f'extraitems:item/{name}'}
+    })
+    geometry(ASSETS / 'models/item' / f'{name}_3d.json', elements, textures,
+             ITEM_DISPLAY if display is None else display)
+
 def geometry(path, elements, textures, display=None):
     obj = {'parent': 'minecraft:block/block', 'ambientocclusion': False,
            'textures': textures, 'elements': elements}
@@ -46,7 +64,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.3.1 • Pflanzen, Burger & Käse • 1.21.11–26.2',
+    'description': 'ExtraItems 0.3.2 • 3D-Küchenitems & reparierte Käsestation • 1.21.11–26.2',
     'min_format': [75, 0], 'max_format': [88, 0]
 }})
 
@@ -73,12 +91,53 @@ geometry(ASSETS / 'models/item/lettuce.json', [
     'leaf': 'minecraft:block/green_wool', 'lime': 'minecraft:block/lime_concrete',
     'heart': 'minecraft:block/lime_wool'}, ITEM_DISPLAY)
 
-# Reliable extruded sprites: every referenced texture is bundled with the pack.
-generated('onion', 'extraitems:item/onion')
-generated('knife', 'extraitems:item/knife')
-generated('burger_bun', 'extraitems:item/burger_bun')
-generated('schlemmer_burger', 'extraitems:item/schlemmer_burger')
-generated('cheesy_schlemmer', 'extraitems:item/cheesy_schlemmer')
+# Inventory slots retain the approved sprites. Hands, dropped items and item frames use
+# true cuboid models selected through minecraft:display_context.
+contextual_geometry('onion', [
+    cube([4, 3, 4], [12, 12, 12], 'skin'), cube([3, 5, 5], [13, 10, 11], 'skin'),
+    cube([5, 5, 3], [11, 10, 13], 'skin'), cube([7, 12, 7], [9, 15, 9], 'shoot'),
+    cube([6, 14, 7], [8, 16, 8], 'shoot'), cube([8, 14, 8], [10, 16, 9], 'shoot')
+], {'particle': 'minecraft:block/calcite', 'skin': 'minecraft:block/calcite',
+    'shoot': 'minecraft:block/lime_terracotta'})
+
+contextual_geometry('knife', [
+    cube([6.75, 1, 6.75], [9.25, 6, 9.25], 'handle'),
+    cube([7.25, 6, 7.25], [8.75, 7, 8.75], 'guard'),
+    cube([6.5, 7, 7.25], [9.5, 15, 8.75], 'blade'),
+    cube([7, 15, 7.25], [9, 16, 8.75], 'blade')
+], {'particle': 'minecraft:block/iron_block', 'handle': 'minecraft:block/dark_oak_planks',
+    'guard': 'minecraft:block/polished_andesite', 'blade': 'minecraft:block/iron_block'})
+
+contextual_geometry('burger_bun', [
+    cube([2, 1, 2], [14, 4, 14], 'crust'), cube([3, 4, 3], [13, 5, 13], 'crumb'),
+    cube([2, 7, 2], [14, 10, 14], 'crust'), cube([4, 10, 4], [12, 12, 12], 'crust'),
+    cube([3, 7, 3], [13, 8, 13], 'crumb')
+], {'particle': 'minecraft:block/yellow_terracotta', 'crust': 'minecraft:block/orange_terracotta',
+    'crumb': 'minecraft:block/yellow_terracotta'})
+
+schlemmer = [
+    cube([2, 1, 3], [14, 4, 13], 'bun'),
+    cube([2.5, 4, 2.5], [13.5, 6.5, 13.5], 'patty'),
+    cube([2, 6.5, 4], [14, 7.5, 12], 'lettuce'), cube([4, 6.5, 2], [12, 7.5, 14], 'lettuce'),
+    cube([3, 7.5, 3], [13, 8.5, 13], 'onion'),
+    cube([2, 8.5, 3], [14, 11.5, 13], 'bun'), cube([4, 11.5, 5], [12, 13, 11], 'bun')
+]
+burger_textures = {
+    'particle': 'minecraft:block/orange_terracotta', 'bun': 'minecraft:block/orange_terracotta',
+    'patty': 'minecraft:block/brown_wool', 'lettuce': 'minecraft:block/lime_concrete',
+    'onion': 'minecraft:block/calcite', 'cheese': 'minecraft:block/yellow_concrete',
+    'tomato': 'minecraft:block/red_concrete'
+}
+contextual_geometry('schlemmer_burger', schlemmer, burger_textures)
+
+cheesy = [
+    cube([2, .5, 3], [14, 3.5, 13], 'bun'),
+    cube([2.5, 3.5, 2.5], [13.5, 6, 13.5], 'patty'),
+    cube([2, 6, 4], [14, 7, 12], 'lettuce'), cube([4, 6, 2], [12, 7, 14], 'lettuce'),
+    cube([2, 7, 2], [14, 8, 14], 'cheese'), cube([3, 8, 3], [13, 9.5, 13], 'tomato'),
+    cube([2, 9.5, 3], [14, 12.5, 13], 'bun'), cube([4, 12.5, 5], [12, 14, 11], 'bun')
+]
+contextual_geometry('cheesy_schlemmer', cheesy, burger_textures)
 
 item('cheese_slice', 'item/cheese_slice')
 geometry(ASSETS / 'models/item/cheese_slice.json', [
@@ -177,4 +236,4 @@ item('cheese_wheel', 'block/cheese_wheel_0')
 
 paths = sorted(str(path.relative_to(PACK)).replace('\\', '/') for path in PACK.rglob('*') if path.is_file())
 (ROOT / 'pack-files.txt').write_text('\n'.join(paths) + '\n', encoding='utf-8')
-print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 10 Käsestufen und robuste extrudierte Küchen-Sprites.')
+print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 10 Käsestufen, GUI-Icons und echte 3D-Handmodelle.')

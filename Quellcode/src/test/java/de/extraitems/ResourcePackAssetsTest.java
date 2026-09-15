@@ -48,11 +48,22 @@ class ResourcePackAssetsTest {
     }
 
     @Test
-    void repairedKitchenItemsUseBundledExtrudedSprites() throws Exception {
+    void kitchenItemsKeepTheirGuiSpritesAndUseCuboidsInHand() throws Exception {
         for (String name : new String[]{"onion", "knife", "burger_bun", "schlemmer_burger", "cheesy_schlemmer"}) {
-            String model = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + ".json"));
-            assertTrue(model.contains("minecraft:item/generated"), name);
-            assertTrue(model.contains("extraitems:item/" + name), name);
+            String selector = Files.readString(PACK.resolve("assets/extraitems/items/" + name + ".json"));
+            assertTrue(selector.contains("minecraft:display_context"), name);
+            assertTrue(selector.contains("\"when\": \"gui\""), name);
+            assertTrue(selector.contains("extraitems:item/" + name + "_icon"), name);
+            assertTrue(selector.contains("extraitems:item/" + name + "_3d"), name);
+
+            String icon = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + "_icon.json"));
+            assertTrue(icon.contains("minecraft:item/generated"), name);
+            assertTrue(icon.contains("extraitems:item/" + name), name);
+
+            String hand = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + "_3d.json"));
+            assertTrue(hand.contains("\"elements\""), name);
+            assertTrue(hand.contains("\"firstperson_righthand\""), name);
+            assertTrue(hand.contains("\"thirdperson_righthand\""), name);
         }
     }
 

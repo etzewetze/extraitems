@@ -17,7 +17,7 @@ final class RecipeListener implements Listener {
     }
 
     boolean allowed(Player player, CraftingInventory inventory, Recipe recipe) {
-        var spec = items.recipe(recipe);
+        var spec = items.recipe(recipe, inventory.getMatrix());
         var actual = Arrays.stream(inventory.getMatrix())
                 .map(item -> spec == null ? items.ingredientId(item) : items.ingredientId(item, spec.ingredients()))
                 .toList();
@@ -28,7 +28,10 @@ final class RecipeListener implements Listener {
     public void prepare(PrepareItemCraftEvent event) {
         if (!(event.getView().getPlayer() instanceof Player player) || !allowed(player, event.getInventory(), event.getRecipe())) {
             event.getInventory().setResult(null);
+            return;
         }
+        var spec = items.recipe(event.getRecipe(), event.getInventory().getMatrix());
+        if (spec != null) event.getInventory().setResult(items.create(spec.result(), spec.amount()));
     }
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void craft(CraftItemEvent event) {
@@ -37,7 +40,7 @@ final class RecipeListener implements Listener {
             if (event.getWhoClicked() instanceof Player player) plugin.message(player, "no-permission");
             return;
         }
-        var spec = items.recipe(event.getRecipe());
+        var spec = items.recipe(event.getRecipe(), event.getInventory().getMatrix());
         if (spec != null && spec.damagesTool()) craftWithTool(event, player, spec);
     }
 

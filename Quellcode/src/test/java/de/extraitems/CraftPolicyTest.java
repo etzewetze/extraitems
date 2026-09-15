@@ -22,4 +22,12 @@ class CraftPolicyTest {
         assertFalse(CraftPolicy.mayCraft(true,true,recipe,List.of("extraitems:tomato")));
         assertFalse(CraftPolicy.mayCraft(true,true,List.of("extraitems:tomato"),recipe));
     }
+    @Test void materialPreselectionStillRequiresTheExactCustomIds() {
+        assertTrue(CraftPolicy.ingredientsMatch(
+                List.of("extraitems:burger_bun", "extraitems:lettuce", "minecraft:cooked_beef"),
+                List.of("minecraft:cooked_beef", "extraitems:lettuce", "extraitems:burger_bun")));
+        assertFalse(CraftPolicy.ingredientsMatch(
+                List.of("extraitems:burger_bun", "extraitems:lettuce", "minecraft:cooked_beef"),
+                List.of("minecraft:cooked_beef", "extraitems:onion", "extraitems:burger_bun")));
+    }
 }
