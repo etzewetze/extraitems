@@ -1,0 +1,10 @@
+type: item
+id: cheese_slice
+material: BAKED_POTATO
+name: '&eKäsescheibe'
+model: extraitems:cheese_slice
+lore:
+  - '&7Eine handliche Portion Käse.'
+food:
+  nutrition: 2
+  saturation: 0.3

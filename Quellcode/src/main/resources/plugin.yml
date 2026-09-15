@@ -1,8 +1,8 @@
 name: ExtraItems
-version: '0.2.1'
+version: '0.3.0'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
-description: Modulare Vanilla-Items, Pflanzen, Pflicht-Ressourcenpaket und Rechte
+description: Modulare Vanilla-Items, Pflanzen, Küche, Pflicht-Ressourcenpaket und Rechte
 author: ExtraItems
 softdepend: [LuckPerms, WorldGuard, GriefPrevention]
 commands:
@@ -17,6 +17,42 @@ permissions:
   extraitems.plant.tomato:
     description: Tomatensamen pflanzen und Tomaten mit Knochenmehl düngen
     default: op
+  extraitems.plant.lettuce:
+    description: Salatsamen pflanzen und düngen
+    default: op
+  extraitems.plant.onion:
+    description: Zwiebelsamen pflanzen und düngen
+    default: op
+  extraitems.place.cheese_wheel:
+    description: Käseräder platzieren
+    default: true
+  extraitems.use.cheese_station:
+    description: Käsestationen öffnen und verwenden
+    default: op
+  extraitems.craft.knife:
+    description: Eisenmesser herstellen
+    default: op
+  extraitems.craft.burger_bun:
+    description: Brot mit dem Messer in Burgerbrötchen schneiden
+    default: op
+  extraitems.craft.cheese_slice:
+    description: Käserad mit dem Messer in Scheiben schneiden
+    default: op
+  extraitems.craft.schlemmer_burger:
+    description: Schlemmer-Burger herstellen
+    default: op
+  extraitems.craft.cheese_station:
+    description: Käsestation herstellen
+    default: op
+  extraitems.craft.old_but_gold:
+    description: Old-but-Gold-Buch herstellen
+    default: op
   extraitems.craft.tomato_seeds:
     description: Tomatensamen herstellen
+    default: op
+  extraitems.craft.lettuce_seeds:
+    description: Salatsamen herstellen
+    default: op
+  extraitems.craft.onion_seeds:
+    description: Zwiebelsamen herstellen
     default: op

@@ -1,0 +1,9 @@
+type: item
+id: cheese_station
+material: BARREL
+name: '&eKäsestation'
+model: extraitems:cheese_station
+lore:
+  - '&7Verarbeitet Milcheimer zu Käserädern.'
+  - '&7Eingang: Hopper seitlich oder oben.'
+  - '&7Ausgang: Hopper darunter.'

@@ -1,0 +1,10 @@
+type: item
+id: lettuce
+material: CARROT
+name: '&aSalat'
+model: extraitems:lettuce
+lore:
+  - '&7Knackig und frisch.'
+food:
+  nutrition: 2
+  saturation: 0.3

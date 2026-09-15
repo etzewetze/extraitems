@@ -1,0 +1,10 @@
+type: tool
+id: knife
+material: SHEARS
+name: '&fEisenmesser'
+model: extraitems:knife
+lore:
+  - '&7Schneidet Brot und Käseräder.'
+base-uses: 192
+uses-per-unbreaking-level: 64
+old-but-gold-book: old_but_gold_book

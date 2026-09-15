@@ -1,0 +1,8 @@
+type: station
+id: cheese_station
+item: cheese_station
+use-permission: extraitems.use.cheese_station
+input-material: MILK_BUCKET
+process-seconds: 60
+output: cheese_wheel
+byproduct-material: BUCKET

@@ -1,0 +1,14 @@
+type: recipe
+id: cheese_station
+result: cheese_station
+amount: 1
+permission: extraitems.craft.cheese_station
+shape:
+  - 'ICI'
+  - 'BHB'
+  - 'III'
+keys:
+  I: minecraft:iron_ingot
+  C: minecraft:copper_ingot
+  B: minecraft:barrel
+  H: minecraft:hopper

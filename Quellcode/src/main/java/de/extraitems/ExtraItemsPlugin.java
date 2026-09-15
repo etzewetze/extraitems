@@ -12,6 +12,9 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
     private PackGate gate;
     private ItemRegistry items;
     private CropService crops;
+    private ToolService tools;
+    private CheeseStationService stations;
+    private PlaceableFoodService placeableFoods;
     private boolean operational;
 
     @Override
@@ -29,12 +32,20 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
             DefinitionFiles.prepare(this);
             items = new ItemRegistry(this);
             items.registerRecipes();
+            tools = new ToolService(this, items);
             crops = new CropService(this, items);
+            stations = new CheeseStationService(this, items);
+            placeableFoods = new PlaceableFoodService(this, items);
+            getServer().getPluginManager().registerEvents(tools, this);
             getServer().getPluginManager().registerEvents(crops, this);
-            getServer().getPluginManager().registerEvents(new RecipeListener(this, items), this);
+            getServer().getPluginManager().registerEvents(stations, this);
+            getServer().getPluginManager().registerEvents(placeableFoods, this);
+            getServer().getPluginManager().registerEvents(new RecipeListener(this, items, tools), this);
             crops.start();
+            stations.start();
+            placeableFoods.start();
             operational = true;
-            getLogger().info("ExtraItems 0.2.0 bereit. Server " + Bukkit.getBukkitVersion()
+            getLogger().info("ExtraItems 0.3.0 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
                     + "; Definitionen " + items.sourceCount());
         } catch (Exception error) {
@@ -43,6 +54,8 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
                     error);
             if (items != null) items.unregisterRecipes();
             if (crops != null) crops.stop();
+            if (stations != null) stations.stop();
+            if (placeableFoods != null) placeableFoods.stop();
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) gate.request(player);
@@ -51,6 +64,8 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
     @Override
     public void onDisable() {
         operational = false;
+        if (placeableFoods != null) placeableFoods.stop();
+        if (stations != null) stations.stop();
         if (crops != null) crops.stop();
         if (items != null) items.unregisterRecipes();
         if (pack != null) pack.close();
@@ -74,13 +89,15 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.2.0 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.3.0 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));
             sender.sendMessage("§7SHA-1: " + pack.sha1());
             sender.sendMessage("§7Definitionen: " + (items == null ? 0 : items.sourceCount())
-                    + " | Geladene Pflanzen: " + (crops == null ? 0 : crops.count()));
+                    + " | Pflanzen: " + (crops == null ? 0 : crops.count())
+                    + " | Käsestationen: " + (stations == null ? 0 : stations.count())
+                    + " | Käseräder: " + (placeableFoods == null ? 0 : placeableFoods.count()));
             if (sender instanceof Player player && pack.ready() && pack.deliveryEnabled()) {
                 try {
                     sender.sendMessage("§7Deine Pack-URL: " + gate.resolvedUrl(player));

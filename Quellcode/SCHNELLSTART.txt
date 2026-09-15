@@ -1,7 +1,7 @@
-ExtraItems 0.2.1 — Schnellstart
+ExtraItems 0.3.0 — Schnellstart
 
 1. Server stoppen.
-2. ExtraItems-0.2.1.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
+2. ExtraItems-0.3.0.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
 3. Server starten.
 4. Standardmäßig nutzt das Plugin:
      resource-pack.mode: self-host
@@ -35,10 +35,28 @@ Admin-Befehle:
   /ei pack
   /ei give SPIELERNAME tomato_seeds 16
   /ei give SPIELERNAME tomato 16
+  /ei give SPIELERNAME lettuce_seeds 16
+  /ei give SPIELERNAME onion_seeds 16
+  /ei give SPIELERNAME knife 1
+  /ei give SPIELERNAME cheese_station 1
 
 LuckPerms:
   lp group farmer permission set extraitems.plant.tomato true
   lp group farmer permission set extraitems.craft.tomato_seeds true
+  lp group farmer permission set extraitems.plant.lettuce true
+  lp group farmer permission set extraitems.plant.onion true
+  lp group cook permission set extraitems.craft.knife true
+  lp group cook permission set extraitems.craft.burger_bun true
+  lp group cook permission set extraitems.craft.schlemmer_burger true
+  lp group cook permission set extraitems.use.cheese_station true
+
+Käsestation automatisieren:
+  Kiste -> Hopper oben/seitlich -> Käsestation -> Hopper direkt darunter
+  Eingabe: Milcheimer. Nach 60 Sekunden: 1 Käserad + 1 leerer Eimer.
+
+Messer:
+  192 Schnitte; Haltbarkeit I/II/III = 256/320/384 Schnitte.
+  Old-but-Gold-Buch rechts neben das Messer in den Amboss legen (5 Level).
 
 Tomaten essen und reife Pflanzen ernten sind ohne diese Rechte erlaubt.
 Vor Updates Welten und plugins/ExtraItems sichern. Kein /reload verwenden.

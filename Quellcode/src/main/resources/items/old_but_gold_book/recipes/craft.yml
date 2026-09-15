@@ -1,0 +1,13 @@
+type: recipe
+id: old_but_gold_book
+result: old_but_gold_book
+amount: 1
+permission: extraitems.craft.old_but_gold
+shape:
+  - ' G '
+  - 'GBG'
+  - ' C '
+keys:
+  G: minecraft:gold_ingot
+  B: minecraft:book
+  C: minecraft:clock

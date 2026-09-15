@@ -1,0 +1,10 @@
+type: item
+id: burger_bun
+material: BREAD
+name: '&6Burger Buns'
+model: extraitems:burger_bun
+lore:
+  - '&7Aufgeschnitten und bereit zum Belegen.'
+food:
+  nutrition: 5
+  saturation: 0.6

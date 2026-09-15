@@ -54,7 +54,7 @@ ingredients:
   - extraitems:tomato
 ```
 
-Zutaten beginnen mit `minecraft:` oder `extraitems:`. In 0.2.1 sind formlose Rezepte mit 1–9 Zutaten implementiert.
+Zutaten beginnen mit `minecraft:` oder `extraitems:`. Seit 0.3.0 sind formlose und geformte Rezepte mit 1–9 Zutaten implementiert. Ein formloses Schneiderezept kann zusätzlich `tool: knife` und `tool-damage: 1` angeben; das Werkzeug bleibt im Feld und verliert pro Herstellung exakt diese Zahl an Einsätzen.
 
 ## Neue Definition registrieren
 
@@ -68,4 +68,6 @@ Eine Definition kann mit `enabled: false` vorübergehend übersprungen werden. B
 
 ## Erweiterungspunkte
 
-Die Loader-Pipeline verarbeitet Definitionen nach Typ. `tool`, `potion`, `effect`, `gui`, `tree` und `ore` sind reservierte Namen für spätere Module. Werden sie in 0.2.1 verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
+Die Loader-Pipeline verarbeitet Definitionen nach Typ. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station` und `placeable_food`. `potion`, `effect`, `gui`, `tree` und `ore` bleiben reserviert. Werden reservierte Typen verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
+
+Werkzeuge, Stationen und platzierbares Essen liegen ebenfalls getrennt im jeweiligen Itemordner. Beispiele sind `items/knife/tool.yml`, `items/cheese_station/station.yml` und `items/cheese_wheel/placeable_food.yml`.

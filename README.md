@@ -1,8 +1,19 @@
-# ExtraItems 0.2.1
+# ExtraItems 0.3.0
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
 
-## Behoben in 0.2.1
+## Neu in 0.3.0
+
+- Eigene Tomaten-, Salat- und Zwiebelsamen-Symbole sowie je vier 3D-Wachstumsstufen.
+- Salat und Zwiebeln können auf Ackerboden gepflanzt, mit Knochenmehl beschleunigt und geerntet werden.
+- Eisenmesser mit 3D-Modell: Grundhaltbarkeit 192 Schnitte. `Haltbarkeit I–III` ergänzt exakt 64 Schnitte je Stufe; Reparatur durch `Mending` bleibt möglich.
+- Das eigene Amboss-Upgrade `Old but Gold` funktioniert ausschließlich auf dem ExtraItems-Messer und macht es unzerstörbar.
+- Messer + Brot ergibt Burger Buns; Messer + Käserad ergibt zehn essbare Käsescheiben.
+- Schlemmer-Burger aus Buns, Salat, Zwiebel und gebratenem Rindfleisch.
+- Platzierbare Käsestation mit zwei Ausgängen, 60 Sekunden Reifezeit und Hopper-Automatisierung.
+- Platzierbares Käserad mit zehn Portionen. Es ist nur platziert essbar und wird beim Abbauen wie Kuchen zerstört.
+
+## Behoben seit 0.2.1
 
 - Die reife vierte Tomatenstufe verwendet jetzt eine sichere Vanilla-Blocktextur und erscheint nicht mehr als pink-schwarzes Fehlermodell.
 - Die Tomate besitzt ein echtes Quader-Modell für Inventar, Hand und gedroppte Items.
@@ -15,7 +26,7 @@ ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items
 - `items.yml` ist nur noch der zentrale Index mit den Pfaden zu diesen Dateien.
 - Alte kombinierte `items.yml`-Dateien werden beim Start automatisch gesichert und aufgeteilt.
 - Definitionen melden Fehler mit dem genauen Dateipfad.
-- Die Typen `tool`, `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. 0.2.1 implementiert weiterhin `item`, `crop` und `recipe`.
+- Die Typen `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. 0.3.0 implementiert `item`, `tool`, `crop`, `recipe`, `station` und `placeable_food`.
 - Ressourcenpaket-Modi sind jetzt eindeutig: `self-host`, `external` oder `disabled`.
 - `self-host` bildet die Downloadadresse automatisch aus dem Hostnamen bzw. der IP, mit der ein Spieler beitritt.
 - Administratoren können bei einer kaputten Pack-Konfiguration per Notfallzugang beitreten und `/ei status` verwenden.
@@ -36,11 +47,16 @@ plugins/ExtraItems/
     ├── tomato/
     │   ├── item.yml
     │   └── crop.yml
-    └── tomato_seeds/
+    ├── tomato_seeds/
         ├── item.yml
         └── recipes/
             ├── starter.yml
             └── from_tomato.yml
+    ├── lettuce/              # item.yml + crop.yml
+    ├── onion/                # item.yml + crop.yml
+    ├── knife/                # tool.yml + Rezept
+    ├── cheese_station/       # Item, Station und Rezept
+    └── cheese_wheel/         # Item und platzierbares Essen
 ```
 
 `items.yml`:
@@ -106,7 +122,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.2.1.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.3.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -124,9 +140,28 @@ Vor dem Update Welten und `plugins/ExtraItems/` sichern. `/reload` und Hot-Unloa
 | `/ei give <Spieler> <ID> [Anzahl]` | eigenes Item vergeben |
 | `extraitems.admin` | Administration und Notfallzugang bei Packfehler |
 | `extraitems.plant.tomato` | Tomate pflanzen und mit Knochenmehl düngen |
+| `extraitems.plant.lettuce` | Salat pflanzen und düngen |
+| `extraitems.plant.onion` | Zwiebeln pflanzen und düngen |
 | `extraitems.craft.tomato_seeds` | Tomatensamen herstellen |
+| `extraitems.craft.knife` | Eisenmesser herstellen |
+| `extraitems.craft.burger_bun` | Burger Buns schneiden |
+| `extraitems.craft.cheese_slice` | Käserad schneiden |
+| `extraitems.craft.schlemmer_burger` | Schlemmer-Burger herstellen |
+| `extraitems.craft.cheese_station` | Käsestation herstellen |
+| `extraitems.craft.old_but_gold` | Old-but-Gold-Buch herstellen |
+| `extraitems.use.cheese_station` | Käsestation öffnen |
+| `extraitems.place.cheese_wheel` | Käserad platzieren |
 
-Tomaten essen und reife Pflanzen ernten benötigen weiterhin kein Anbau- oder Craftrecht. Grundstücksschutz gilt.
+Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstücksschutz gilt.
+
+## Küchenmechaniken
+
+- Messerrezept (2×2 oder Werkbank): oben `Stock | Eisenbarren`, darunter rechts ein `Steinknopf`.
+- Burger Buns: ein Brot und ein Messer formlos in das Craftingfeld legen.
+- Käse schneiden: ein Käserad und ein Messer ergeben zehn Scheiben.
+- `Old but Gold`: das hergestellte Buch im Amboss rechts neben das Messer legen; Kosten: 5 Level.
+- Käsestation: Milcheimer manuell in den Eingang legen. Alternativ eine Kiste über einen Hopper stellen und den Hopper oben oder seitlich an die Station setzen. Ein Hopper direkt darunter zieht Käseräder und leere Eimer heraus.
+- Das Käserad mit Rechtsklick auf einen soliden Block stellen und mit leerer Hand essen. Jede der zehn Portionen füllt eine Hungerkeule. Beim Abbauen gibt es keinen Drop.
 
 ## Versionen und Build
 
@@ -142,6 +177,6 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.2.1.jar`.
+Ergebnis: `target/ExtraItems-0.3.0.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).

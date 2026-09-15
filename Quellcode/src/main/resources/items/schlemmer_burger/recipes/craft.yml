@@ -1,0 +1,10 @@
+type: recipe
+id: schlemmer_burger
+result: schlemmer_burger
+amount: 1
+permission: extraitems.craft.schlemmer_burger
+ingredients:
+  - extraitems:burger_bun
+  - extraitems:lettuce
+  - extraitems:onion
+  - minecraft:cooked_beef

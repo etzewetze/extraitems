@@ -1,4 +1,4 @@
-# ExtraItems 0.2.0 — Änderungen benötigen einen vollständigen Serverneustart.
+# ExtraItems 0.3.0 — Änderungen benötigen einen vollständigen Serverneustart.
 resource-pack:
   # true: Ablehnung/Downloadfehler führt zum Kick. false: Paket ist nur optional.
   required: true

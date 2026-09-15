@@ -1,0 +1,9 @@
+type: recipe
+id: cut_cheese_wheel
+result: cheese_slice
+amount: 10
+permission: extraitems.craft.cheese_slice
+ingredients:
+  - extraitems:cheese_wheel
+tool: knife
+tool-damage: 1
