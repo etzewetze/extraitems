@@ -64,7 +64,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.3.2 • 3D-Küchenitems & reparierte Käsestation • 1.21.11–26.2',
+    'description': 'ExtraItems 0.3.3 • 3D-Küchenitems & reparierte Käsestation • 1.21.11–26.2',
     'min_format': [75, 0], 'max_format': [88, 0]
 }})
 

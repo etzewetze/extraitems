@@ -17,6 +17,14 @@ class KitchenDefinitionsTest {
         assertTrue(recipe.contains("C: minecraft:crafting_table"));
     }
 
+    @Test void knifeRecipeUsesMiddleLeftStickMiddleIronAndBottomMiddleButton() throws Exception {
+        String recipe = Files.readString(ROOT.resolve("knife/recipes/craft.yml"));
+        assertTrue(recipe.contains("shape:\n  - '   '\n  - 'SI '\n  - ' B '\n"));
+        assertTrue(recipe.contains("S: minecraft:stick"));
+        assertTrue(recipe.contains("I: minecraft:iron_ingot"));
+        assertTrue(recipe.contains("B: minecraft:stone_button"));
+    }
+
     @Test void foodValuesUseHalfDrumstickUnits() throws Exception {
         assertNutrition("tomato/item.yml", 3);
         assertNutrition("lettuce/item.yml", 3);

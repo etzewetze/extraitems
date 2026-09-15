@@ -4,8 +4,9 @@ result: knife
 amount: 1
 permission: extraitems.craft.knife
 shape:
-  - 'SI'
-  - ' B'
+  - '   '
+  - 'SI '
+  - ' B '
 keys:
   S: minecraft:stick
   I: minecraft:iron_ingot
