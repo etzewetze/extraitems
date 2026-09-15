@@ -35,5 +35,22 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Chunklimit erreichen | Weitere Aussaat abgelehnt, ohne Samenverbrauch. |
 | `/ei give` bei vollem Inventar | Kein unkontrollierter Bodendrop; Meldung nennt nicht vergebene Menge. |
 | Originalmodelle und Tomaten auf beiden Clients | Keine Missing-Texture-Flächen, brauchbare Skalierung/Hitbox, transparenter Hintergrund. |
+| Tomaten-, Salat- und Zwiebelsamen nebeneinander | Drei eindeutig unterschiedliche Symbole, keine Vanilla-Samenanzeige. |
+| Salat/Zwiebel pflanzen, düngen und ernten | Je vier sichtbare Stufen; definierte Erntemenge; Nachwuchs ab Stufe 0. |
+| Messerrezept im 2×2-Feld | Stock links, Eisen rechts, Steinknopf unter dem Eisen ergibt ein Eisenmesser. |
+| Messer + Brot normal und per Shift-Klick | Buns entstehen; Zutaten und exakt ein Messereinsatz pro Brot werden verbraucht. |
+| Messer mit Haltbarkeit I/II/III | Insgesamt exakt 256/320/384 Brote schneidbar. |
+| Mending-Messer mit Erfahrung reparieren | Schaden sinkt, eigenes Modell und ID bleiben erhalten. |
+| Old-but-Gold-Buch auf anderes Item | Amboss zeigt kein Ergebnis. |
+| Old-but-Gold-Buch auf Messer | Kostet 5 Level; Messer bleibt dauerhaft unzerstörbar. |
+| Schlemmer-Burger herstellen und droppen | Rezept benötigt nur Buns, Salat, Zwiebel und gebratenes Rind; 3D-Modell sichtbar. |
+| Käsestation manuell | Milcheimer im Eingang startet 60 Sekunden; Käserad und leerer Eimer erscheinen getrennt. |
+| Kiste → Hopper → Station → Hopper | Milcheimer wird oben/seitlich eingezogen; beide Ausgaben landen ausschließlich unten. |
+| Neustart während der Reifezeit | Verbleibende Reifezeit und Station bleiben erhalten. |
+| Käserad in der Hand benutzen | Nicht essbar. |
+| Käserad platzieren und leerhändig essen | Zehn sichtbare Portionen; jede füllt 2 Nahrungspunkte. |
+| Käserad abbauen oder Unterlage entfernen | Rad verschwindet vollständig und droppt nichts. |
+| Messer + Käserad | Zehn Käsescheiben entstehen; ein Messereinsatz wird verbraucht. |
+| Käsescheibe essen | In der Hand essbar; füllt genau eine Hungerkeule. |
 
 Die echte Grafik, Client-Handanimation, Reihenfolge mit Drittplugins und Verhalten unter hoher Spielerlast lassen sich mit reinen Unit-Tests nicht abnehmen. Erst nach dieser Prüfung produktiv einsetzen.
