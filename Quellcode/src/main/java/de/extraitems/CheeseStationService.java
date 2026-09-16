@@ -173,32 +173,42 @@ final class CheeseStationService implements Listener {
             ItemRegistry.Station definition = station(block);
             if (definition == null) { machines.remove(position(block)); removeDisplay(block); continue; }
             if (!(block.getState() instanceof Barrel barrel)) continue;
+
             Inventory inventory = barrel.getInventory();
             pullMilk(block, inventory, definition.input());
-            pushOutput(block, inventory, CHEESE);
-            pushOutput(block, inventory, BUCKET);
             long ready = barrel.getPersistentDataContainer().getOrDefault(readyKey, PersistentDataType.LONG, 0L);
+
             if (ready <= 0 && has(inventory.getItem(INPUT), definition.input())) {
+                // Consume before saving the timer. Barrel.update() may otherwise restore
+                // the inventory snapshot taken before the bucket was removed.
+                takeOne(inventory, INPUT);
                 ready = now + definition.processSeconds() * 1000L;
                 barrel.getPersistentDataContainer().set(readyKey, PersistentDataType.LONG, ready);
                 barrel.update(true, false);
-                // update() writes the Container snapshot. Reacquire its live inventory afterwards
-                // so the snapshot cannot restore the milk bucket that is consumed here.
                 inventory = liveInventory(block);
-                takeOne(inventory, INPUT);
+                // Older Bukkit versions can restore the old snapshot; consume it once.
+                if (has(inventory.getItem(INPUT), definition.input())) takeOne(inventory, INPUT);
                 block.getWorld().playSound(block.getLocation(), Sound.ITEM_BUCKET_EMPTY, .7f, .9f);
-            } else if (ready > 0 && now >= ready && fits(inventory.getItem(CHEESE), items.create(definition.output(), 1))
-                    && fits(inventory.getItem(BUCKET), new ItemStack(definition.byproduct()))) {
-                ready = 0;
-                barrel.getPersistentDataContainer().remove(readyKey);
-                barrel.update(true, false);
-                // Persist machine metadata before writing the outputs for the same reason.
+            } else if (ready > 0 && now >= ready) {
+                ItemStack cheese = items.create(definition.output(), 1);
+                ItemStack bucket = new ItemStack(definition.byproduct());
                 inventory = liveInventory(block);
-                add(inventory, CHEESE, items.create(definition.output(), 1));
-                add(inventory, BUCKET, new ItemStack(definition.byproduct()));
-                block.getWorld().playSound(block.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .9f, .8f);
-                block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation().add(.5, 1.1, .5), 8, .25, .1, .25, .01);
+                if (fits(inventory.getItem(CHEESE), cheese) && fits(inventory.getItem(BUCKET), bucket)) {
+                    add(inventory, CHEESE, cheese);
+                    add(inventory, BUCKET, bucket);
+                    barrel.getPersistentDataContainer().remove(readyKey);
+                    barrel.update(true, false);
+                    inventory = liveInventory(block);
+                    block.getWorld().playSound(block.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .9f, .8f);
+                    block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation().add(.5, 1.1, .5), 8, .25, .1, .25, .01);
+                    ready = 0;
+                }
             }
+
+            // Push after processing so a newly completed cycle can leave the station
+            // in the same tick, while both output slots remain independently accessible.
+            pushOutput(block, inventory, CHEESE);
+            pushOutput(block, inventory, BUCKET);
             renderGui(inventory, ready, definition);
             ensureDisplay(block);
         }
@@ -230,13 +240,15 @@ final class CheeseStationService implements Listener {
     private void pullMilk(Block station, Inventory target, Material input) {
         ItemStack current = target.getItem(INPUT);
         if (current != null && !current.getType().isAir()) return;
-        for (BlockFace face : List.of(BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST)) {
+        for (BlockFace face : List.of(BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH,
+                BlockFace.EAST, BlockFace.WEST)) {
             if (!(station.getRelative(face).getState() instanceof Hopper hopper)) continue;
             Inventory source = hopper.getInventory();
             for (int slot = 0; slot < source.getSize(); slot++) {
                 ItemStack stack = source.getItem(slot);
                 if (stack != null && stack.getType() == input) {
-                    ItemStack one = stack.clone(); one.setAmount(1); target.setItem(INPUT, one);
+                    ItemStack one = stack.clone(); one.setAmount(1);
+                    target.setItem(INPUT, one);
                     if (stack.getAmount() <= 1) source.setItem(slot, null);
                     else { stack.setAmount(stack.getAmount() - 1); source.setItem(slot, stack); }
                     return;

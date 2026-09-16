@@ -3,11 +3,16 @@ package de.extraitems;
 import org.bukkit.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
-public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
+public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, Listener {
     private PackService pack;
     private PackGate gate;
     private ItemRegistry items;
@@ -15,11 +20,13 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
     private ToolService tools;
     private CheeseStationService stations;
     private PlaceableFoodService placeableFoods;
+    private BukkitTask externalRecipeTask;
     private boolean operational;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        getServer().getPluginManager().registerEvents(this, this);
 
         pack = new PackService(this);
         gate = new PackGate(this, pack);
@@ -45,9 +52,11 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
             stations.start();
             placeableFoods.start();
             operational = true;
-            getLogger().info("ExtraItems 0.3.3 bereit. Server " + Bukkit.getBukkitVersion()
+            scheduleExternalRecipeRefresh();
+            getLogger().info("ExtraItems 0.4.0 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
-                    + "; Definitionen " + items.sourceCount());
+                    + "; Definitionen " + items.sourceCount()
+                    + "; Integrationen " + items.externalStatus());
         } catch (Exception error) {
             getLogger().log(java.util.logging.Level.SEVERE,
                     "Konfiguration/Initialisierung fehlgeschlagen. Administratoren können den Notfallzugang nutzen.",
@@ -61,9 +70,42 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
         for (Player player : Bukkit.getOnlinePlayers()) gate.request(player);
     }
 
+    private void scheduleExternalRecipeRefresh() {
+        if (items == null || !items.hasExternalReferences()) return;
+        externalRecipeTask = Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
+            private int attempts;
+            @Override public void run() {
+                if (items == null || items.externalReferencesReady() || ++attempts >= 300) {
+                    if (items != null && !items.externalReferencesReady()) {
+                        getLogger().warning("[Integrationen] Nicht alle externen Items waren nach fünf Minuten verfügbar.");
+                    }
+                    if (externalRecipeTask != null) externalRecipeTask.cancel();
+                    externalRecipeTask = null;
+                    return;
+                }
+                items.refreshRecipes();
+            }
+        }, 20L, 20L);
+    }
+
+    @EventHandler
+    public void providerEnabled(PluginEnableEvent event) {
+        if (items != null && ExternalItemBridge.isProviderPlugin(event.getPlugin().getName())) {
+            Bukkit.getScheduler().runTask(this, items::refreshRecipes);
+        }
+    }
+
+    @EventHandler
+    public void providerDisabled(PluginDisableEvent event) {
+        if (items != null && ExternalItemBridge.isProviderPlugin(event.getPlugin().getName())) {
+            items.refreshRecipes();
+        }
+    }
+
     @Override
     public void onDisable() {
         operational = false;
+        if (externalRecipeTask != null) externalRecipeTask.cancel();
         if (placeableFoods != null) placeableFoods.stop();
         if (stations != null) stations.stop();
         if (crops != null) crops.stop();
@@ -89,7 +131,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.3.3 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.4.0 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));
@@ -98,6 +140,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor {
                     + " | Pflanzen: " + (crops == null ? 0 : crops.count())
                     + " | Käsestationen: " + (stations == null ? 0 : stations.count())
                     + " | Käseräder: " + (placeableFoods == null ? 0 : placeableFoods.count()));
+            sender.sendMessage("§7Integrationen: " + (items == null ? "nicht initialisiert" : items.externalStatus()));
             if (sender instanceof Player player && pack.ready() && pack.deliveryEnabled()) {
                 try {
                     sender.sendMessage("§7Deine Pack-URL: " + gate.resolvedUrl(player));

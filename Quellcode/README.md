@@ -1,8 +1,8 @@
-# ExtraItems 0.3.3
+# ExtraItems 0.4.0
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
 
-## Neu in 0.3.3
+## Neu in 0.4.0
 
 - Das Eisenmesser hat jetzt das gewünschte 3×3-Rezept: mittlere Reihe `Stick | Eisenbarren | ·`, darunter `· | Steinknopf | ·`; alle übrigen Felder bleiben leer.
 
@@ -141,7 +141,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.3.3.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.4.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -199,6 +199,10 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.3.3.jar`.
+Ergebnis: `target/ExtraItems-0.4.0.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
+
+## Optionale Provider-Integrationen
+
+Externe Item-IDs können in Rezeptdateien als `nexo:id`, `itemsadder:id`, `oraxen:id` oder `craftengine:id` genutzt werden. Siehe [docs/INTEGRATIONEN.md](docs/INTEGRATIONEN.md). Die Provider bleiben optionale Laufzeit-Abhängigkeiten.

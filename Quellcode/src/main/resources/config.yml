@@ -1,4 +1,4 @@
-# ExtraItems 0.3.1 — Änderungen benötigen einen vollständigen Serverneustart.
+# ExtraItems 0.4.0 — Änderungen benötigen einen vollständigen Serverneustart.
 resource-pack:
   # true: Ablehnung/Downloadfehler führt zum Kick. false: Paket ist nur optional.
   required: true
@@ -29,6 +29,13 @@ resource-pack:
 limits:
   plants-per-chunk: 64
   loaded-plants-total: 10000
+
+# Optionale Provider-Integrationen. false deaktiviert nur die jeweiligen Referenzen.
+integrations:
+  nexo: true
+  itemsadder: true
+  oraxen: true
+  craftengine: true
 
 messages:
   no-permission: '&cDu hast dafür keine Berechtigung.'

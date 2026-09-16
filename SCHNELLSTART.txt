@@ -1,7 +1,7 @@
-ExtraItems 0.3.3 — Schnellstart
+ExtraItems 0.4.0 — Schnellstart
 
 1. Server stoppen.
-2. ExtraItems-0.3.3.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
+2. ExtraItems-0.4.0.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
 3. Server starten.
 4. Standardmäßig nutzt das Plugin:
      resource-pack.mode: self-host
@@ -66,3 +66,5 @@ Messer:
 
 Tomaten essen und reife Pflanzen ernten sind ohne diese Rechte erlaubt.
 Vor Updates Welten und plugins/ExtraItems sichern. Kein /reload verwenden.
+
+Optionale Integrationen: Rezept-YAMLs unterstützen `nexo:id`, `itemsadder:id`, `oraxen:id` und `craftengine:id`. Fehlende Provider verhindern den Start nicht; `/ei status` zeigt den Zustand. Siehe Quellcode/docs/INTEGRATIONEN.md.

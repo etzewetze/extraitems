@@ -1,4 +1,4 @@
-# Validierung — ExtraItems 0.3.3
+# Validierung — ExtraItems 0.4.0
 
 Stand: 15. September 2026. Build und Komponenten sind automatisiert geprüft; die neuen GUI-, Hopper- und Entity-Interaktionen benötigen zusätzlich einen echten Minecraft-Ingame-Test.
 
@@ -36,3 +36,6 @@ Die Crafting-Tests prüfen die Entscheidungs- und Haltbarkeitslogik. Sie simulie
 Echte Client-/Server-Durchläufe auf Paper 1.21.11 und 26.2: neue Saatbilder und Modelle, Käserad-Hitbox, Messer im 2×2-Feld und per Shift-Klick, Amboss mit Mending/Haltbarkeit/Old but Gold, Käsestation mit manueller Eingabe und Hopperkette, persistente Entities nach Chunk-Unload und Neustart sowie Kombination mit LuckPerms und Grundstücksschutz.
 
 Die konkrete Abnahmeliste steht in `docs/INGAME-TEST.md`. Vor dem Einsatz in einer bestehenden Welt dort prüfen. Eine uneingeschränkte Kompatibilitätszusage für zukünftige Minecraft-Versionen wird nicht gegeben.
+
+- Optionaler Laufzeit-Adapter für Nexo, ItemsAdder, Oraxen und CraftEngine; Provider bleiben ohne Fremdplugin-Abhängigkeit.
+- Externe Rezepte werden nach dem Provider-Enable automatisch erneut registriert.

@@ -39,10 +39,15 @@ public final class ItemRegistry {
     private final Map<String, PlaceableFood> placeableFoods = new LinkedHashMap<>();
     private final Map<NamespacedKey, RecipeSpec> recipes = new LinkedHashMap<>();
     private final int sourceCount;
+    private final ExternalItemBridge external;
+    private boolean recipesRegistered;
+    private boolean recipesComplete;
+    private final Set<NamespacedKey> registeredRecipeKeys = new LinkedHashSet<>();
 
     public ItemRegistry(ExtraItemsPlugin plugin) {
         this.plugin = plugin;
         itemKey = new NamespacedKey(plugin, "item_id");
+        external = new ExternalItemBridge(plugin);
         List<DefinitionFiles.Definition> definitions = DefinitionFiles.load(plugin);
         sourceCount = definitions.size();
 
@@ -184,7 +189,7 @@ public final class ItemRegistry {
     private void loadRecipe(DefinitionFiles.Definition definition) {
         String id = definition.id();
         ConfigurationSection c = definition.config();
-        String result = requireItem(c.getString("result", ""));
+        String result = requireRecipeItem(c.getString("result", ""));
         List<String> shape = List.copyOf(c.getStringList("shape"));
         Map<Character, String> keys = new LinkedHashMap<>();
         List<String> ingredients = new ArrayList<>();
@@ -199,7 +204,7 @@ public final class ItemRegistry {
             for (String raw : rawKeys.getKeys(false)) {
                 if (raw.length() != 1 || raw.charAt(0) == ' ') throw new IllegalArgumentException("Ungültiges Rezeptzeichen: " + raw);
                 String ingredient = rawKeys.getString(raw, "");
-                choice(ingredient, null);
+                validateChoice(ingredient);
                 keys.put(raw.charAt(0), ingredient);
             }
             for (String row : shape) for (char symbol : row.toCharArray()) {
@@ -211,7 +216,7 @@ public final class ItemRegistry {
         } else {
             ingredients.addAll(c.getStringList("ingredients"));
             if (ingredients.isEmpty()) throw new IllegalArgumentException("Rezept benötigt Zutaten: " + id);
-            for (String ingredient : ingredients) choice(ingredient, null);
+            for (String ingredient : ingredients) validateChoice(ingredient);
         }
 
         String tool = c.getString("tool");
@@ -226,46 +231,86 @@ public final class ItemRegistry {
 
         NamespacedKey recipeKey = new NamespacedKey(plugin, id);
         RecipeSpec spec = new RecipeSpec(recipeKey, result,
-                range(c.getInt("amount", 1), 1, templates.get(result).getMaxStackSize(), id),
-                permission(c.getString("permission", "extraitems.craft." + result)),
+                range(c.getInt("amount", 1), 1, stackLimit(result), id),
+                permission(c.getString("permission",
+                        external.isReference(result) ? "extraitems.craft.external" : "extraitems.craft." + result)),
                 List.copyOf(ingredients), shape, Collections.unmodifiableMap(keys), tool, toolDamage);
         if (recipes.putIfAbsent(recipeKey, spec) != null) throw new IllegalArgumentException("Rezept-ID bereits belegt: " + id);
     }
 
     public void registerRecipes() {
-        for (RecipeSpec spec : recipes.values()) {
-            Recipe recipe;
-            if (spec.shaped()) {
-                ShapedRecipe shaped = new ShapedRecipe(spec.key(), create(spec.result(), spec.amount()));
-                shaped.shape(spec.shape().toArray(String[]::new));
-                spec.keys().forEach((symbol, ingredient) -> shaped.setIngredient(symbol, choice(ingredient, null)));
-                recipe = shaped;
-            } else {
-                ShapelessRecipe shapeless = new ShapelessRecipe(spec.key(), create(spec.result(), spec.amount()));
-                for (String ingredient : spec.ingredients()) shapeless.addIngredient(choice(ingredient, spec.tool()));
-                recipe = shapeless;
-            }
-            if (!Bukkit.addRecipe(recipe)) throw new IllegalStateException("Rezept-ID bereits belegt: " + spec.key());
-        }
+        registerRecipes(false);
     }
 
-    public void unregisterRecipes() { recipes.keySet().forEach(Bukkit::removeRecipe); }
+    private void registerRecipes(boolean force) {
+        if (recipesRegistered && !force) return;
+        if (force) {
+            registeredRecipeKeys.forEach(Bukkit::removeRecipe);
+            registeredRecipeKeys.clear();
+        }
+        boolean complete = true;
+        for (RecipeSpec spec : recipes.values()) {
+            try {
+                Recipe recipe;
+                if (spec.shaped()) {
+                    ShapedRecipe shaped = new ShapedRecipe(spec.key(), create(spec.result(), spec.amount()));
+                    shaped.shape(spec.shape().toArray(String[]::new));
+                    spec.keys().forEach((symbol, ingredient) -> shaped.setIngredient(symbol, choice(ingredient, null)));
+                    recipe = shaped;
+                } else {
+                    ShapelessRecipe shapeless = new ShapelessRecipe(spec.key(), create(spec.result(), spec.amount()));
+                    for (String ingredient : spec.ingredients()) shapeless.addIngredient(choice(ingredient, spec.tool()));
+                    recipe = shapeless;
+                }
+                if (!Bukkit.addRecipe(recipe)) throw new IllegalStateException("Rezept-ID bereits belegt: " + spec.key());
+                registeredRecipeKeys.add(spec.key());
+            } catch (ExternalItemBridge.Unavailable unavailable) {
+                complete = false;
+                plugin.getLogger().warning("[Integrationen] Rezept " + spec.key()
+                        + " wartet auf " + unavailable.getMessage());
+            }
+        }
+        recipesRegistered = true;
+        recipesComplete = complete;
+    }
+
+    public void refreshRecipes() {
+        registerRecipes(true);
+    }
+
+    public void unregisterRecipes() {
+        registeredRecipeKeys.forEach(Bukkit::removeRecipe);
+        registeredRecipeKeys.clear();
+        recipesRegistered = false;
+        recipesComplete = false;
+    }
 
     private RecipeChoice choice(String id, String flexibleTool) {
-        if (id == null) throw new IllegalArgumentException("Leere Rezeptzutat");
+        if (id == null || id.isBlank()) throw new IllegalArgumentException("Leere Rezeptzutat");
         if (id.equals("minecraft:#planks")) return new RecipeChoice.MaterialChoice(Tag.PLANKS);
+        if (external.isReference(id)) {
+            ItemStack resolved = external.resolve(id, 1);
+            return new RecipeChoice.MaterialChoice(resolved.getType());
+        }
         if (id.startsWith("extraitems:")) {
             String custom = requireItem(id.substring(11));
-            // ExactChoice compares every component. Food-value migrations, lore changes and
-            // current tool damage can therefore hide an otherwise valid recipe before our
-            // listener can check it. Bukkit preselects by base material; RecipeListener then
-            // requires the exact namespaced ExtraItems id in each occupied slot.
             return new RecipeChoice.MaterialChoice(templates.get(custom).getType());
         }
-        if (!id.startsWith("minecraft:")) throw new IllegalArgumentException("Zutat benötigt minecraft: oder extraitems: " + id);
+        if (!id.startsWith("minecraft:")) {
+            throw new IllegalArgumentException("Zutat benötigt minecraft:, extraitems: oder provider: " + id);
+        }
         Material material = Material.matchMaterial(id);
-        if (material == null || !material.isItem() || material.isAir()) throw new IllegalArgumentException("Unbekannte Zutat: " + id);
+        if (material == null || !material.isItem() || material.isAir()) {
+            throw new IllegalArgumentException("Unbekannte Zutat: " + id);
+        }
         return new RecipeChoice.MaterialChoice(material);
+    }
+
+    private void validateChoice(String id) {
+        if (id == null || id.isBlank()) throw new IllegalArgumentException("Leere Rezeptzutat");
+        if (id.equals("minecraft:#planks")) return;
+        if (external.isReference(id)) return;
+        choice(id, null);
     }
 
     public String id(ItemStack item) {
@@ -276,20 +321,36 @@ public final class ItemRegistry {
     public String ingredientId(ItemStack item) {
         if (item == null || item.getType().isAir()) return null;
         String custom = id(item);
-        return custom == null ? item.getType().getKey().toString() : "extraitems:" + custom;
+        if (custom != null) return "extraitems:" + custom;
+        String externalToken = external.stateToken(item);
+        if (externalToken != null) return externalToken;
+        return item.getType().getKey().toString();
     }
 
     public String ingredientId(ItemStack item, Collection<String> expected) {
-        String exact = ingredientId(item);
-        if (exact != null && expected.contains("minecraft:#planks")
-                && item != null && Tag.PLANKS.isTagged(item.getType())) return "minecraft:#planks";
-        return exact;
+        if (item == null || item.getType().isAir()) return null;
+        for (String candidate : expected) {
+            if (external.isReference(candidate) && external.matches(item, candidate)) {
+                return candidate.trim().toLowerCase(Locale.ROOT);
+            }
+        }
+        if (expected.contains("minecraft:#planks") && Tag.PLANKS.isTagged(item.getType())) {
+            return "minecraft:#planks";
+        }
+        return ingredientId(item);
     }
 
     public ItemStack create(String id, int amount) {
-        ItemStack result = templates.get(requireItem(id)).clone();
+        String token = requireRecipeItem(id);
+        if (external.isReference(token)) return external.resolve(token, amount);
+        ItemStack result = templates.get(token).clone();
         result.setAmount(range(amount, 1, result.getMaxStackSize(), id));
         return result;
+    }
+
+    private int stackLimit(String id) {
+        if (external.isReference(id)) return 64;
+        return templates.get(id).getMaxStackSize();
     }
 
     public ItemStack model(NamespacedKey key) {
@@ -329,7 +390,7 @@ public final class ItemRegistry {
     public RecipeSpec recipe(Recipe recipe, ItemStack[] matrix) {
         RecipeSpec keyed = recipe(recipe);
         if (keyed != null) return keyed;
-        boolean containsCustom = Arrays.stream(matrix).anyMatch(item -> id(item) != null);
+        boolean containsCustom = Arrays.stream(matrix).anyMatch(item -> id(item) != null || external.isKnownCustom(item));
         if (!containsCustom) return null;
         for (RecipeSpec candidate : recipes.values()) {
             if (candidate.shaped()) continue;
@@ -342,14 +403,44 @@ public final class ItemRegistry {
     }
     public Set<NamespacedKey> recipeKeys() { return Collections.unmodifiableSet(recipes.keySet()); }
 
+    ExternalItemBridge external() { return external; }
+    boolean isExternalReference(String token) { return external.isReference(token); }
+    String externalStatus() { return external.status(); }
+
+    boolean hasExternalReferences() {
+        for (RecipeSpec spec : recipes.values()) {
+            if (external.isReference(spec.result())
+                    || spec.ingredients().stream().anyMatch(external::isReference)) return true;
+        }
+        return false;
+    }
+
+    boolean externalReferencesReady() {
+        for (RecipeSpec spec : recipes.values()) {
+            List<String> values = new ArrayList<>(spec.ingredients());
+            values.add(spec.result());
+            for (String value : values) {
+                if (!external.isReference(value)) continue;
+                try {
+                    external.resolve(value, 1);
+                } catch (ExternalItemBridge.Unavailable error) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private String requireRecipeItem(String id) {
+        if (id == null || id.isBlank()) throw new IllegalArgumentException("Leeres Rezeptresultat");
+        if (external.isReference(id)) return id.trim();
+        if (id.startsWith("extraitems:")) return requireItem(id.substring(11));
+        return requireItem(id);
+    }
+
     private String requireItem(String id) {
         if (id == null || !templates.containsKey(id)) throw new IllegalArgumentException("Unbekannte Item-ID: " + id);
         return id;
-    }
-    private Tool requireTool(String id) {
-        Tool tool = tools.get(id);
-        if (tool == null) throw new IllegalArgumentException("Unbekannte Werkzeug-ID: " + id);
-        return tool;
     }
 
     static String permission(String value) {

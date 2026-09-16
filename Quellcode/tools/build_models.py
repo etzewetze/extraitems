@@ -40,13 +40,20 @@ def generated(name, texture):
 
 def contextual_geometry(name, elements, textures, display=None):
     """Keep the established sprite in inventories, but use real cuboids elsewhere."""
+    cases = [{
+        'when': 'gui',
+        'model': {'type': 'minecraft:model', 'model': f'extraitems:item/{name}_icon'}
+    }]
+    for context in ('ground', 'fixed', 'thirdperson_righthand', 'thirdperson_lefthand',
+                    'firstperson_righthand', 'firstperson_lefthand'):
+        cases.append({
+            'when': context,
+            'model': {'type': 'minecraft:model', 'model': f'extraitems:item/{name}_3d'}
+        })
     write(ASSETS / 'items' / f'{name}.json', {'model': {
         'type': 'minecraft:select',
         'property': 'minecraft:display_context',
-        'cases': [{
-            'when': 'gui',
-            'model': {'type': 'minecraft:model', 'model': f'extraitems:item/{name}_icon'}
-        }],
+        'cases': cases,
         'fallback': {'type': 'minecraft:model', 'model': f'extraitems:item/{name}_3d'}
     }})
     write(ASSETS / 'models/item' / f'{name}_icon.json', {
@@ -64,7 +71,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.3.3 • 3D-Küchenitems & reparierte Käsestation • 1.21.11–26.2',
+    'description': 'ExtraItems 0.4.0 • 3D-Küchenitems, Käsestation und optionale Integrationen • 1.21.11–26.2',
     'min_format': [75, 0], 'max_format': [88, 0]
 }})
 

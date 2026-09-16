@@ -169,6 +169,9 @@ final class DefinitionFiles {
         migrateSection(indexFile.getParent(), legacy.getConfigurationSection("recipes"), "recipe",
                 (id, section) -> {
                     String result = section.getString("result", "recipes");
+                    if (ExternalItemBridge.isReferenceToken(result)) {
+                        return "items/external/recipes/" + id + ".yml";
+                    }
                     ItemRegistry.checkId(result);
                     return "items/" + result + "/recipes/" + id + ".yml";
                 }, sources);

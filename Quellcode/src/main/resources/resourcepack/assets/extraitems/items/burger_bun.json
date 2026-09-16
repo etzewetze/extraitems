@@ -9,6 +9,48 @@
           "type": "minecraft:model",
           "model": "extraitems:item/burger_bun_icon"
         }
+      },
+      {
+        "when": "ground",
+        "model": {
+          "type": "minecraft:model",
+          "model": "extraitems:item/burger_bun_3d"
+        }
+      },
+      {
+        "when": "fixed",
+        "model": {
+          "type": "minecraft:model",
+          "model": "extraitems:item/burger_bun_3d"
+        }
+      },
+      {
+        "when": "thirdperson_righthand",
+        "model": {
+          "type": "minecraft:model",
+          "model": "extraitems:item/burger_bun_3d"
+        }
+      },
+      {
+        "when": "thirdperson_lefthand",
+        "model": {
+          "type": "minecraft:model",
+          "model": "extraitems:item/burger_bun_3d"
+        }
+      },
+      {
+        "when": "firstperson_righthand",
+        "model": {
+          "type": "minecraft:model",
+          "model": "extraitems:item/burger_bun_3d"
+        }
+      },
+      {
+        "when": "firstperson_lefthand",
+        "model": {
+          "type": "minecraft:model",
+          "model": "extraitems:item/burger_bun_3d"
+        }
       }
     ],
     "fallback": {

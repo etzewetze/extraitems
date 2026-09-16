@@ -1,10 +1,10 @@
 name: ExtraItems
-version: '0.3.3'
+version: '0.4.0'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
 description: Modulare Vanilla-Items, Pflanzen, Küche, Pflicht-Ressourcenpaket und Rechte
 author: ExtraItems
-softdepend: [LuckPerms, WorldGuard, GriefPrevention]
+softdepend: [LuckPerms, WorldGuard, GriefPrevention, Nexo, ItemsAdder, Oraxen, CraftEngine]
 commands:
   extraitems:
     description: ExtraItems verwalten
@@ -46,6 +46,9 @@ permissions:
     default: op
   extraitems.craft.cheese_station:
     description: Käsestation herstellen
+    default: op
+  extraitems.craft.external:
+    description: Externe Nexo-, ItemsAdder-, Oraxen- oder CraftEngine-Rezepte herstellen
     default: op
   extraitems.craft.old_but_gold:
     description: Old-but-Gold-Buch herstellen

@@ -21,7 +21,8 @@ final class RecipeListener implements Listener {
         var actual = Arrays.stream(inventory.getMatrix())
                 .map(item -> spec == null ? items.ingredientId(item) : items.ingredientId(item, spec.ingredients()))
                 .toList();
-        if (spec == null) return actual.stream().noneMatch(s -> s != null && s.startsWith("extraitems:"));
+        if (spec == null) return actual.stream().noneMatch(s -> s != null
+                && (s.startsWith("extraitems:") || s.startsWith("external:")));
         return CraftPolicy.mayCraft(plugin.gate().ready(player), player.hasPermission(spec.permission()), spec.ingredients(), actual);
     }
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -116,6 +117,7 @@ final class RecipeListener implements Listener {
     public void automate(CrafterCraftEvent event) {
         // A redstone crafter has no authenticated player/group; gated recipes are manual only.
         if (items.recipe(event.getRecipe()) != null || (event.getBlock().getState() instanceof Crafter crafter
-                && Arrays.stream(crafter.getInventory().getContents()).anyMatch(i -> items.id(i) != null))) event.setCancelled(true);
+                && Arrays.stream(crafter.getInventory().getContents()).anyMatch(i -> items.id(i) != null
+                        || items.external().isKnownCustom(i)))) event.setCancelled(true);
     }
 }
