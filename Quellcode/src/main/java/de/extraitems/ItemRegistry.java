@@ -443,6 +443,12 @@ public final class ItemRegistry {
         return id;
     }
 
+    private Tool requireTool(String id) {
+        Tool tool = tools.get(id);
+        if (tool == null) throw new IllegalArgumentException("Unbekannte Werkzeug-ID: " + id);
+        return tool;
+    }
+
     static String permission(String value) {
         if (value == null || value.isBlank() || !value.matches("[a-z0-9_.-]+")) throw new IllegalArgumentException("Ungültiges Recht: " + value);
         return value;
