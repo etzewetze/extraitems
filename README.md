@@ -4,7 +4,7 @@ ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items
 
 ## Neu in 0.5.1
 
-- Minecraft 26.3 wird über die aktuelle Paper-API unterstützt; die CI prüft dafür zusätzlich `paper-api:26.3-R0.1-SNAPSHOT` unter Java 25.
+- Minecraft 26.3 wird über die aktuelle Paper-API unterstützt. Solange Paper noch kein 26.3-API-Artefakt veröffentlicht, baut die CI die API reproduzierbar aus dem offiziellen, fest angehefteten Paper-Quellstand und prüft sie unter Java 25.
 - Das Ressourcenpaket akzeptiert nun die Formate 75.0 bis 97.1 und deckt damit Minecraft 1.21.11 bis 26.3 ab.
 - Die Untergrenze 1.21.11 und der Java-21-Bytecode bleiben erhalten.
 - Hinweis: Paper führt den 26.3-Port derzeit noch im Alpha-Kanal. Vor dem Produktiveinsatz ist deshalb ein echter Test mit dem verwendeten Paper-26.3-Build erforderlich.

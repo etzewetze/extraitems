@@ -21,16 +21,19 @@ jobs:
             api_group: org.spigotmc
             api_artifact: spigot-api
             api_version: "1.21.11-R0.1-SNAPSHOT"
+            build_paper_api: false
           - label: Spigot 26.2 / Java 25
             java: "25"
             api_group: org.spigotmc
             api_artifact: spigot-api
             api_version: "26.2-R0.1-SNAPSHOT"
+            build_paper_api: false
           - label: Paper 26.3 Alpha / Java 25
             java: "25"
             api_group: io.papermc.paper
             api_artifact: paper-api
-            api_version: "26.3-R0.1-SNAPSHOT"
+            api_version: "26.3.local-SNAPSHOT"
+            build_paper_api: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +42,25 @@ jobs:
           distribution: temurin
           java-version: ${{ matrix.java }}
           cache: maven
+      - name: Check out pinned Paper 26.3 source
+        if: ${{ matrix.build_paper_api }}
+        uses: actions/checkout@v4
+        with:
+          repository: PaperMC/Paper
+          ref: cc95f009b7e4b5687feb0a068d9fc44b326dc8c3
+          path: paper-26.3
+          fetch-depth: 0
+      - name: Set up Gradle for Paper API
+        if: ${{ matrix.build_paper_api }}
+        uses: gradle/actions/setup-gradle@v6
+      - name: Build Paper 26.3 API locally
+        if: ${{ matrix.build_paper_api }}
+        working-directory: paper-26.3
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          ./gradlew applyPatches --stacktrace
+          ./gradlew :paper-api:publishToMavenLocal --stacktrace
       - name: Test against ${{ matrix.label }}
         working-directory: Quellcode
         run: mvn -B clean verify -Dserver.api.group=${{ matrix.api_group }} -Dserver.api.artifact=${{ matrix.api_artifact }} -Dserver.api.version=${{ matrix.api_version }}
