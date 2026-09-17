@@ -1,6 +1,6 @@
-# Validierung — ExtraItems 0.4.0
+# Validierung — ExtraItems 0.5.0
 
-Stand: 15. September 2026. Build und Komponenten sind automatisiert geprüft; die neuen GUI-, Hopper- und Entity-Interaktionen benötigen zusätzlich einen echten Minecraft-Ingame-Test.
+Stand: 17. September 2026. Build und Komponenten sind automatisiert geprüft; die neuen GUI-, Hopper- und Entity-Interaktionen benötigen zusätzlich einen echten Minecraft-Ingame-Test.
 
 ## Ausgeführt
 
@@ -9,9 +9,9 @@ Stand: 15. September 2026. Build und Komponenten sind automatisiert geprüft; di
 | Sauberer Maven-Build gegen Spigot-API `1.21.11-R0.1-SNAPSHOT` | Erfolgreich |
 | Sauberer Maven-Build gegen Spigot-API `26.2-R0.1-SNAPSHOT` | Erfolgreich |
 | Java-Compilerziel | `--release 21`, Classfile-Version 65 |
-| Automatisierte Tests gegen Basis-API | 44 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
-| Dieselben Tests gegen neueste API | 44 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
-| JSON-/Manifest-/Modellreferenzprüfung | 86 Packdateien, 3 Pflanzen × 4 Stufen, 10 Käsestufen und kontextabhängige 3D-Handmodelle vollständig |
+| Automatisierte Tests gegen Basis-API | 53 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| Dieselben Tests gegen neueste API | 53 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| JSON-/Manifest-/Modellreferenzprüfung | 88 Packdateien, 3 Pflanzen × 4 Stufen, 2 Maschinen, 10 Käsestufen und kontextabhängige 3D-Handmodelle vollständig |
 | Bildprüfung | 9 eigene PNGs; quadratische RGBA-Zweierpotenzen mit Alphakanal |
 | ZIP-Paketlayout | `pack.mcmeta` direkt an der Wurzel, relative Assetpfade |
 
@@ -22,18 +22,19 @@ GitHub Actions baute gegen 1.21.11 unter Temurin 21 und gegen 26.2 unter Temurin
 - **10 Pack-Statusfälle:** fremde Paket-ID schaltet nicht frei; „akzeptiert“/„heruntergeladen“ reichen nicht; erfolgreiche Meldung; Timeout; Ablehnung; Downloadfehler; ungültige URL; Reloadfehler; verworfenes Paket; unbekannte Statuswerte bleiben gesperrt. Späte Erfolgsmeldungen können einen gescheiterten Vorgang nicht nachträglich freischalten.
 - **4 Crafting-Regelfälle:** Packfreigabe und aktuelles Recht nötig; gewöhnliche Äpfel gelten nicht als Tomaten; formlose Reihenfolge und leere Felder; korrekte Anzahl mehrfach benötigter Zutaten.
 - **5 Speicher-/Wachstumsfälle:** verlustfreies Kodieren und Dekodieren einschließlich negativer Chunkkoordinaten; keine Einträge außerhalb ihres Chunks oder der Welthöhe; beschädigte Werte abgelehnt; Wachstum pausiert bei fehlenden Bedingungen; reife Pflanzen überschreiten die Modellzahl nicht.
-- **3 Definitionsdateifälle:** nur reguläre YAML-Dateien innerhalb des Pluginordners werden geladen; Traversal, absolute Pfade, falsche Endungen, fehlende Dateien und Symlinks werden abgelehnt; neue Standardpfade werden verlustfrei mit eigenen Indexeinträgen zusammengeführt.
+- **4 Definitionsdateifälle:** nur reguläre YAML-Dateien innerhalb des Pluginordners werden geladen; Traversal, absolute Pfade, falsche Endungen, fehlende Dateien und Symlinks werden abgelehnt; neue Standardpfade werden verlustfrei mit eigenen Indexeinträgen zusammengeführt; das alte direkte Tomaten-Samen-Rezept wird aus bestehenden Indizes entfernt.
 - **9 Download-/Archivfälle:** reproduzierbare ZIPs und Hashänderung bei geänderten Inhalten; fehlende Metadaten und Symlinks abgelehnt; atomisches Ersetzen der Ausgabe; sichere Revisionserneuerung mit Backup; echte HTTP-Requests für GET, HEAD, 404 und 405; URL- und Hostvalidierung.
 - **6 Assetfälle:** neun eigene Zweierpotenz-RGBA-Texturen; reife Tomate ohne Abhängigkeit von der eigenen PNG; Ground-Transformationen für Quader-Items; fünf GUI-Icons mit `minecraft:display_context`-Auswahl und echten 3D-Handmodellen; drei vollständige Wachstumsreihen; zehn Käserad-Portionen.
 - **2 Werkzeugfälle:** 192 Grundnutzungen, exakt 64 zusätzliche Nutzungen je Haltbarkeitsstufe und unbegrenzte Nutzungen mit Old but Gold.
-- **4 Küchen-Definitionsfälle:** das exakte Käsestationsraster mit beliebigen Brettern, das Messerrezept mit Stick, Eisenbarren und Steinknopf, die gewünschten Nahrungswerte und die fünf Zutaten des Cheesy Schlemmers.
-- **2 Fehlerkorrekturen:** Container-Snapshots werden vor der Stations-Inventaränderung gespeichert; Custom-Rezepte werden per Material vorselektiert und danach anhand der ExtraItems-ID geprüft.
+- **6 Küchen-Definitionsfälle:** exakte Käsestations- und Messerrezepte, gewünschte Nahrungswerte, fünf Zutaten des Cheesy Schlemmers, Samengenerator mit allen drei Umwandlungen sowie 9 Schaden/2,4 Angriffsgeschwindigkeit des Messers.
+- **3 Maschinen-Zustandsfälle:** gültiger Eingang startet ohne Frühverbrauch; Entfernen vor oder nach Ablauf bricht ab; ein voller Ausgang wartet und ein freier Ausgang schließt exakt ab.
+- **2 Fehlerkorrekturen:** Käsestationen verbrauchen den Milcheimer erst beim kapazitätsgeprüften Abschluss und schreiben keinen veralteten Fass-Snapshot zurück; Custom-Rezepte werden per Material vorselektiert und danach anhand der ExtraItems-ID geprüft.
 
 Die Crafting-Tests prüfen die Entscheidungs- und Haltbarkeitslogik. Sie simulieren nicht die komplette Bukkit-Inventarverarbeitung, Hopper oder einen echten Shift-Klick-Client. Die Pflanzentests prüfen den gespeicherten Datensatz und den Wachstumsübergang, keine laufende Minecraft-Welt. Diese Grenzen werden nicht durch die Zahl der Tests aufgehoben.
 
 ## Noch ausstehend
 
-Echte Client-/Server-Durchläufe auf Paper 1.21.11 und 26.2: neue Saatbilder und Modelle, Käserad-Hitbox, Messer im 2×2-Feld und per Shift-Klick, Amboss mit Mending/Haltbarkeit/Old but Gold, Käsestation mit manueller Eingabe und Hopperkette, persistente Entities nach Chunk-Unload und Neustart sowie Kombination mit LuckPerms und Grundstücksschutz.
+Echte Client-/Server-Durchläufe auf Paper 1.21.11 und 26.2: Saatbilder und Modelle, Käserad-Hitbox, Messerrezept und Shift-Klick, Nahkampfschaden/-tempo, Amboss mit Mending/Haltbarkeit/Old but Gold, Käsestation mit Abbruch und Hopperkette, Samengenerator mit drei Eingängen, persistente Entities nach Chunk-Unload und Neustart sowie Kombination mit LuckPerms und Grundstücksschutz.
 
 Die konkrete Abnahmeliste steht in `docs/INGAME-TEST.md`. Vor dem Einsatz in einer bestehenden Welt dort prüfen. Eine uneingeschränkte Kompatibilitätszusage für zukünftige Minecraft-Versionen wird nicht gegeben.
 

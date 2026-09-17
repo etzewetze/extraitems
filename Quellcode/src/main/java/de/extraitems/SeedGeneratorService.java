@@ -199,7 +199,7 @@ final class SeedGeneratorService implements Listener {
 
             Cycle cycle = currentCycle(block);
             String currentInput = activeInput(inventory);
-            String expectedInput = cycle.inputId() == null ? currentInput : cycle.inputId();
+            String expectedInput = cycle.readyAt() <= 0 ? currentInput : cycle.inputId();
             ItemRegistry.SeedConversion conversion = definition.conversion(expectedInput);
             boolean inputPresent = conversion != null && expectedInput.equals(currentInput);
             ItemStack result = conversion == null ? null : items.create(conversion.output(), conversion.amount());
