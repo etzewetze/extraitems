@@ -99,15 +99,19 @@ final class CheeseStationService implements Listener {
         return item;
     }
 
-    private ItemStack progress(long readyAt, ItemRegistry.Station station) {
+    private ItemStack progress(long readyAt, ItemRegistry.Station station, boolean outputBlocked) {
         if (readyAt <= 0 || station == null) return decoration(Material.LIME_DYE, "§a§lBereit",
-                List.of("§7Lege links einen Milcheimer ein.", "§7Rechts erscheinen Käse und Eimer."));
+                List.of("§7Lege links einen Milcheimer ein.", "§7Er bleibt bis zum Abschluss sichtbar.",
+                        "§7Herausnehmen bricht den Vorgang ab."));
+        if (outputBlocked) return decoration(Material.RED_DYE, "§c§lAusgänge voll",
+                List.of("§7Nimm Käse oder Eimer heraus.", "§7Der Milcheimer bleibt sicher im Eingang."));
         long seconds = Math.max(0, (readyAt - System.currentTimeMillis() + 999) / 1000);
         int percent = progressPercent(readyAt, station.processSeconds());
         ItemStack item = new ItemStack(Material.CLOCK);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(seconds == 0 ? "§6§lAusgabe wird vorbereitet" : "§e§lKäse reift: " + percent + "%");
-        meta.setLore(List.of("§7Verbleibend: §f" + seconds + " Sekunden", "§8Fortschritt wird jede Sekunde aktualisiert."));
+        meta.setLore(List.of("§7Verbleibend: §f" + seconds + " Sekunden",
+                "§7Der Milcheimer muss im Eingang bleiben.", "§8Fortschritt wird jede Sekunde aktualisiert."));
         meta.getPersistentDataContainer().set(fillerKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
@@ -122,6 +126,12 @@ final class CheeseStationService implements Listener {
     private void renderGui(Inventory inventory, long readyAt, ItemRegistry.Station station) {
         int percent = station == null ? 0 : progressPercent(readyAt, station.processSeconds());
         int lit = readyAt <= 0 ? 0 : (percent + 19) / 20;
+        boolean outputBlocked = false;
+        if (readyAt > 0 && readyAt <= System.currentTimeMillis() && station != null) {
+            ItemStack cheese = items.create(station.output(), 1);
+            ItemStack bucket = new ItemStack(station.byproduct());
+            outputBlocked = !fits(inventory.getItem(CHEESE), cheese) || !fits(inventory.getItem(BUCKET), bucket);
+        }
         for (int slot = 0; slot < inventory.getSize(); slot++) {
             if (OPEN_SLOTS.contains(slot)) continue;
             ItemStack current = inventory.getItem(slot);
@@ -138,7 +148,7 @@ final class CheeseStationService implements Listener {
                         List.of("§7Käserad und leerer Eimer")));
             } else inventory.setItem(slot, filler());
         }
-        inventory.setItem(PROGRESS, progress(readyAt, station));
+        inventory.setItem(PROGRESS, progress(readyAt, station, outputBlocked));
     }
 
     private boolean filler(ItemStack item) {
@@ -176,33 +186,36 @@ final class CheeseStationService implements Listener {
 
             Inventory inventory = barrel.getInventory();
             pullMilk(block, inventory, definition.input());
-            long ready = barrel.getPersistentDataContainer().getOrDefault(readyKey, PersistentDataType.LONG, 0L);
+            inventory = liveInventory(block);
+            long ready = currentReady(block);
+            ItemStack cheese = items.create(definition.output(), 1);
+            ItemStack bucket = new ItemStack(definition.byproduct());
+            boolean inputPresent = has(inventory.getItem(INPUT), definition.input());
+            boolean outputsFit = fits(inventory.getItem(CHEESE), cheese)
+                    && fits(inventory.getItem(BUCKET), bucket);
 
-            if (ready <= 0 && has(inventory.getItem(INPUT), definition.input())) {
-                // Consume before saving the timer. Barrel.update() may otherwise restore
-                // the inventory snapshot taken before the bucket was removed.
-                takeOne(inventory, INPUT);
+            MachineCycle.Decision decision = MachineCycle.decide(ready, now, inputPresent, outputsFit);
+            if (decision == MachineCycle.Decision.START) {
                 ready = now + definition.processSeconds() * 1000L;
-                barrel.getPersistentDataContainer().set(readyKey, PersistentDataType.LONG, ready);
-                barrel.update(true, false);
+                setReady(block, ready);
                 inventory = liveInventory(block);
-                // Older Bukkit versions can restore the old snapshot; consume it once.
-                if (has(inventory.getItem(INPUT), definition.input())) takeOne(inventory, INPUT);
                 block.getWorld().playSound(block.getLocation(), Sound.ITEM_BUCKET_EMPTY, .7f, .9f);
-            } else if (ready > 0 && now >= ready) {
-                ItemStack cheese = items.create(definition.output(), 1);
-                ItemStack bucket = new ItemStack(definition.byproduct());
+            } else if (decision == MachineCycle.Decision.CANCEL) {
+                clearReady(block);
                 inventory = liveInventory(block);
-                if (fits(inventory.getItem(CHEESE), cheese) && fits(inventory.getItem(BUCKET), bucket)) {
-                    add(inventory, CHEESE, cheese);
-                    add(inventory, BUCKET, bucket);
-                    barrel.getPersistentDataContainer().remove(readyKey);
-                    barrel.update(true, false);
-                    inventory = liveInventory(block);
-                    block.getWorld().playSound(block.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .9f, .8f);
-                    block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation().add(.5, 1.1, .5), 8, .25, .1, .25, .01);
-                    ready = 0;
-                }
+                ready = 0;
+                block.getWorld().playSound(block.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, .6f, 1.4f);
+            } else if (decision == MachineCycle.Decision.COMPLETE) {
+                // The input remains visible for the whole process. Only the successful,
+                // capacity-checked completion consumes it and creates both outputs.
+                takeOne(inventory, INPUT);
+                add(inventory, CHEESE, cheese);
+                add(inventory, BUCKET, bucket);
+                clearReady(block); // fresh BlockState: never writes an old inventory snapshot back.
+                inventory = liveInventory(block);
+                block.getWorld().playSound(block.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, .9f, .8f);
+                block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation().add(.5, 1.1, .5), 8, .25, .1, .25, .01);
+                ready = 0;
             }
 
             // Push after processing so a newly completed cycle can leave the station
@@ -221,6 +234,23 @@ final class CheeseStationService implements Listener {
         return current.getInventory();
     }
 
+    private long currentReady(Block block) {
+        if (!(block.getState() instanceof Barrel current)) return 0L;
+        return current.getPersistentDataContainer().getOrDefault(readyKey, PersistentDataType.LONG, 0L);
+    }
+
+    private void setReady(Block block, long readyAt) {
+        if (!(block.getState() instanceof Barrel current)) return;
+        current.getPersistentDataContainer().set(readyKey, PersistentDataType.LONG, readyAt);
+        current.update(true, false);
+    }
+
+    private void clearReady(Block block) {
+        if (!(block.getState() instanceof Barrel current)) return;
+        current.getPersistentDataContainer().remove(readyKey);
+        current.update(true, false);
+    }
+
     private boolean has(ItemStack item, Material material) { return item != null && item.getType() == material && item.getAmount() > 0; }
     private void takeOne(Inventory inventory, int slot) {
         ItemStack item = inventory.getItem(slot);
@@ -229,7 +259,7 @@ final class CheeseStationService implements Listener {
     }
     private boolean fits(ItemStack current, ItemStack added) {
         return current == null || current.getType().isAir()
-                || (current.isSimilar(added) && current.getAmount() < current.getMaxStackSize());
+                || (current.isSimilar(added) && current.getAmount() + added.getAmount() <= current.getMaxStackSize());
     }
     private void add(Inventory inventory, int slot, ItemStack added) {
         ItemStack current = inventory.getItem(slot);

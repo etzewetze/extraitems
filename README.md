@@ -1,6 +1,13 @@
-# ExtraItems 0.4.0
+# ExtraItems 0.5.0
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Neu in 0.5.0
+
+- Die Käsestation lässt den Milcheimer während der gesamten Reifezeit sichtbar im Eingang. Herausnehmen bricht den Vorgang ohne Verlust ab; erst beim erfolgreichen Abschluss entstehen Käserad und leerer Eimer.
+- Neuer platzierbarer Samengenerator mit GUI und Hopper-Unterstützung: Tomate ergibt vier, Salat und Zwiebel jeweils drei Samen nach 30 Sekunden Trocknung.
+- Die direkte Umwandlung von Tomate zu Samen wird beim Update automatisch aus `items.yml` entfernt. Die Starterrezepte bleiben für den Einstieg in neue Welten erhalten.
+- Das Eisenmesser verursacht 9 Angriffsschaden bei 2,4 Angriffen pro Sekunde und verbraucht bei einem Treffer einen Einsatz. `Old but Gold` verhindert weiterhin jeden Verschleiß.
 
 ## Neu in 0.4.0
 
@@ -45,7 +52,7 @@ ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items
 - `items.yml` ist nur noch der zentrale Index mit den Pfaden zu diesen Dateien.
 - Alte kombinierte `items.yml`-Dateien werden beim Start automatisch gesichert und aufgeteilt.
 - Definitionen melden Fehler mit dem genauen Dateipfad.
-- Die Typen `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. 0.3.0 implementiert `item`, `tool`, `crop`, `recipe`, `station` und `placeable_food`.
+- Die Typen `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator` und `placeable_food`.
 - Ressourcenpaket-Modi sind jetzt eindeutig: `self-host`, `external` oder `disabled`.
 - `self-host` bildet die Downloadadresse automatisch aus dem Hostnamen bzw. der IP, mit der ein Spieler beitritt.
 - Administratoren können bei einer kaputten Pack-Konfiguration per Notfallzugang beitreten und `/ei status` verwenden.
@@ -69,12 +76,12 @@ plugins/ExtraItems/
     ├── tomato_seeds/
         ├── item.yml
         └── recipes/
-            ├── starter.yml
-            └── from_tomato.yml
+            └── starter.yml
     ├── lettuce/              # item.yml + crop.yml
     ├── onion/                # item.yml + crop.yml
     ├── knife/                # tool.yml + Rezept
     ├── cheese_station/       # Item, Station und Rezept
+    ├── seed_generator/       # Item, Trocknungsdefinition und Rezept
     └── cheese_wheel/         # Item und platzierbares Essen
 ```
 
@@ -87,7 +94,8 @@ sources:
   - items/tomato/crop.yml
   - items/tomato_seeds/item.yml
   - items/tomato_seeds/recipes/starter.yml
-  - items/tomato_seeds/recipes/from_tomato.yml
+  - items/seed_generator/item.yml
+  - items/seed_generator/generator.yml
 ```
 
 Jede Quelldatei enthält mindestens `type` und `id`. IDs dürfen nur Kleinbuchstaben, Zahlen und Unterstriche enthalten. Relative Pfade dürfen den Pluginordner nicht verlassen; doppelte Dateien und doppelte Definitionen werden abgelehnt. Einzelheiten und kopierbare Beispiele stehen in [docs/DEFINITIONEN.md](docs/DEFINITIONEN.md).
@@ -141,7 +149,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.4.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.5.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -168,8 +176,10 @@ Vor dem Update Welten und `plugins/ExtraItems/` sichern. `/reload` und Hot-Unloa
 | `extraitems.craft.schlemmer_burger` | Schlemmer-Burger herstellen |
 | `extraitems.craft.cheesy_schlemmer` | Cheesy Schlemmer herstellen |
 | `extraitems.craft.cheese_station` | Käsestation herstellen |
+| `extraitems.craft.seed_generator` | Samengenerator herstellen |
 | `extraitems.craft.old_but_gold` | Old-but-Gold-Buch herstellen |
 | `extraitems.use.cheese_station` | Käsestation öffnen |
+| `extraitems.use.seed_generator` | Samengenerator öffnen |
 | `extraitems.place.cheese_wheel` | Käserad platzieren |
 
 Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstücksschutz gilt.
@@ -180,8 +190,10 @@ Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstückssch
 - Burger Buns: ein Brot und ein Messer formlos in das Craftingfeld legen.
 - Käse schneiden: ein Käserad und ein Messer ergeben zehn Scheiben.
 - `Old but Gold`: das hergestellte Buch im Amboss rechts neben das Messer legen; Kosten: 5 Level.
-- Käsestation: Milcheimer manuell in den Eingang legen. Alternativ eine Kiste über einen Hopper stellen und den Hopper oben oder seitlich an die Station setzen. Ein Hopper direkt darunter zieht Käseräder und leere Eimer heraus.
+- Käsestation: Milcheimer manuell in den Eingang legen. Er bleibt dort 60 Sekunden sichtbar; Herausnehmen bricht den Vorgang ab. Erst bei freiem Käse- und Eimerausgang wird er verbraucht. Alternativ eine Kiste über einen Hopper stellen und den Hopper oben oder seitlich an die Station setzen. Ein Hopper direkt darunter zieht Käseräder und leere Eimer heraus.
 - Stationsrezept: `· Fass ·` / `Bretter Werkbank Bretter` / `Stock · Stock`; jede Holzbrettart ist erlaubt.
+- Samengenerator: Tomate, Salat oder Zwiebel links einlegen; nach 30 Sekunden erscheinen rechts 4/3/3 Samen. Rezept: `Glas Lagerfeuer Glas` / `Bretter Fass Bretter` / `Stock · Stock`.
+- Messer im Kampf: 9 Schaden bei 2,4 Angriffen pro Sekunde; jeder erfolgreiche Nahkampftreffer verbraucht einen Einsatz.
 - Cheesy Schlemmer: Buns + Käsescheibe + Tomate + Salat + gebratenes Rindfleisch.
 - Das Käserad mit Rechtsklick auf einen soliden Block stellen und mit leerer Hand essen. Jede der zehn Portionen füllt eine Hungerkeule. Beim Abbauen gibt es keinen Drop.
 
@@ -199,7 +211,7 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.4.0.jar`.
+Ergebnis: `target/ExtraItems-0.5.0.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
 

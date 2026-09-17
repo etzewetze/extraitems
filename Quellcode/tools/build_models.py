@@ -71,7 +71,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.4.0 • 3D-Küchenitems, Käsestation und optionale Integrationen • 1.21.11–26.2',
+    'description': 'ExtraItems 0.5.0 • 3D-Küche, Käsestation, Samengenerator und Integrationen • 1.21.11–26.2',
     'min_format': [75, 0], 'max_format': [88, 0]
 }})
 
@@ -162,6 +162,18 @@ geometry(ASSETS / 'models/item/cheese_station.json', [
     'copper': 'minecraft:block/exposed_copper', 'rim': 'minecraft:block/barrel_side',
     'milk': 'minecraft:block/calcite', 'iron': 'minecraft:block/iron_block'}, ITEM_DISPLAY)
 
+item('seed_generator', 'item/seed_generator')
+geometry(ASSETS / 'models/item/seed_generator.json', [
+    cube([0, 0, 0], [16, 3, 16], 'wood'), cube([1, 3, 1], [15, 11, 15], 'frame'),
+    cube([2, 5, 2], [14, 6, 14], 'tray'), cube([3, 6, 3], [5, 6.6, 5], 'seed'),
+    cube([7, 6, 4], [9, 6.6, 6], 'seed'), cube([11, 6, 8], [13, 6.6, 10], 'seed'),
+    cube([4, 6, 10], [6, 6.6, 12], 'seed'), cube([2, 11, 2], [14, 13, 14], 'glass'),
+    cube([6, 13, 6], [10, 15, 10], 'vent')
+], {'particle': 'minecraft:block/barrel_side', 'wood': 'minecraft:block/dark_oak_planks',
+    'frame': 'minecraft:block/stripped_oak_log', 'tray': 'minecraft:block/copper_block',
+    'seed': 'minecraft:block/hay_block', 'glass': 'minecraft:block/tinted_glass',
+    'vent': 'minecraft:block/iron_block'}, ITEM_DISPLAY)
+
 item('old_but_gold_book', 'minecraft:item/enchanted_book')
 
 # Tomato crop: mature fruit uses a vanilla atlas texture for maximum robustness.
@@ -243,4 +255,4 @@ item('cheese_wheel', 'block/cheese_wheel_0')
 
 paths = sorted(str(path.relative_to(PACK)).replace('\\', '/') for path in PACK.rglob('*') if path.is_file())
 (ROOT / 'pack-files.txt').write_text('\n'.join(paths) + '\n', encoding='utf-8')
-print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 10 Käsestufen, GUI-Icons und echte 3D-Handmodelle.')
+print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 2 Maschinen, 10 Käsestufen und echte 3D-Handmodelle.')

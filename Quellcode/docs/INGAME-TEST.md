@@ -38,15 +38,18 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Originalmodelle und Tomaten auf beiden Clients | Keine Missing-Texture-Flächen, brauchbare Skalierung/Hitbox, transparenter Hintergrund. |
 | Tomaten-, Salat- und Zwiebelsamen nebeneinander | Drei eindeutig unterschiedliche Symbole, keine Vanilla-Samenanzeige. |
 | Salat/Zwiebel pflanzen, düngen und ernten | Je vier sichtbare Stufen; definierte Erntemenge; Nachwuchs ab Stufe 0. |
-| Messerrezept im 2×2-Feld | Stock links, Eisen rechts, Steinknopf unter dem Eisen ergibt ein Eisenmesser. |
+| Messerrezept in der Werkbank | Mitte links Stock, Mitte Eisen, unten Mitte Steinknopf ergibt ein Eisenmesser; alle übrigen Felder leer. |
 | Messer + Brot normal und per Shift-Klick | Buns entstehen; Zutaten und exakt ein Messereinsatz pro Brot werden verbraucht. |
 | Messer mit Haltbarkeit I/II/III | Insgesamt exakt 256/320/384 Brote schneidbar. |
 | Mending-Messer mit Erfahrung reparieren | Schaden sinkt, eigenes Modell und ID bleiben erhalten. |
 | Old-but-Gold-Buch auf anderes Item | Amboss zeigt kein Ergebnis. |
 | Old-but-Gold-Buch auf Messer | Kostet 5 Level; Messer bleibt dauerhaft unzerstörbar. |
+| Messer im Nahkampf | Voller Treffer zeigt 9 Angriffsschaden und eine deutlich schnellere 2,4-Angriffsgeschwindigkeit; ein Einsatz wird verbraucht. |
 | Schlemmer-Burger herstellen und droppen | Rezept benötigt nur Buns, Salat, Zwiebel und gebratenes Rind; extrudiertes Pixelmodell sichtbar; füllt 9 Keulen. |
 | Cheesy Schlemmer herstellen und droppen | Buns, Käsescheibe, Tomate, Salat und gebratenes Rind; kein Zwiebelbedarf; eigene Textur; füllt maximal die zehn Vanilla-Keulen plus Sättigung. |
-| Käsestation manuell | Milcheimer im Eingang startet 60 Sekunden; Käserad und leerer Eimer erscheinen getrennt. |
+| Käsestation manuell | Milcheimer bleibt während der 60 Sekunden im Eingang; erst danach erscheinen Käserad und leerer Eimer getrennt. |
+| Milcheimer während Reife herausnehmen | Vorgang bricht beim nächsten Stationstick ab; Eimer bleibt beim Spieler, kein Käse entsteht und ein neuer Eimer startet bei 0 %. |
+| Käse- oder Eimerausgang voll | Verarbeitung wartet bei 100 %, ohne den Milcheimer zu verlieren; nach Freimachen entstehen beide Ausgaben genau einmal. |
 | Käsestations-GUI | Dunkler Rahmen, farbig markierter Eingang/Ausgang, fünfteiliger Balken, Prozent und Restzeit aktualisieren sich. |
 | Käsestationsrezept mit verschiedenen Brettern | Positionen entsprechen `·Fass· / Bretter-Werkbank-Bretter / Stock-·-Stock`; alle Brettarten funktionieren. |
 | Kiste → Hopper → Station → Hopper | Milcheimer wird oben/seitlich eingezogen; beide Ausgaben landen ausschließlich unten. |
@@ -56,5 +59,9 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Käserad abbauen oder Unterlage entfernen | Rad verschwindet vollständig und droppt nichts. |
 | Messer + Käserad | Zehn Käsescheiben entstehen; ein Messereinsatz wird verbraucht. |
 | Käsescheibe essen | In der Hand essbar; füllt genau eine Hungerkeule. |
+| Samengenerator-Rezept | `Glas-Lagerfeuer-Glas / Bretter-Fass-Bretter / Stock-·-Stock`; alle Brettarten funktionieren. |
+| Gemüse manuell trocknen | Tomate/Salat/Zwiebel bleiben jeweils 30 Sekunden im Eingang und ergeben 4/3/3 passende Samen. |
+| Gemüse während Trocknung entfernen/tauschen | Lauf bricht ohne Verlust ab; ein anderes Gemüse übernimmt nicht den alten Fortschritt. |
+| Kiste → Hopper → Samengenerator → Hopper | Gemüse wird nur oben/seitlich eingezogen, fertige Samen ausschließlich unten ausgegeben. |
 
 Die echte Grafik, Client-Handanimation, Reihenfolge mit Drittplugins und Verhalten unter hoher Spielerlast lassen sich mit reinen Unit-Tests nicht abnehmen. Erst nach dieser Prüfung produktiv einsetzen.

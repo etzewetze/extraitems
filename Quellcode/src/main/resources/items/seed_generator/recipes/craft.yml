@@ -1,0 +1,15 @@
+type: recipe
+id: seed_generator
+result: seed_generator
+amount: 1
+permission: extraitems.craft.seed_generator
+shape:
+  - 'GCG'
+  - 'PBP'
+  - 'S S'
+keys:
+  G: minecraft:glass
+  C: minecraft:campfire
+  P: 'minecraft:#planks'
+  B: minecraft:barrel
+  S: minecraft:stick

@@ -1,11 +1,13 @@
 package de.extraitems;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
@@ -70,6 +72,15 @@ final class ToolService implements Listener {
         meta.setMaxDamage(maxUses(item));
         if (isOldGold(item)) meta.setUnbreakable(true);
         item.setItemMeta(meta);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void melee(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) return;
+        ItemStack weapon = player.getInventory().getItemInMainHand();
+        if (items.tool(weapon) == null) return;
+        if (damage(weapon, 1, player)) player.getInventory().setItemInMainHand(weapon);
+        else player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

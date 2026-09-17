@@ -16,6 +16,8 @@ import java.util.*;
 final class DefinitionFiles {
     static final int SCHEMA_VERSION = 2;
     private static final String MANIFEST = "definition-files.txt";
+    private static final Set<String> RETIRED_BUNDLED_SOURCES = Set.of(
+            "items/tomato_seeds/recipes/from_tomato.yml");
 
     record Definition(String type, String id, YamlConfiguration config, String source) {}
 
@@ -115,7 +117,7 @@ final class DefinitionFiles {
         }
     }
 
-    /** Adds new bundled definitions to an existing modular index without removing server-owned entries. */
+    /** Adds new bundled definitions and retires obsolete bundled paths without touching other server entries. */
     private static void mergeBundledIndex(ExtraItemsPlugin plugin, Path indexFile) throws IOException {
         YamlConfiguration current;
         YamlConfiguration bundled = new YamlConfiguration();
@@ -140,7 +142,8 @@ final class DefinitionFiles {
     }
 
     static List<String> mergeSources(List<String> current, List<String> bundled) {
-        LinkedHashSet<String> result = new LinkedHashSet<>(current);
+        LinkedHashSet<String> result = new LinkedHashSet<>();
+        current.stream().filter(source -> !RETIRED_BUNDLED_SOURCES.contains(source)).forEach(result::add);
         result.addAll(bundled);
         return List.copyOf(result);
     }

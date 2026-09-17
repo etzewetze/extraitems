@@ -42,16 +42,43 @@ harvest-max: 3
 
 Itemdefinitionen werden unabhängig von der Reihenfolge in `items.yml` zuerst geladen. Danach folgen Pflanzen und Rezepte.
 
+## Samengenerator
+
+```yaml
+type: seed_generator
+id: seed_generator
+item: seed_generator
+use-permission: extraitems.use.seed_generator
+process-seconds: 30
+conversions:
+  tomato:
+    output: tomato_seeds
+    amount: 4
+  lettuce:
+    output: lettuce_seeds
+    amount: 3
+```
+
+Der Schlüssel unter `conversions` ist die ExtraItems-ID des Eingangs. Gemüse bleibt während der Trocknung sichtbar und wird erst bei erfolgreicher Ausgabe verbraucht. Ein fehlender oder ausgetauschter Eingang bricht den Vorgang ab.
+
 ## Rezept
 
 ```yaml
 type: recipe
-id: tomato_to_seeds
-result: tomato_seeds
-amount: 4
-permission: extraitems.craft.tomato_seeds
-ingredients:
-  - extraitems:tomato
+id: seed_generator
+result: seed_generator
+amount: 1
+permission: extraitems.craft.seed_generator
+shape:
+  - 'GCG'
+  - 'PBP'
+  - 'S S'
+keys:
+  G: minecraft:glass
+  C: minecraft:campfire
+  P: 'minecraft:#planks'
+  B: minecraft:barrel
+  S: minecraft:stick
 ```
 
 Zutaten beginnen mit `minecraft:` oder `extraitems:`. Seit 0.3.0 sind formlose und geformte Rezepte mit 1–9 Zutaten implementiert. Für beliebige Holzbrettarten kann `minecraft:#planks` als Zutat verwendet werden. Ein formloses Schneiderezept kann zusätzlich `tool: knife` und `tool-damage: 1` angeben; das Werkzeug bleibt im Feld und verliert pro Herstellung exakt diese Zahl an Einsätzen.
@@ -68,6 +95,6 @@ Eine Definition kann mit `enabled: false` vorübergehend übersprungen werden. B
 
 ## Erweiterungspunkte
 
-Die Loader-Pipeline verarbeitet Definitionen nach Typ. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station` und `placeable_food`. `potion`, `effect`, `gui`, `tree` und `ore` bleiben reserviert. Werden reservierte Typen verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
+Die Loader-Pipeline verarbeitet Definitionen nach Typ. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator` und `placeable_food`. `potion`, `effect`, `gui`, `tree` und `ore` bleiben reserviert. Werden reservierte Typen verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
 
-Werkzeuge, Stationen und platzierbares Essen liegen ebenfalls getrennt im jeweiligen Itemordner. Beispiele sind `items/knife/tool.yml`, `items/cheese_station/station.yml` und `items/cheese_wheel/placeable_food.yml`.
+Werkzeuge, Stationen, Samengeneratoren und platzierbares Essen liegen ebenfalls getrennt im jeweiligen Itemordner. Beispiele sind `items/knife/tool.yml`, `items/cheese_station/station.yml`, `items/seed_generator/generator.yml` und `items/cheese_wheel/placeable_food.yml`. Werkzeuge können über `attack-damage` und `attack-speed` eigene Haupt-Hand-Kampfwerte erhalten.

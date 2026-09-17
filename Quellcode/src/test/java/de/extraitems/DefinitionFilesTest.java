@@ -46,4 +46,12 @@ class DefinitionFilesTest {
         assertEquals(List.of("items/server_custom/item.yml", "items/tomato/item.yml",
                 "items/lettuce/item.yml", "items/onion/item.yml"), merged);
     }
+
+    @Test
+    void updateRetiresTheDirectTomatoToSeedRecipe() {
+        var merged = DefinitionFiles.mergeSources(
+                List.of("items/custom/recipe.yml", "items/tomato_seeds/recipes/from_tomato.yml"),
+                List.of("items/seed_generator/generator.yml"));
+        assertEquals(List.of("items/custom/recipe.yml", "items/seed_generator/generator.yml"), merged);
+    }
 }

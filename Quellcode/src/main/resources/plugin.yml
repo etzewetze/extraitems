@@ -1,5 +1,5 @@
 name: ExtraItems
-version: '0.4.0'
+version: '0.5.0'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
 description: Modulare Vanilla-Items, Pflanzen, Küche, Pflicht-Ressourcenpaket und Rechte
@@ -29,6 +29,9 @@ permissions:
   extraitems.use.cheese_station:
     description: Käsestationen öffnen und verwenden
     default: op
+  extraitems.use.seed_generator:
+    description: Samengenerator öffnen und verwenden
+    default: op
   extraitems.craft.knife:
     description: Eisenmesser herstellen
     default: op
@@ -46,6 +49,9 @@ permissions:
     default: op
   extraitems.craft.cheese_station:
     description: Käsestation herstellen
+    default: op
+  extraitems.craft.seed_generator:
+    description: Samengenerator herstellen
     default: op
   extraitems.craft.external:
     description: Externe Nexo-, ItemsAdder-, Oraxen- oder CraftEngine-Rezepte herstellen

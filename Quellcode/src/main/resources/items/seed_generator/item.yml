@@ -1,0 +1,9 @@
+type: item
+id: seed_generator
+material: BARREL
+name: '&aSamengenerator'
+model: extraitems:seed_generator
+lore:
+  - '&7Trocknet Gemüse zu Saatgut.'
+  - '&7Eingang: Hopper seitlich oder oben.'
+  - '&7Ausgang: Hopper darunter.'

@@ -19,6 +19,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
     private CropService crops;
     private ToolService tools;
     private CheeseStationService stations;
+    private SeedGeneratorService seedGenerators;
     private PlaceableFoodService placeableFoods;
     private BukkitTask externalRecipeTask;
     private boolean operational;
@@ -42,18 +43,21 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             tools = new ToolService(this, items);
             crops = new CropService(this, items);
             stations = new CheeseStationService(this, items);
+            seedGenerators = new SeedGeneratorService(this, items);
             placeableFoods = new PlaceableFoodService(this, items);
             getServer().getPluginManager().registerEvents(tools, this);
             getServer().getPluginManager().registerEvents(crops, this);
             getServer().getPluginManager().registerEvents(stations, this);
+            getServer().getPluginManager().registerEvents(seedGenerators, this);
             getServer().getPluginManager().registerEvents(placeableFoods, this);
             getServer().getPluginManager().registerEvents(new RecipeListener(this, items, tools), this);
             crops.start();
             stations.start();
+            seedGenerators.start();
             placeableFoods.start();
             operational = true;
             scheduleExternalRecipeRefresh();
-            getLogger().info("ExtraItems 0.4.0 bereit. Server " + Bukkit.getBukkitVersion()
+            getLogger().info("ExtraItems 0.5.0 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
                     + "; Definitionen " + items.sourceCount()
                     + "; Integrationen " + items.externalStatus());
@@ -64,6 +68,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             if (items != null) items.unregisterRecipes();
             if (crops != null) crops.stop();
             if (stations != null) stations.stop();
+            if (seedGenerators != null) seedGenerators.stop();
             if (placeableFoods != null) placeableFoods.stop();
         }
 
@@ -107,6 +112,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
         operational = false;
         if (externalRecipeTask != null) externalRecipeTask.cancel();
         if (placeableFoods != null) placeableFoods.stop();
+        if (seedGenerators != null) seedGenerators.stop();
         if (stations != null) stations.stop();
         if (crops != null) crops.stop();
         if (items != null) items.unregisterRecipes();
@@ -131,7 +137,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.4.0 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.5.0 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));
@@ -139,6 +145,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             sender.sendMessage("§7Definitionen: " + (items == null ? 0 : items.sourceCount())
                     + " | Pflanzen: " + (crops == null ? 0 : crops.count())
                     + " | Käsestationen: " + (stations == null ? 0 : stations.count())
+                    + " | Samengeneratoren: " + (seedGenerators == null ? 0 : seedGenerators.count())
                     + " | Käseräder: " + (placeableFoods == null ? 0 : placeableFoods.count()));
             sender.sendMessage("§7Integrationen: " + (items == null ? "nicht initialisiert" : items.externalStatus()));
             if (sender instanceof Player player && pack.ready() && pack.deliveryEnabled()) {

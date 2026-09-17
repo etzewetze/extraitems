@@ -25,6 +25,22 @@ class KitchenDefinitionsTest {
         assertTrue(recipe.contains("B: minecraft:stone_button"));
     }
 
+    @Test void knifeUsesAxeDamageAtHighAttackSpeed() throws Exception {
+        String tool = Files.readString(ROOT.resolve("knife/tool.yml"));
+        assertTrue(tool.contains("attack-damage: 9.0"));
+        assertTrue(tool.contains("attack-speed: 2.4"));
+    }
+
+    @Test void seedGeneratorDriesAllThreeVegetables() throws Exception {
+        String generator = Files.readString(ROOT.resolve("seed_generator/generator.yml"));
+        assertTrue(generator.contains("process-seconds: 30"));
+        for (String vegetable : new String[]{"tomato", "lettuce", "onion"}) {
+            assertTrue(generator.contains("  " + vegetable + ":"), vegetable);
+            assertTrue(generator.contains("output: " + vegetable + "_seeds"), vegetable);
+        }
+        assertFalse(Files.exists(ROOT.resolve("tomato_seeds/recipes/from_tomato.yml")));
+    }
+
     @Test void foodValuesUseHalfDrumstickUnits() throws Exception {
         assertNutrition("tomato/item.yml", 3);
         assertNutrition("lettuce/item.yml", 3);

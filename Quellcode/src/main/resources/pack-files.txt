@@ -28,6 +28,7 @@ assets/extraitems/items/onion_stage_1.json
 assets/extraitems/items/onion_stage_2.json
 assets/extraitems/items/onion_stage_3.json
 assets/extraitems/items/schlemmer_burger.json
+assets/extraitems/items/seed_generator.json
 assets/extraitems/items/tomato.json
 assets/extraitems/items/tomato_seeds.json
 assets/extraitems/items/tomato_stage_0.json
@@ -72,6 +73,7 @@ assets/extraitems/models/item/onion_icon.json
 assets/extraitems/models/item/onion_seeds.json
 assets/extraitems/models/item/schlemmer_burger_3d.json
 assets/extraitems/models/item/schlemmer_burger_icon.json
+assets/extraitems/models/item/seed_generator.json
 assets/extraitems/models/item/tomato.json
 assets/extraitems/models/item/tomato_seeds.json
 assets/extraitems/textures/item/burger_bun.png

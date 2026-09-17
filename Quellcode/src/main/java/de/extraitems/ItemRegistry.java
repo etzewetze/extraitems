@@ -15,9 +15,15 @@ public final class ItemRegistry {
     public record Crop(String id, String seed, String produce, String permission,
                        List<NamespacedKey> models, int secondsPerStage, int regrowStage,
                        int light, boolean hydrated, boolean bonemeal, int minDrop, int maxDrop) {}
-    public record Tool(String id, int baseUses, int usesPerUnbreakingLevel, String oldGoldBook) {}
+    public record Tool(String id, int baseUses, int usesPerUnbreakingLevel, String oldGoldBook,
+                       double attackDamage, double attackSpeed) {}
     public record Station(String id, String item, String permission, Material input,
                           int processSeconds, String output, Material byproduct) {}
+    public record SeedConversion(String input, String output, int amount) {}
+    public record SeedGenerator(String id, String item, String permission, int processSeconds,
+                                Map<String, SeedConversion> conversions) {
+        SeedConversion conversion(String input) { return conversions.get(input); }
+    }
     public record PlaceableFood(String id, String item, String permission, List<NamespacedKey> models,
                                 int nutrition, float saturation, boolean emptyHandOnly) {}
     public record RecipeSpec(NamespacedKey key, String result, int amount, String permission,
@@ -29,13 +35,14 @@ public final class ItemRegistry {
 
     private static final Set<String> FUTURE_TYPES = Set.of("potion", "effect", "gui", "tree", "ore");
     private static final Set<String> ACTIVE_TYPES = Set.of(
-            "item", "tool", "crop", "recipe", "station", "placeable_food");
+            "item", "tool", "crop", "recipe", "station", "seed_generator", "placeable_food");
     private final ExtraItemsPlugin plugin;
     private final NamespacedKey itemKey;
     private final Map<String, ItemStack> templates = new LinkedHashMap<>();
     private final Map<String, Crop> crops = new LinkedHashMap<>();
     private final Map<String, Tool> tools = new LinkedHashMap<>();
     private final Map<String, Station> stations = new LinkedHashMap<>();
+    private final Map<String, SeedGenerator> seedGenerators = new LinkedHashMap<>();
     private final Map<String, PlaceableFood> placeableFoods = new LinkedHashMap<>();
     private final Map<NamespacedKey, RecipeSpec> recipes = new LinkedHashMap<>();
     private final int sourceCount;
@@ -55,6 +62,7 @@ public final class ItemRegistry {
         loadType(definitions, "tool", this::loadTool);
         loadType(definitions, "crop", this::loadCrop);
         loadType(definitions, "station", this::loadStation);
+        loadType(definitions, "seed_generator", this::loadSeedGenerator);
         loadType(definitions, "placeable_food", this::loadPlaceableFood);
         loadType(definitions, "recipe", this::loadRecipe);
 
@@ -90,6 +98,8 @@ public final class ItemRegistry {
         ItemStack item = template(id, c);
         int baseUses = range(c.getInt("base-uses", 192), 1, 100000, id);
         int bonus = range(c.getInt("uses-per-unbreaking-level", 64), 0, 100000, id);
+        double attackDamage = finiteDouble(c.getDouble("attack-damage", 1.0), 0, 100, id);
+        double attackSpeed = finiteDouble(c.getDouble("attack-speed", 4.0), 0.1, 20, id);
         String book = c.getString("old-but-gold-book", "old_but_gold_book");
         if (book != null && !book.isBlank()) requireItem(book);
         if (!(item.getItemMeta() instanceof Damageable damageable)) {
@@ -98,8 +108,9 @@ public final class ItemRegistry {
         damageable.setMaxDamage(baseUses);
         damageable.setDamage(0);
         item.setItemMeta(damageable);
+        CombatAttributes.apply(item, plugin, id, attackDamage, attackSpeed);
         putTemplate(id, item);
-        tools.put(id, new Tool(id, baseUses, bonus, book));
+        tools.put(id, new Tool(id, baseUses, bonus, book, attackDamage, attackSpeed));
     }
 
     private ItemStack template(String id, ConfigurationSection c) {
@@ -164,6 +175,31 @@ public final class ItemRegistry {
                 range(c.getInt("process-seconds", 60), 1, 86400, id),
                 requireItem(c.getString("output", "")), byproduct);
         if (stations.putIfAbsent(id, station) != null) throw new IllegalArgumentException("Stations-ID doppelt: " + id);
+    }
+
+    private void loadSeedGenerator(DefinitionFiles.Definition definition) {
+        String id = definition.id();
+        ConfigurationSection c = definition.config();
+        ConfigurationSection raw = c.getConfigurationSection("conversions");
+        if (raw == null || raw.getKeys(false).isEmpty()) {
+            throw new IllegalArgumentException("conversions benötigt mindestens einen Eintrag: " + id);
+        }
+        Map<String, SeedConversion> conversions = new LinkedHashMap<>();
+        for (String inputId : raw.getKeys(false)) {
+            String input = requireItem(inputId);
+            ConfigurationSection conversion = raw.getConfigurationSection(inputId);
+            if (conversion == null) throw new IllegalArgumentException("Ungültige Umwandlung: " + inputId);
+            String output = requireItem(conversion.getString("output", ""));
+            int amount = range(conversion.getInt("amount", 1), 1, stackLimit(output), inputId);
+            conversions.put(input, new SeedConversion(input, output, amount));
+        }
+        SeedGenerator generator = new SeedGenerator(id, requireItem(c.getString("item", id)),
+                permission(c.getString("use-permission", "extraitems.use." + id)),
+                range(c.getInt("process-seconds", 30), 1, 86400, id),
+                Collections.unmodifiableMap(conversions));
+        if (seedGenerators.putIfAbsent(id, generator) != null) {
+            throw new IllegalArgumentException("Samengenerator-ID doppelt: " + id);
+        }
     }
 
     private void loadPlaceableFood(DefinitionFiles.Definition definition) {
@@ -365,10 +401,12 @@ public final class ItemRegistry {
     public int sourceCount() { return sourceCount; }
     public Crop crop(String id) { return crops.get(id); }
     public Collection<Station> stations() { return Collections.unmodifiableCollection(stations.values()); }
+    public Collection<SeedGenerator> seedGenerators() { return Collections.unmodifiableCollection(seedGenerators.values()); }
     public Collection<PlaceableFood> placeableFoods() { return Collections.unmodifiableCollection(placeableFoods.values()); }
     public Tool tool(String id) { return tools.get(id); }
     public Tool tool(ItemStack item) { String id = id(item); return id == null ? null : tools.get(id); }
     public Station station(String id) { return stations.get(id); }
+    public SeedGenerator seedGenerator(String id) { return seedGenerators.get(id); }
     public PlaceableFood placeableFood(String id) { return placeableFoods.get(id); }
 
     public Crop cropForSeed(ItemStack item) {
@@ -378,6 +416,11 @@ public final class ItemRegistry {
     public Station stationForItem(ItemStack item) {
         String id = id(item);
         return id == null ? null : stations.values().stream().filter(s -> s.item().equals(id)).findFirst().orElse(null);
+    }
+    public SeedGenerator seedGeneratorForItem(ItemStack item) {
+        String id = id(item);
+        return id == null ? null : seedGenerators.values().stream()
+                .filter(generator -> generator.item().equals(id)).findFirst().orElse(null);
     }
     public PlaceableFood placeableFoodForItem(ItemStack item) {
         String id = id(item);
@@ -464,6 +507,12 @@ public final class ItemRegistry {
         float result = (float) value;
         if (!Float.isFinite(result) || result < min || result > max) throw new IllegalArgumentException("Ungültiger Wert: " + name);
         return result;
+    }
+    static double finiteDouble(double value, double min, double max, String name) {
+        if (!Double.isFinite(value) || value < min || value > max) {
+            throw new IllegalArgumentException("Ungültiger Wert: " + name);
+        }
+        return value;
     }
     static NamespacedKey key(String value) {
         NamespacedKey key = NamespacedKey.fromString(value);

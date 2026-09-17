@@ -40,7 +40,7 @@ class ResourcePackAssetsTest {
 
     @Test
     void blockyItemsHaveCuboidsAndDroppedItemTransform() throws Exception {
-        for (String name : new String[]{"lettuce", "cheese_slice", "cheese_station"}) {
+        for (String name : new String[]{"lettuce", "cheese_slice", "cheese_station", "seed_generator"}) {
             String model = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + ".json"));
             assertTrue(model.contains("\"elements\""), name);
             assertTrue(model.contains("\"ground\""), name);

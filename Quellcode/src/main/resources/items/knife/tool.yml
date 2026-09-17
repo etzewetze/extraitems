@@ -5,6 +5,9 @@ name: '&fEisenmesser'
 model: extraitems:knife
 lore:
   - '&7Schneidet Brot und Käseräder.'
+  - '&79 Angriffsschaden, 2,4 Angriffsgeschwindigkeit.'
 base-uses: 192
 uses-per-unbreaking-level: 64
 old-but-gold-book: old_but_gold_book
+attack-damage: 9.0
+attack-speed: 2.4

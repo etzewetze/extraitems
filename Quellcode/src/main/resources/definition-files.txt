@@ -2,7 +2,6 @@ items/tomato/item.yml
 items/tomato/crop.yml
 items/tomato_seeds/item.yml
 items/tomato_seeds/recipes/starter.yml
-items/tomato_seeds/recipes/from_tomato.yml
 items/lettuce/item.yml
 items/lettuce/crop.yml
 items/lettuce_seeds/item.yml
@@ -28,3 +27,6 @@ items/cheese_wheel/item.yml
 items/cheese_wheel/placeable_food.yml
 items/cheese_slice/item.yml
 items/cheese_slice/recipes/cut_wheel.yml
+items/seed_generator/item.yml
+items/seed_generator/generator.yml
+items/seed_generator/recipes/craft.yml
