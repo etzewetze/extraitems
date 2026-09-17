@@ -57,8 +57,8 @@ jobs:
         if: ${{ matrix.build_paper_api }}
         working-directory: paper-26.3
         run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
           ./gradlew applyPatches --stacktrace
           ./gradlew :paper-api:publishToMavenLocal --stacktrace
       - name: Test against ${{ matrix.label }}
