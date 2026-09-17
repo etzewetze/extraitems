@@ -5,14 +5,16 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.extraitems</groupId>
   <artifactId>extraitems</artifactId>
-  <version>0.5.0</version>
+  <version>0.5.1</version>
   <name>ExtraItems</name>
   <description>Modular Vanilla custom items and crops with mandatory resource pack</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
-    <spigot.version>1.21.11-R0.1-SNAPSHOT</spigot.version>
+    <server.api.group>org.spigotmc</server.api.group>
+    <server.api.artifact>spigot-api</server.api.artifact>
+    <server.api.version>1.21.11-R0.1-SNAPSHOT</server.api.version>
   </properties>
 
   <repositories>
@@ -21,13 +23,17 @@
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
       <releases><enabled>false</enabled></releases>
     </repository>
+    <repository>
+      <id>papermc</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
+    </repository>
   </repositories>
 
   <dependencies>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>${spigot.version}</version>
+      <groupId>${server.api.group}</groupId>
+      <artifactId>${server.api.artifact}</artifactId>
+      <version>${server.api.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -1,6 +1,13 @@
-# ExtraItems 0.5.0
+# ExtraItems 0.5.1
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Neu in 0.5.1
+
+- Minecraft 26.3 wird über die aktuelle Paper-API unterstützt; die CI prüft dafür zusätzlich `paper-api:26.3-R0.1-SNAPSHOT` unter Java 25.
+- Das Ressourcenpaket akzeptiert nun die Formate 75.0 bis 97.1 und deckt damit Minecraft 1.21.11 bis 26.3 ab.
+- Die Untergrenze 1.21.11 und der Java-21-Bytecode bleiben erhalten.
+- Hinweis: Paper führt den 26.3-Port derzeit noch im Alpha-Kanal. Vor dem Produktiveinsatz ist deshalb ein echter Test mit dem verwendeten Paper-26.3-Build erforderlich.
 
 ## Neu in 0.5.0
 
@@ -149,7 +156,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.5.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.5.1.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -201,7 +208,8 @@ Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstückssch
 
 - API-Untergrenze: Paper/Spigot 1.21.11.
 - Java-Bytecode: Java 21.
-- Der CI-Build prüft 1.21.11 mit Java 21 und 26.2 mit Java 25.
+- Der CI-Build prüft 1.21.11 mit Java 21, 26.2 mit Java 25 und Paper 26.3 Alpha mit Java 25.
+- Minecraft 26.3 verwendet Ressourcenpaketformat 97.1; Paper 26.3 ist zum Stand dieser Version noch Alpha.
 - Zukünftige Minecraft-Versionen benötigen eine erneute API- und Ingame-Prüfung.
 
 Lokaler Build:
@@ -211,7 +219,7 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.5.0.jar`.
+Ergebnis: `target/ExtraItems-0.5.1.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
 

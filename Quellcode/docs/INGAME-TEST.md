@@ -1,6 +1,6 @@
 # Abnahme auf einem separaten Testserver
 
-Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die Komponententests. Für belastbare Freigabe dieselben Schritte auf Paper 1.21.11 und Paper 26.2 mit jeweils passendem Vanilla-Java-Client durchführen. Als zweiten Account einen Spieler ohne OP und ohne Wildcard-Rechte nutzen. Grundstücksschutz zusätzlich mit den auf dem Zielserver tatsächlich eingesetzten Plugins prüfen.
+Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die Komponententests. Für belastbare Freigabe dieselben Schritte auf Paper 1.21.11, Paper 26.2 und einem aktuellen Paper-26.3-Alpha-Build mit jeweils passendem Vanilla-Java-Client durchführen. Als zweiten Account einen Spieler ohne OP und ohne Wildcard-Rechte nutzen. Grundstücksschutz zusätzlich mit den auf dem Zielserver tatsächlich eingesetzten Plugins prüfen.
 
 | Test | Erwartung |
 |---|---|

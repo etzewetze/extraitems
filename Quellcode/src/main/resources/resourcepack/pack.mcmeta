@@ -1,13 +1,13 @@
 {
   "pack": {
-    "description": "ExtraItems 0.5.0 • 3D-Küche, Käsestation, Samengenerator und Integrationen • 1.21.11–26.2",
+    "description": "ExtraItems 0.5.1 • 3D-Küche, Käsestation, Samengenerator und Integrationen • 1.21.11–26.3",
     "min_format": [
       75,
       0
     ],
     "max_format": [
-      88,
-      0
+      97,
+      1
     ]
   }
 }

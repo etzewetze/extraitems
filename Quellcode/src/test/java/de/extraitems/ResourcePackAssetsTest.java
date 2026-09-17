@@ -24,6 +24,13 @@ class ResourcePackAssetsTest {
     }
 
     @Test
+    void packManifestCoversMinecraft26_3() throws Exception {
+        String metadata = Files.readString(PACK.resolve("pack.mcmeta")).replaceAll("\\s+", "");
+        assertTrue(metadata.contains("\"min_format\":[75,0]"));
+        assertTrue(metadata.contains("\"max_format\":[97,1]"));
+    }
+
+    @Test
     void ripeCropDoesNotDependOnTheCustomItemTexture() throws Exception {
         String model = Files.readString(PACK.resolve("assets/extraitems/models/block/tomato_stage_3.json"));
         assertTrue(model.contains("minecraft:block/red_concrete"));

@@ -11,14 +11,26 @@ permissions:
 
 jobs:
   verify:
+    name: Verify ${{ matrix.label }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - java: "21"
-            api: "1.21.11-R0.1-SNAPSHOT"
-          - java: "25"
-            api: "26.2-R0.1-SNAPSHOT"
+          - label: Spigot 1.21.11 / Java 21
+            java: "21"
+            api_group: org.spigotmc
+            api_artifact: spigot-api
+            api_version: "1.21.11-R0.1-SNAPSHOT"
+          - label: Spigot 26.2 / Java 25
+            java: "25"
+            api_group: org.spigotmc
+            api_artifact: spigot-api
+            api_version: "26.2-R0.1-SNAPSHOT"
+          - label: Paper 26.3 Alpha / Java 25
+            java: "25"
+            api_group: io.papermc.paper
+            api_artifact: paper-api
+            api_version: "26.3-R0.1-SNAPSHOT"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,9 +39,9 @@ jobs:
           distribution: temurin
           java-version: ${{ matrix.java }}
           cache: maven
-      - name: Test against Spigot API ${{ matrix.api }}
+      - name: Test against ${{ matrix.label }}
         working-directory: Quellcode
-        run: mvn -B clean verify -Dspigot.version=${{ matrix.api }}
+        run: mvn -B clean verify -Dserver.api.group=${{ matrix.api_group }} -Dserver.api.artifact=${{ matrix.api_artifact }} -Dserver.api.version=${{ matrix.api_version }}
 
   package:
     needs: verify
@@ -47,13 +59,13 @@ jobs:
       - name: Assemble complete package
         run: |
           mkdir -p dist/Quellcode
-          cp Quellcode/target/ExtraItems-0.5.0.jar dist/
+          cp Quellcode/target/ExtraItems-0.5.1.jar dist/
           cp README.md SCHNELLSTART.txt ASSETS.md dist/
           rsync -a --exclude target Quellcode/ dist/Quellcode/
           cd dist
-          zip -r ExtraItems-0.5.0-Komplettpaket.zip ExtraItems-0.5.0.jar README.md SCHNELLSTART.txt ASSETS.md Quellcode
+          zip -r ExtraItems-0.5.1-Komplettpaket.zip ExtraItems-0.5.1.jar README.md SCHNELLSTART.txt ASSETS.md Quellcode
       - uses: actions/upload-artifact@v4
         with:
-          name: ExtraItems-0.5.0-Komplettpaket
-          path: dist/ExtraItems-0.5.0-Komplettpaket.zip
+          name: ExtraItems-0.5.1-Komplettpaket
+          path: dist/ExtraItems-0.5.1-Komplettpaket.zip
           if-no-files-found: error

@@ -71,8 +71,8 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.5.0 • 3D-Küche, Käsestation, Samengenerator und Integrationen • 1.21.11–26.2',
-    'min_format': [75, 0], 'max_format': [88, 0]
+    'description': 'ExtraItems 0.5.1 • 3D-Küche, Käsestation, Samengenerator und Integrationen • 1.21.11–26.3',
+    'min_format': [75, 0], 'max_format': [97, 1]
 }})
 
 # Distinct seed sprites.
