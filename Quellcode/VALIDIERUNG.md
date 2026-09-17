@@ -8,15 +8,16 @@ Stand: 17. September 2026. Build und Komponenten sind automatisiert geprüft; di
 |---|---|
 | Sauberer Maven-Build gegen Spigot-API `1.21.11-R0.1-SNAPSHOT` | Erfolgreich |
 | Sauberer Maven-Build gegen Spigot-API `26.2-R0.1-SNAPSHOT` | Erfolgreich |
-| Maven-Build gegen lokal erzeugte Paper-API `26.3.local-SNAPSHOT` unter Java 25 | Aktuelle CI läuft |
+| Sauberer Maven-Build gegen lokal erzeugte Paper-API `26.3.local-SNAPSHOT` unter Java 25 | Erfolgreich |
 | Java-Compilerziel | `--release 21`, Classfile-Version 65 |
-| Automatisierte Tests gegen Basis-API | 53 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
-| Dieselben Tests gegen neueste API | 53 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| Automatisierte Tests gegen Spigot 1.21.11 | 54 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| Automatisierte Tests gegen Spigot 26.2 | 54 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| Automatisierte Tests gegen Paper 26.3 Alpha | 54 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
 | JSON-/Manifest-/Modellreferenzprüfung | 88 Packdateien, 3 Pflanzen × 4 Stufen, 2 Maschinen, 10 Käsestufen und kontextabhängige 3D-Handmodelle vollständig |
 | Bildprüfung | 9 eigene PNGs; quadratische RGBA-Zweierpotenzen mit Alphakanal |
 | ZIP-Paketlayout | `pack.mcmeta` direkt an der Wurzel, relative Assetpfade |
 
-GitHub Actions prüft 1.21.11 unter Temurin 21, 26.2 unter Temurin 25 und Paper 26.3 Alpha unter Temurin 25. Weil Paper noch kein öffentliches 26.3-API-Artefakt ausliefert, wird die API reproduzierbar aus dem offiziellen Commit `cc95f009b7e4b5687feb0a068d9fc44b326dc8c3` gebaut und lokal als `26.3.local-SNAPSHOT` installiert. Das ausgelieferte JAR wird abschließend gegen die niedrigste API 1.21.11 erzeugt, sodass beim Bau keine ausschließlich in neueren APIs vorhandenen Methoden eingebunden werden. Das Ressourcenpaket deklariert den offiziellen Bereich 75.0 bis 97.1.
+GitHub Actions baute erfolgreich gegen 1.21.11 unter Temurin 21, 26.2 unter Temurin 25 und Paper 26.3 Alpha unter Temurin 25. Weil Paper noch kein öffentliches 26.3-API-Artefakt ausliefert, wird die API reproduzierbar aus dem offiziellen Commit `cc95f009b7e4b5687feb0a068d9fc44b326dc8c3` gebaut und lokal als `26.3.local-SNAPSHOT` installiert. Das ausgelieferte JAR wird abschließend gegen die niedrigste API 1.21.11 erzeugt, sodass beim Bau keine ausschließlich in neueren APIs vorhandenen Methoden eingebunden werden. Das Ressourcenpaket deklariert den offiziellen Bereich 75.0 bis 97.1.
 
 ## Was die Tests tatsächlich prüfen
 
