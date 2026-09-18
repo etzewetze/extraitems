@@ -1,5 +1,12 @@
 # Optionale Item-Integrationen
 
+Es gibt zwei getrennte Arten der Integration:
+
+1. **Laufzeit-Provider:** Ein Item bleibt Eigentum von Nexo, ItemsAdder, Oraxen oder CraftEngine. Das jeweilige Plugin muss installiert sein; ExtraItems kann dessen Item in eigenen Rezepten verwenden.
+2. **Nexo-Maker-Import:** Eine für CraftEngine exportierte ZIP wird beim Serverstart in ein natives ExtraItems-Item und Ressourcenpaket-Assets umgewandelt. Dafür muss CraftEngine nicht installiert sein.
+
+## Laufzeit-Provider
+
 ExtraItems benötigt keines dieser Plugins zum Starten. In Rezeptdateien dürfen externe
 Item-IDs als Zutaten oder Ergebnis verwendet werden. Die Syntax ist immer
 `provider:id`; zusätzliche Doppelpunkte in der Provider-ID bleiben erhalten.
@@ -29,3 +36,16 @@ Plugin-Enable automatisch erneut registriert. `/ei status` zeigt den Zustand.
 
 Jedes Provider-Plugin muss sein eigenes Ressourcenpaket liefern. ExtraItems kann die
 ItemStack-Identität für Rezepte prüfen, aber keine Fremd-Packs in sein eigenes ZIP kopieren.
+
+## Nexo-Maker-Export für CraftEngine importieren
+
+Die unveränderte ZIP oder der entpackte Ordner wird unter `plugins/ExtraItems/` abgelegt und als relativer Pfad in `items.yml` registriert:
+
+```yaml
+schema-version: 2
+sources:
+  - items/tomato/item.yml
+  - imports/mein_craftengine_export.zip
+```
+
+Das ist keine Laufzeitverbindung zu CraftEngine. Normale Einträge aus dem Abschnitt `items:` werden zu ExtraItems-Items; Modellgenerierung und `resourcepack/assets/` landen automatisch im ExtraItems-Ressourcenpaket. Kategorien, Rezepte und anbieterspezifische Mechaniken werden bewusst nicht erraten. Die vollständigen Importregeln stehen in [DEFINITIONEN.md](DEFINITIONEN.md).

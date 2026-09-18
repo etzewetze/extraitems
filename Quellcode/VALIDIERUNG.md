@@ -1,6 +1,6 @@
-# Validierung — ExtraItems 0.5.1
+# Validierung — ExtraItems 0.6.0
 
-Stand: 17. September 2026. Build und Komponenten sind automatisiert geprüft; die neuen GUI-, Hopper- und Entity-Interaktionen benötigen zusätzlich einen echten Minecraft-Ingame-Test.
+Stand: 18. September 2026. Build und Komponenten sind automatisiert geprüft; die neuen GUI-, Hopper-, Entity- und Import-Interaktionen benötigen zusätzlich einen echten Minecraft-Ingame-Test.
 
 ## Ausgeführt
 
@@ -10,9 +10,9 @@ Stand: 17. September 2026. Build und Komponenten sind automatisiert geprüft; di
 | Sauberer Maven-Build gegen Spigot-API `26.2-R0.1-SNAPSHOT` | Erfolgreich |
 | Sauberer Maven-Build gegen lokal erzeugte Paper-API `26.3.local-SNAPSHOT` unter Java 25 | Erfolgreich |
 | Java-Compilerziel | `--release 21`, Classfile-Version 65 |
-| Automatisierte Tests gegen Spigot 1.21.11 | 54 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
-| Automatisierte Tests gegen Spigot 26.2 | 54 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
-| Automatisierte Tests gegen Paper 26.3 Alpha | 54 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| Automatisierte Tests gegen Spigot 1.21.11 | 61 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| Automatisierte Tests gegen Spigot 26.2 | 61 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
+| Automatisierte Tests gegen Paper 26.3 Alpha | 61 Tests, 0 Fehler, 0 Fehlschläge, 0 übersprungen |
 | JSON-/Manifest-/Modellreferenzprüfung | 88 Packdateien, 3 Pflanzen × 4 Stufen, 2 Maschinen, 10 Käsestufen und kontextabhängige 3D-Handmodelle vollständig |
 | Bildprüfung | 9 eigene PNGs; quadratische RGBA-Zweierpotenzen mit Alphakanal |
 | ZIP-Paketlayout | `pack.mcmeta` direkt an der Wurzel, relative Assetpfade |
@@ -24,8 +24,9 @@ GitHub Actions baute erfolgreich gegen 1.21.11 unter Temurin 21, 26.2 unter Temu
 - **10 Pack-Statusfälle:** fremde Paket-ID schaltet nicht frei; „akzeptiert“/„heruntergeladen“ reichen nicht; erfolgreiche Meldung; Timeout; Ablehnung; Downloadfehler; ungültige URL; Reloadfehler; verworfenes Paket; unbekannte Statuswerte bleiben gesperrt. Späte Erfolgsmeldungen können einen gescheiterten Vorgang nicht nachträglich freischalten.
 - **4 Crafting-Regelfälle:** Packfreigabe und aktuelles Recht nötig; gewöhnliche Äpfel gelten nicht als Tomaten; formlose Reihenfolge und leere Felder; korrekte Anzahl mehrfach benötigter Zutaten.
 - **5 Speicher-/Wachstumsfälle:** verlustfreies Kodieren und Dekodieren einschließlich negativer Chunkkoordinaten; keine Einträge außerhalb ihres Chunks oder der Welthöhe; beschädigte Werte abgelehnt; Wachstum pausiert bei fehlenden Bedingungen; reife Pflanzen überschreiten die Modellzahl nicht.
-- **4 Definitionsdateifälle:** nur reguläre YAML-Dateien innerhalb des Pluginordners werden geladen; Traversal, absolute Pfade, falsche Endungen, fehlende Dateien und Symlinks werden abgelehnt; neue Standardpfade werden verlustfrei mit eigenen Indexeinträgen zusammengeführt; das alte direkte Tomaten-Samen-Rezept wird aus bestehenden Indizes entfernt.
-- **9 Download-/Archivfälle:** reproduzierbare ZIPs und Hashänderung bei geänderten Inhalten; fehlende Metadaten und Symlinks abgelehnt; atomisches Ersetzen der Ausgabe; sichere Revisionserneuerung mit Backup; echte HTTP-Requests für GET, HEAD, 404 und 405; URL- und Hostvalidierung.
+- **5 Definitionsdateifälle:** reguläre YAML-Dateien sowie CraftEngine-ZIPs/-Ordner innerhalb des Pluginordners werden geladen; Traversal, absolute Pfade, falsche Endungen, fehlende Dateien und Symlinks werden abgelehnt; neue Standardpfade werden verlustfrei mit eigenen Indexeinträgen zusammengeführt; das alte direkte Tomaten-Samen-Rezept wird aus bestehenden Indizes entfernt.
+- **10 Download-/Archivfälle:** reproduzierbare ZIPs und Hashänderung bei geänderten Inhalten; fehlende Metadaten und Symlinks abgelehnt; Import-Overlay wird konfliktgeprüft zusammengeführt; atomisches Ersetzen der Ausgabe; sichere Revisionserneuerung mit Backup; echte HTTP-Requests für GET, HEAD, 404 und 405; URL- und Hostvalidierung.
+- **5 Importfälle:** Nexo-Maker-CraftEngine-ZIP und entpackter Ordner werden zu nativen Items, Modell-JSON und Pack-Overlay konvertiert; Kategorien werden ignoriert; ZIP-Traversal und widersprüchliche Assets werden abgelehnt; entfernte Quellen hinterlassen nach erfolgreichem Neustart keine alten Importassets.
 - **7 Assetfälle:** neun eigene Zweierpotenz-RGBA-Texturen; reife Tomate ohne Abhängigkeit von der eigenen PNG; Ground-Transformationen für Quader-Items; fünf GUI-Icons mit `minecraft:display_context`-Auswahl und echten 3D-Handmodellen; drei vollständige Wachstumsreihen; zehn Käserad-Portionen.
 - **2 Werkzeugfälle:** 192 Grundnutzungen, exakt 64 zusätzliche Nutzungen je Haltbarkeitsstufe und unbegrenzte Nutzungen mit Old but Gold.
 - **6 Küchen-Definitionsfälle:** exakte Käsestations- und Messerrezepte, gewünschte Nahrungswerte, fünf Zutaten des Cheesy Schlemmers, Samengenerator mit allen drei Umwandlungen sowie 9 Schaden/2,4 Angriffsgeschwindigkeit des Messers.

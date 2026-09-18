@@ -1,7 +1,7 @@
-ExtraItems 0.5.1 — Schnellstart
+ExtraItems 0.6.0 — Schnellstart
 
 1. Server stoppen.
-2. ExtraItems-0.5.1.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
+2. ExtraItems-0.6.0.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
    Unterstützt: 1.21.11, 26.2 und Paper 26.3 Alpha; für 26.3 Java 25 verwenden.
 3. Server starten.
 4. Standardmäßig nutzt das Plugin:
@@ -77,5 +77,12 @@ Messer:
 
 Tomaten essen und reife Pflanzen ernten sind ohne diese Rechte erlaubt.
 Vor Updates Welten und plugins/ExtraItems sichern. Kein /reload verwenden.
+
+Nexo-Maker-CraftEngine-Export importieren:
+  1. Export-ZIP unverändert nach plugins/ExtraItems/imports/ kopieren.
+  2. In plugins/ExtraItems/items.yml unter sources ergänzen:
+       - imports/mein_export.zip
+  3. Server vollständig neu starten. Nur tatsächlich eingetragene ZIPs oder
+     Exportordner werden geladen; das Beispielitem wird nicht mitgeliefert.
 
 Optionale Integrationen: Rezept-YAMLs unterstützen `nexo:id`, `itemsadder:id`, `oraxen:id` und `craftengine:id`. Fehlende Provider verhindern den Start nicht; `/ei status` zeigt den Zustand. Siehe Quellcode/docs/INTEGRATIONEN.md.

@@ -35,10 +35,10 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
         Objects.requireNonNull(getCommand("extraitems")).setExecutor(this);
         Objects.requireNonNull(getCommand("extraitems")).setTabCompleter(this);
 
-        pack.start();
         try {
             DefinitionFiles.prepare(this);
             items = new ItemRegistry(this);
+            pack.start();
             items.registerRecipes();
             tools = new ToolService(this, items);
             crops = new CropService(this, items);
@@ -57,7 +57,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             placeableFoods.start();
             operational = true;
             scheduleExternalRecipeRefresh();
-            getLogger().info("ExtraItems 0.5.1 bereit. Server " + Bukkit.getBukkitVersion()
+            getLogger().info("ExtraItems 0.6.0 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
                     + "; Definitionen " + items.sourceCount()
                     + "; Integrationen " + items.externalStatus());
@@ -137,7 +137,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.5.1 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.6.0 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));

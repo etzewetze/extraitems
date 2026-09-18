@@ -39,6 +39,22 @@ class DefinitionFilesTest {
     }
 
     @Test
+    void resolvesCraftEngineZipAndDirectorySourcesInsidePluginDirectory() throws Exception {
+        Path zip = directory.resolve("imports/bundle.zip");
+        Files.createDirectories(zip.getParent());
+        Files.write(zip, new byte[]{1, 2, 3});
+        Path folder = directory.resolve("imports/unpacked");
+        Files.createDirectories(folder);
+
+        assertEquals(zip.toRealPath(), DefinitionFiles.resolveSource(
+                directory.toAbsolutePath(), "imports/bundle.zip").toRealPath());
+        assertEquals(folder.toRealPath(), DefinitionFiles.resolveSource(
+                directory.toAbsolutePath(), "imports/unpacked").toRealPath());
+        assertThrows(IllegalArgumentException.class,
+                () -> DefinitionFiles.resolveSource(directory.toAbsolutePath(), "imports/bundle.txt"));
+    }
+
+    @Test
     void updateAddsBundledSourcesWithoutRemovingOrDuplicatingCustomOnes() {
         var merged = DefinitionFiles.mergeSources(
                 List.of("items/server_custom/item.yml", "items/tomato/item.yml"),

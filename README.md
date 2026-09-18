@@ -1,6 +1,13 @@
-# ExtraItems 0.5.1
+# ExtraItems 0.6.0
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Neu in 0.6.0
+
+- Nexo-Maker-Exporte im CraftEngine-Format lassen sich als unveränderte ZIP-Datei oder als entpackter Ordner unter `plugins/ExtraItems/` ablegen und mit nur einem Pfad in `items.yml` laden.
+- Normale CraftEngine-Items werden beim Start in native ExtraItems-Items umgewandelt. Konfiguration, Texturen und Modellgenerierung werden automatisch in das ausgelieferte Ressourcenpaket eingebunden; das Originalpaket wird nicht verändert.
+- Importpfade, ZIP-Inhalte, Größen und Asset-Konflikte werden geprüft. Ein Import darf keine vorhandene ExtraItems-Ressource unbemerkt überschreiben.
+- Das hochgeladene Beispielitem dient nur als Formatprobe und wird nicht mitgeliefert.
 
 ## Neu in 0.5.1
 
@@ -74,7 +81,9 @@ plugins/ExtraItems/
 ├── items.yml
 ├── items.legacy.yml          # nur nach Migration von 0.1.0
 ├── generated/
-│   └── extraitems.zip
+│   ├── extraitems.zip
+│   └── imported-resourcepack/ # automatisch erzeugter Import-Overlay
+├── imports/                   # optional: ZIPs oder entpackte Exporte
 ├── resourcepack/
 └── items/
     ├── tomato/
@@ -103,9 +112,10 @@ sources:
   - items/tomato_seeds/recipes/starter.yml
   - items/seed_generator/item.yml
   - items/seed_generator/generator.yml
+  - imports/mein_craftengine_export.zip
 ```
 
-Jede Quelldatei enthält mindestens `type` und `id`. IDs dürfen nur Kleinbuchstaben, Zahlen und Unterstriche enthalten. Relative Pfade dürfen den Pluginordner nicht verlassen; doppelte Dateien und doppelte Definitionen werden abgelehnt. Einzelheiten und kopierbare Beispiele stehen in [docs/DEFINITIONEN.md](docs/DEFINITIONEN.md).
+Native Quelldateien enthalten mindestens `type` und `id`. Alternativ darf ein Pfad auf eine Nexo-Maker-CraftEngine-ZIP oder deren entpackten Ordner zeigen. Importierte IDs werden automatisch als `<namespace>_<itempfad>` registriert, beispielsweise `gems:green_gem` als `gems_green_gem`. Relative Pfade dürfen den Pluginordner nicht verlassen; doppelte Dateien und doppelte Definitionen werden abgelehnt. Einzelheiten und kopierbare Beispiele stehen in [Quellcode/docs/DEFINITIONEN.md](Quellcode/docs/DEFINITIONEN.md).
 
 ## Ressourcenpaket einrichten
 
@@ -156,7 +166,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.5.1.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.6.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -219,10 +229,10 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.5.1.jar`.
+Ergebnis: `target/ExtraItems-0.6.0.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
 
 ## Optionale Provider-Integrationen
 
-Rezeptdateien können Item-IDs aus Nexo, ItemsAdder, Oraxen und CraftEngine über `provider:id` verwenden. Beispiele stehen in [Quellcode/docs/INTEGRATIONEN.md](Quellcode/docs/INTEGRATIONEN.md). Fehlende Provider verhindern den Start nicht; `/ei status` zeigt den Zustand.
+Rezeptdateien können Item-IDs aus Nexo, ItemsAdder, Oraxen und CraftEngine über `provider:id` verwenden. Zusätzlich lassen sich Nexo-Maker-Exporte im CraftEngine-Format ohne installiertes CraftEngine als native ExtraItems-Items importieren. Beispiele und die Abgrenzung stehen in [Quellcode/docs/INTEGRATIONEN.md](Quellcode/docs/INTEGRATIONEN.md). Fehlende Provider verhindern den Start nicht; `/ei status` zeigt den Zustand.

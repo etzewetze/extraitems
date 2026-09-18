@@ -47,23 +47,33 @@ final class DefinitionFiles {
             List<Definition> result = new ArrayList<>();
             Set<String> files = new HashSet<>();
             Set<String> definitions = new HashSet<>();
-            for (Object raw : rawSources) {
-                if (!(raw instanceof String source) || source.isBlank()) {
-                    throw new IllegalArgumentException("items.yml: Jeder sources-Eintrag muss ein nicht leerer Pfad sein");
-                }
-                Path file = resolve(root, source);
-                String normalized = root.relativize(file).toString().replace(File.separatorChar, '/');
-                if (!files.add(normalized)) throw new IllegalArgumentException("items.yml: Pfad doppelt eingetragen: " + normalized);
+            try (CraftEngineBundleImporter importer = CraftEngineBundleImporter.open(root)) {
+                for (Object raw : rawSources) {
+                    if (!(raw instanceof String source) || source.isBlank()) {
+                        throw new IllegalArgumentException("items.yml: Jeder sources-Eintrag muss ein nicht leerer Pfad sein");
+                    }
+                    Path file = resolveSource(root, source);
+                    String normalized = root.relativize(file).toString().replace(File.separatorChar, '/');
+                    if (!files.add(normalized)) {
+                        throw new IllegalArgumentException("items.yml: Pfad doppelt eingetragen: " + normalized);
+                    }
 
-                YamlConfiguration yaml = read(file);
-                if (!yaml.getBoolean("enabled", true)) continue;
-                String type = requireScalar(yaml, "type", normalized).toLowerCase(Locale.ROOT);
-                String id = requireScalar(yaml, "id", normalized);
-                ItemRegistry.checkId(id);
-                if (!definitions.add(type + ":" + id)) {
-                    throw new IllegalArgumentException("Definition doppelt: " + type + ":" + id);
+                    if (Files.isDirectory(file, LinkOption.NOFOLLOW_LINKS)
+                            || normalized.toLowerCase(Locale.ROOT).endsWith(".zip")) {
+                        List<Definition> imported = importer.importSource(file, normalized);
+                        for (Definition definition : imported) add(result, definitions, definition);
+                        plugin.getLogger().info("[CraftEngine-Import] " + normalized + ": "
+                                + imported.size() + " Item(s) geladen");
+                        continue;
+                    }
+
+                    YamlConfiguration yaml = read(file);
+                    if (!yaml.getBoolean("enabled", true)) continue;
+                    String type = requireScalar(yaml, "type", normalized).toLowerCase(Locale.ROOT);
+                    String id = requireScalar(yaml, "id", normalized);
+                    add(result, definitions, new Definition(type, id, yaml, normalized));
                 }
-                result.add(new Definition(type, id, yaml, normalized));
+                importer.commit();
             }
             return List.copyOf(result);
         } catch (IOException | InvalidConfigurationException e) {
@@ -72,22 +82,47 @@ final class DefinitionFiles {
     }
 
     static Path resolve(Path root, String source) throws IOException {
+        Path target = resolveSource(root, source);
+        if (Files.isDirectory(target, LinkOption.NOFOLLOW_LINKS)
+                || !source.toLowerCase(Locale.ROOT).endsWith(".yml")) {
+            throw new IllegalArgumentException("Definitionspfad muss relativ sein und auf .yml enden: " + source);
+        }
+        return target;
+    }
+
+    static Path resolveSource(Path root, String source) throws IOException {
         if (source.indexOf('\\') >= 0 || source.indexOf('\0') >= 0) {
             throw new IllegalArgumentException("Ungültiger Definitionspfad: " + source);
         }
         Path relative = Path.of(source);
-        if (relative.isAbsolute() || !source.toLowerCase(Locale.ROOT).endsWith(".yml")) {
-            throw new IllegalArgumentException("Definitionspfad muss relativ sein und auf .yml enden: " + source);
+        if (relative.isAbsolute()) {
+            throw new IllegalArgumentException("Quellpfad muss relativ sein: " + source);
         }
         Path target = root.resolve(relative).normalize();
         if (!target.startsWith(root)) throw new IllegalArgumentException("Definitionspfad verlässt den Pluginordner: " + source);
-        if (!Files.isRegularFile(target, LinkOption.NOFOLLOW_LINKS)) {
-            throw new IllegalArgumentException("Definitionsdatei fehlt oder ist kein normales File: " + source);
+        boolean regular = Files.isRegularFile(target, LinkOption.NOFOLLOW_LINKS);
+        boolean directory = Files.isDirectory(target, LinkOption.NOFOLLOW_LINKS);
+        String lower = source.toLowerCase(Locale.ROOT);
+        if ((!regular && !directory) || (regular && !lower.endsWith(".yml") && !lower.endsWith(".zip"))) {
+            throw new IllegalArgumentException("Quelle fehlt oder ist weder .yml, .zip noch ein Ordner: " + source);
+        }
+        Path cursor = target;
+        while (cursor != null && cursor.startsWith(root)) {
+            if (Files.isSymbolicLink(cursor)) throw new IllegalArgumentException("Symlinks sind als Quelle nicht erlaubt: " + source);
+            if (cursor.equals(root)) break;
+            cursor = cursor.getParent();
         }
         if (!target.toRealPath().startsWith(root.toRealPath())) {
             throw new IllegalArgumentException("Definitionspfad verlässt den Pluginordner: " + source);
         }
         return target;
+    }
+
+    private static void add(List<Definition> result, Set<String> definitions, Definition definition) {
+        ItemRegistry.checkId(definition.id());
+        String key = definition.type() + ":" + definition.id();
+        if (!definitions.add(key)) throw new IllegalArgumentException("Definition doppelt: " + key);
+        result.add(definition);
     }
 
     private static String requireScalar(ConfigurationSection yaml, String key, String source) {

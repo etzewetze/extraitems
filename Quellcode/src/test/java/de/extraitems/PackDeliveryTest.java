@@ -43,6 +43,27 @@ class PackDeliveryTest {
     }
 
     @Test
+    void importedOverlayIsMergedAndCannotSilentlyOverrideBaseAssets() throws Exception {
+        Path base = directory.resolve("base");
+        Path overlay = directory.resolve("overlay");
+        Files.createDirectories(base.resolve("assets/base"));
+        Files.createDirectories(overlay.resolve("assets/demo"));
+        Files.writeString(base.resolve("pack.mcmeta"), "{}");
+        Files.writeString(base.resolve("assets/base/item.json"), "base");
+        Files.writeString(overlay.resolve("assets/demo/item.json"), "imported");
+
+        Set<String> names = new HashSet<>();
+        try (var zip = new ZipInputStream(new ByteArrayInputStream(PackArchive.build(base, overlay)))) {
+            for (ZipEntry entry; (entry = zip.getNextEntry()) != null;) names.add(entry.getName());
+        }
+        assertEquals(Set.of("pack.mcmeta", "assets/base/item.json", "assets/demo/item.json"), names);
+
+        Files.createDirectories(overlay.resolve("assets/base"));
+        Files.writeString(overlay.resolve("assets/base/item.json"), "different");
+        assertThrows(IOException.class, () -> PackArchive.build(base, overlay));
+    }
+
+    @Test
     void atomicPublicationReplacesAnOlderPack() throws Exception {
         Path target = directory.resolve("generated/extraitems.zip");
         PackArchive.writeAtomic(target, new byte[]{1});

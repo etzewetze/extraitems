@@ -21,7 +21,11 @@ final class PackService implements AutoCloseable {
     private boolean required;
     private String error = "Noch nicht initialisiert";
 
-    PackService(ExtraItemsPlugin plugin) { this.plugin = plugin; }
+    PackService(ExtraItemsPlugin plugin) {
+        this.plugin = plugin;
+        // Fail closed even when an item/import error happens before the pack can be built.
+        required = plugin.getConfig().getBoolean("resource-pack.required", true);
+    }
 
     void start() {
         try {
@@ -47,7 +51,8 @@ final class PackService implements AutoCloseable {
                         + revision + " aktualisiert; Sicherung: " + defaults.backup());
             }
 
-            byte[] bytes = PackArchive.build(root.resolve("resourcepack"));
+            byte[] bytes = PackArchive.build(root.resolve("resourcepack"),
+                    root.resolve(CraftEngineBundleImporter.OVERLAY));
             hash = PackArchive.sha1(bytes);
             PackArchive.writeAtomic(root.resolve("generated/extraitems.zip"), bytes);
             plugin.getLogger().info("Ressourcenpaket: generated/extraitems.zip | SHA-1 " + sha1());

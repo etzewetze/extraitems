@@ -93,6 +93,44 @@ Zutaten beginnen mit `minecraft:` oder `extraitems:`. Seit 0.3.0 sind formlose u
 
 Eine Definition kann mit `enabled: false` vorübergehend übersprungen werden. Bereits in Welt-Chunks gespeicherte IDs nicht umbenennen oder löschen.
 
+## Nexo-Maker-CraftEngine-Export per Drag-and-drop
+
+Ein im Nexo Maker für CraftEngine exportiertes Paket kann unverändert als ZIP geladen werden. Das Beispielitem aus der Entwicklung ist nicht Bestandteil des Plugins.
+
+1. Die Export-ZIP nach `plugins/ExtraItems/imports/` kopieren, beispielsweise als `mein_export.zip`.
+2. In `plugins/ExtraItems/items.yml` nur den relativen Pfad ergänzen:
+
+```yaml
+schema-version: 2
+sources:
+  # vorhandene ExtraItems-Dateien bleiben hier stehen
+  - items/tomato/item.yml
+  - imports/mein_export.zip
+```
+
+3. Den Server vollständig neu starten. `/reload` reicht nicht aus, weil das Ressourcenpaket neu gebaut und mit einem neuen Hash ausgeliefert wird.
+
+Alternativ darf der Pfad auf einen entpackten Exportordner zeigen:
+
+```yaml
+  - imports/mein_entpackter_export
+```
+
+Der Importer sucht darin `configuration/*.yml` und `resourcepack/assets/`, auch wenn davor die üblichen Verzeichnisse `CraftEngine/resources/<paket>/` liegen. Jede Definition unter `items:` wird als natives ExtraItems-Item registriert. Aus `gems:green_gem` wird die interne ExtraItems-ID `gems_green_gem`; diese ID funktioniert anschließend beispielsweise mit `/ei give <Spieler> gems_green_gem` und in nativen Rezepten als `extraitems:gems_green_gem`.
+
+Übernommen werden derzeit:
+
+- `material`
+- `data.item_name`
+- `data.lore`
+- `data.enchantment_glint_override`
+- `model.type: minecraft:model`, `model.path` und `model.generation`
+- alle Dateien unter dem exportierten `resourcepack/assets/`
+
+`categories`, CraftEngine-Rezepte und CraftEngine-spezifische Aktionen oder Mechaniken werden nicht importiert. Dafür weiterhin eine native ExtraItems-Definitionsdatei anlegen. Die ZIP wird nicht entpackt oder verändert; das Plugin erzeugt bei jedem Start einen separaten Overlay unter `generated/imported-resourcepack/` und mischt ihn in `generated/extraitems.zip`.
+
+Sicherheitsgrenzen: maximal 4096 Dateien, 16 MiB je Datei und 64 MiB entpackt je Quelle. Absolute Pfade, Traversal, Symlinks, doppelte ZIP-Einträge und widersprüchliche Assetpfade werden abgelehnt. Ein Import darf ein vorhandenes ExtraItems-Asset nur dann überlagern, wenn die Bytes identisch sind.
+
 ## Erweiterungspunkte
 
 Die Loader-Pipeline verarbeitet Definitionen nach Typ. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator` und `placeable_food`. `potion`, `effect`, `gui`, `tree` und `ore` bleiben reserviert. Werden reservierte Typen verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
