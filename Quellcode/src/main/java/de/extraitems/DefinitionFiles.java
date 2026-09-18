@@ -25,6 +25,7 @@ final class DefinitionFiles {
 
     static void prepare(ExtraItemsPlugin plugin) throws IOException {
         Path index = plugin.getDataFolder().toPath().resolve("items.yml");
+        Files.createDirectories(plugin.getDataFolder().toPath().resolve("imports"));
         if (!Files.exists(index)) plugin.saveResource("items.yml", false);
         migrateLegacy(index);
         installBundled(plugin);
