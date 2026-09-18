@@ -71,7 +71,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.6.0 • 3D-Küche, CraftEngine-Import und Integrationen • 1.21.11–26.3',
+    'description': 'ExtraItems 0.7.0 • Capybaras, 3D-Küche und Integrationen • 1.21.11–26.3',
     'min_format': [75, 0], 'max_format': [97, 1]
 }})
 
@@ -176,6 +176,48 @@ geometry(ASSETS / 'models/item/seed_generator.json', [
 
 item('old_but_gold_book', 'minecraft:item/enchanted_book')
 
+# Capybaras use a hidden vanilla carrier for AI and these block models for their visible body.
+# Adult and baby geometry are intentionally separate instead of merely scaling one model.
+capybara_adult = [
+    cube([3, 4.5, 4], [13, 11.5, 16], 'fur'),
+    cube([3.5, 5, .7], [12.5, 11.4, 6], 'fur'),
+    cube([5, 5.2, .25], [11, 8.8, 2.2], 'fur'),
+    cube([3.7, 10.4, 2.3], [5.5, 13.2, 4.2], 'fur'),
+    cube([10.5, 10.4, 2.3], [12.3, 13.2, 4.2], 'fur'),
+    cube([4.15, 8.1, .35], [5.35, 9.35, .75], 'eye'),
+    cube([10.65, 8.1, .35], [11.85, 9.35, .75], 'eye'),
+    cube([6.5, 6.2, .05], [9.5, 8.1, .5], 'nose'),
+    cube([3.5, 0, 5], [6, 5.5, 8], 'fur'),
+    cube([10, 0, 5], [12.5, 5.5, 8], 'fur'),
+    cube([3.5, 0, 12.5], [6, 5.5, 15.5], 'fur'),
+    cube([10, 0, 12.5], [12.5, 5.5, 15.5], 'fur'),
+]
+capybara_baby = [
+    cube([4.5, 3, 6], [11.5, 8.8, 14], 'fur'),
+    cube([4.2, 3.6, 2], [11.8, 9.4, 7], 'fur'),
+    cube([5.4, 3.9, 1.5], [10.6, 7, 3.4], 'fur'),
+    cube([4.5, 8.5, 3.3], [6.1, 10.6, 5], 'fur'),
+    cube([9.9, 8.5, 3.3], [11.5, 10.6, 5], 'fur'),
+    cube([4.85, 6.6, 1.65], [5.9, 7.7, 2.05], 'eye'),
+    cube([10.1, 6.6, 1.65], [11.15, 7.7, 2.05], 'eye'),
+    cube([6.7, 4.7, 1.3], [9.3, 6.4, 1.75], 'nose'),
+    cube([4.8, 0, 6.5], [6.6, 3.8, 8.5], 'fur'),
+    cube([9.4, 0, 6.5], [11.2, 3.8, 8.5], 'fur'),
+    cube([4.8, 0, 11.5], [6.6, 3.8, 13.5], 'fur'),
+    cube([9.4, 0, 11.5], [11.2, 3.8, 13.5], 'fur'),
+]
+for variant in ('brown', 'dark', 'patched'):
+    textures = {
+        'particle': f'extraitems:entity/capybara_{variant}',
+        'fur': f'extraitems:entity/capybara_{variant}',
+        'eye': 'minecraft:block/black_concrete',
+        'nose': 'minecraft:block/black_concrete',
+    }
+    for age, elements in (('adult', capybara_adult), ('baby', capybara_baby)):
+        name = f'capybara_{variant}_{age}'
+        item(name, 'entity/' + name)
+        geometry(ASSETS / 'models/entity' / f'{name}.json', elements, textures)
+
 # Tomato crop: mature fruit uses a vanilla atlas texture for maximum robustness.
 for stage, height in enumerate((4, 8, 12, 12)):
     elements = [cube([7.5, 0, 7.5], [8.5, height, 8.5], 'stem')]
@@ -255,4 +297,4 @@ item('cheese_wheel', 'block/cheese_wheel_0')
 
 paths = sorted(str(path.relative_to(PACK)).replace('\\', '/') for path in PACK.rglob('*') if path.is_file())
 (ROOT / 'pack-files.txt').write_text('\n'.join(paths) + '\n', encoding='utf-8')
-print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 2 Maschinen, 10 Käsestufen und echte 3D-Handmodelle.')
+print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 2 Maschinen, 10 Käsestufen, 3 Capybara-Felle und getrennte Erwachsenen-/Babymodelle.')

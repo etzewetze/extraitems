@@ -1,4 +1,10 @@
 assets/extraitems/items/burger_bun.json
+assets/extraitems/items/capybara_brown_adult.json
+assets/extraitems/items/capybara_brown_baby.json
+assets/extraitems/items/capybara_dark_adult.json
+assets/extraitems/items/capybara_dark_baby.json
+assets/extraitems/items/capybara_patched_adult.json
+assets/extraitems/items/capybara_patched_baby.json
 assets/extraitems/items/cheese_slice.json
 assets/extraitems/items/cheese_station.json
 assets/extraitems/items/cheese_wheel.json
@@ -57,6 +63,12 @@ assets/extraitems/models/block/tomato_stage_0.json
 assets/extraitems/models/block/tomato_stage_1.json
 assets/extraitems/models/block/tomato_stage_2.json
 assets/extraitems/models/block/tomato_stage_3.json
+assets/extraitems/models/entity/capybara_brown_adult.json
+assets/extraitems/models/entity/capybara_brown_baby.json
+assets/extraitems/models/entity/capybara_dark_adult.json
+assets/extraitems/models/entity/capybara_dark_baby.json
+assets/extraitems/models/entity/capybara_patched_adult.json
+assets/extraitems/models/entity/capybara_patched_baby.json
 assets/extraitems/models/item/burger_bun_3d.json
 assets/extraitems/models/item/burger_bun_icon.json
 assets/extraitems/models/item/cheese_slice.json
@@ -76,6 +88,9 @@ assets/extraitems/models/item/schlemmer_burger_icon.json
 assets/extraitems/models/item/seed_generator.json
 assets/extraitems/models/item/tomato.json
 assets/extraitems/models/item/tomato_seeds.json
+assets/extraitems/textures/entity/capybara_brown.png
+assets/extraitems/textures/entity/capybara_dark.png
+assets/extraitems/textures/entity/capybara_patched.png
 assets/extraitems/textures/item/burger_bun.png
 assets/extraitems/textures/item/cheesy_schlemmer.png
 assets/extraitems/textures/item/knife.png

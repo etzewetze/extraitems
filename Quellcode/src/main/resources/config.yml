@@ -1,4 +1,4 @@
-# ExtraItems 0.6.0 — Änderungen benötigen einen vollständigen Serverneustart.
+# ExtraItems 0.7.0 — Änderungen benötigen einen vollständigen Serverneustart.
 resource-pack:
   # true: Ablehnung/Downloadfehler führt zum Kick. false: Paket ist nur optional.
   required: true
@@ -47,3 +47,4 @@ messages:
   pack-admin-bypass: '&eNotfallzugang: Das Ressourcenpaket ist nicht bereit. Prüfe /ei status und die Serverkonsole.'
   pack-optional: '&eDas ExtraItems-Ressourcenpaket wurde nicht geladen; eigene Modelle können falsch aussehen.'
   no-space: '&cHier ist kein Platz für eine Pflanze oder die Pflanzengrenze wurde erreicht.'
+  capybara-cooldown: '&eDieses Capybara kann gerade noch nicht vermehrt werden.'

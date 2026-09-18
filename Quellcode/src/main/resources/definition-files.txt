@@ -1,3 +1,4 @@
+items/capybara/entity.yml
 items/tomato/item.yml
 items/tomato/crop.yml
 items/tomato_seeds/item.yml

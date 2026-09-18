@@ -21,6 +21,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
     private CheeseStationService stations;
     private SeedGeneratorService seedGenerators;
     private PlaceableFoodService placeableFoods;
+    private CapybaraService capybaras;
     private BukkitTask externalRecipeTask;
     private boolean operational;
 
@@ -45,19 +46,23 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             stations = new CheeseStationService(this, items);
             seedGenerators = new SeedGeneratorService(this, items);
             placeableFoods = new PlaceableFoodService(this, items);
+            ItemRegistry.CustomEntity capybara = items.entity("capybara");
+            if (capybara != null) capybaras = new CapybaraService(this, items, capybara);
             getServer().getPluginManager().registerEvents(tools, this);
             getServer().getPluginManager().registerEvents(crops, this);
             getServer().getPluginManager().registerEvents(stations, this);
             getServer().getPluginManager().registerEvents(seedGenerators, this);
             getServer().getPluginManager().registerEvents(placeableFoods, this);
+            if (capybaras != null) getServer().getPluginManager().registerEvents(capybaras, this);
             getServer().getPluginManager().registerEvents(new RecipeListener(this, items, tools), this);
             crops.start();
             stations.start();
             seedGenerators.start();
             placeableFoods.start();
+            if (capybaras != null) capybaras.start();
             operational = true;
             scheduleExternalRecipeRefresh();
-            getLogger().info("ExtraItems 0.6.0 bereit. Server " + Bukkit.getBukkitVersion()
+            getLogger().info("ExtraItems 0.7.0 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
                     + "; Definitionen " + items.sourceCount()
                     + "; Integrationen " + items.externalStatus());
@@ -70,6 +75,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             if (stations != null) stations.stop();
             if (seedGenerators != null) seedGenerators.stop();
             if (placeableFoods != null) placeableFoods.stop();
+            if (capybaras != null) capybaras.stop();
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) gate.request(player);
@@ -111,6 +117,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
     public void onDisable() {
         operational = false;
         if (externalRecipeTask != null) externalRecipeTask.cancel();
+        if (capybaras != null) capybaras.stop();
         if (placeableFoods != null) placeableFoods.stop();
         if (seedGenerators != null) seedGenerators.stop();
         if (stations != null) stations.stop();
@@ -137,7 +144,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.6.0 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.7.0 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));
@@ -146,7 +153,8 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
                     + " | Pflanzen: " + (crops == null ? 0 : crops.count())
                     + " | Käsestationen: " + (stations == null ? 0 : stations.count())
                     + " | Samengeneratoren: " + (seedGenerators == null ? 0 : seedGenerators.count())
-                    + " | Käseräder: " + (placeableFoods == null ? 0 : placeableFoods.count()));
+                    + " | Käseräder: " + (placeableFoods == null ? 0 : placeableFoods.count())
+                    + " | Capybaras (geladen): " + (capybaras == null ? 0 : capybaras.count()));
             sender.sendMessage("§7Integrationen: " + (items == null ? "nicht initialisiert" : items.externalStatus()));
             if (sender instanceof Player player && pack.ready() && pack.deliveryEnabled()) {
                 try {
@@ -154,6 +162,33 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
                 } catch (RuntimeException error) {
                     sender.sendMessage("§cPack-URL: " + error.getMessage());
                 }
+            }
+            return true;
+        }
+        if (args.length >= 2 && args.length <= 4 && args[0].equalsIgnoreCase("spawn")
+                && args[1].equalsIgnoreCase("capybara")) {
+            if (!operational || capybaras == null) {
+                sender.sendMessage("§cDas Capybara-Modul ist nicht initialisiert.");
+                return true;
+            }
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage("§cDieser Testbefehl muss im Spiel ausgeführt werden.");
+                return true;
+            }
+            try {
+                int amount = args.length >= 3 ? Integer.parseInt(args[2]) : 1;
+                if (amount < 1 || amount > 10) throw new NumberFormatException();
+                boolean baby = args.length == 4 && args[3].equalsIgnoreCase("baby");
+                if (args.length == 4 && !baby && !args[3].equalsIgnoreCase("adult")) {
+                    throw new IllegalArgumentException("Alter muss adult oder baby sein.");
+                }
+                int spawned = capybaras.spawnAt(player.getLocation(), amount, baby);
+                sender.sendMessage("§a" + spawned + " Capybara" + (spawned == 1 ? "" : "s")
+                        + (baby ? " als Baby" : "") + " gespawnt.");
+            } catch (NumberFormatException error) {
+                sender.sendMessage("§cAnzahl muss zwischen 1 und 10 liegen.");
+            } catch (IllegalArgumentException error) {
+                sender.sendMessage("§c" + error.getMessage());
             }
             return true;
         }
@@ -180,7 +215,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             }
             return true;
         }
-        sender.sendMessage("§e/ei give <Spieler> <Item> [1–64] | /ei pack | /ei status");
+        sender.sendMessage("§e/ei give <Spieler> <Item> [1–64] | /ei spawn capybara [1–10] [adult|baby] | /ei pack | /ei status");
         return true;
     }
 
@@ -189,11 +224,15 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
         List<String> options = new ArrayList<>();
         if (args.length == 1) {
             options.addAll(sender.hasPermission("extraitems.admin")
-                    ? List.of("give", "pack", "status") : List.of("pack"));
+                    ? List.of("give", "spawn", "pack", "status") : List.of("pack"));
         } else if (sender.hasPermission("extraitems.admin") && args[0].equalsIgnoreCase("give")) {
             if (args.length == 2) options.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
             if (args.length == 3 && items != null) options.addAll(items.ids());
             if (args.length == 4) options.addAll(List.of("1", "16", "64"));
+        } else if (sender.hasPermission("extraitems.admin") && args[0].equalsIgnoreCase("spawn")) {
+            if (args.length == 2) options.add("capybara");
+            if (args.length == 3 && args[1].equalsIgnoreCase("capybara")) options.addAll(List.of("1", "2", "4"));
+            if (args.length == 4 && args[1].equalsIgnoreCase("capybara")) options.addAll(List.of("adult", "baby"));
         }
         String prefix = args.length == 0 ? "" : args[args.length - 1].toLowerCase(Locale.ROOT);
         return options.stream().filter(value -> value.toLowerCase(Locale.ROOT).startsWith(prefix)).toList();

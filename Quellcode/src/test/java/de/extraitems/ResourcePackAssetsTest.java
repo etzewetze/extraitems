@@ -85,4 +85,28 @@ class ResourcePackAssetsTest {
             assertTrue(Files.isRegularFile(PACK.resolve("assets/extraitems/models/block/cheese_wheel_" + bites + ".json")));
         }
     }
+
+    @Test
+    void capybaraHasThreeFursAndSeparateAdultAndBabyModels() throws Exception {
+        for (String variant : new String[]{"brown", "dark", "patched"}) {
+            var image = ImageIO.read(PACK.resolve(
+                    "assets/extraitems/textures/entity/capybara_" + variant + ".png").toFile());
+            assertNotNull(image, variant);
+            assertEquals(32, image.getWidth(), variant);
+            assertEquals(32, image.getHeight(), variant);
+            assertTrue(image.getColorModel().hasAlpha(), variant);
+            for (String age : new String[]{"adult", "baby"}) {
+                String name = "capybara_" + variant + "_" + age;
+                String item = Files.readString(PACK.resolve("assets/extraitems/items/" + name + ".json"));
+                String model = Files.readString(PACK.resolve("assets/extraitems/models/entity/" + name + ".json"));
+                assertTrue(item.contains("extraitems:entity/" + name), name);
+                assertTrue(model.contains("extraitems:entity/capybara_" + variant), name);
+                assertTrue(model.contains("\"elements\""), name);
+                assertTrue(model.contains("minecraft:block/black_concrete"), name);
+            }
+        }
+        String adult = Files.readString(PACK.resolve("assets/extraitems/models/entity/capybara_brown_adult.json"));
+        String baby = Files.readString(PACK.resolve("assets/extraitems/models/entity/capybara_brown_baby.json"));
+        assertNotEquals(adult, baby);
+    }
 }

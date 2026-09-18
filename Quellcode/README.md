@@ -1,6 +1,15 @@
-# ExtraItems 0.6.0
+# ExtraItems 0.7.0
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Neu in 0.7.0
+
+- Capybaras spawnen natürlich in Gruppen in `badlands`, `wooded_badlands` und `eroded_badlands`.
+- Drei zufällige Fellvarianten (warmbraun, dunkel und schwarz gefleckt) besitzen jeweils ein eigenes Erwachsenen- und Babymodell.
+- Süßbeeren locken Capybaras an und versetzen erwachsene Tiere in Paarungsbereitschaft. Babys wachsen durch Füttern schneller.
+- Die Tiere wandern, schwimmen, suchen gelegentlich Wasser, ruhen, halten Anschluss an ihre Gruppe und fliehen bei Schaden. Ein unsichtbarer Vanilla-Träger übernimmt Hitbox und Tier-AI; Spieler benötigen weiterhin keinen Clientmod.
+- Capybaras und ihre Fell-/Altersdaten bleiben über Chunk-Unload und Neustarts erhalten. Sie lassen kein Schweinefleisch fallen und können nicht gesattelt werden.
+- `/ei spawn capybara [1–10] [adult|baby]` ermöglicht gezielte Ingame-Tests.
 
 ## Neu in 0.6.0
 
@@ -66,7 +75,7 @@ ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items
 - `items.yml` ist nur noch der zentrale Index mit den Pfaden zu diesen Dateien.
 - Alte kombinierte `items.yml`-Dateien werden beim Start automatisch gesichert und aufgeteilt.
 - Definitionen melden Fehler mit dem genauen Dateipfad.
-- Die Typen `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator` und `placeable_food`.
+- Die Typen `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator`, `placeable_food` und `entity`.
 - Ressourcenpaket-Modi sind jetzt eindeutig: `self-host`, `external` oder `disabled`.
 - `self-host` bildet die Downloadadresse automatisch aus dem Hostnamen bzw. der IP, mit der ein Spieler beitritt.
 - Administratoren können bei einer kaputten Pack-Konfiguration per Notfallzugang beitreten und `/ei status` verwenden.
@@ -86,6 +95,8 @@ plugins/ExtraItems/
 ├── imports/                   # optional: ZIPs oder entpackte Exporte
 ├── resourcepack/
 └── items/
+    ├── capybara/
+    │   └── entity.yml
     ├── tomato/
     │   ├── item.yml
     │   └── crop.yml
@@ -166,7 +177,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.6.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.7.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -182,7 +193,9 @@ Vor dem Update Welten und `plugins/ExtraItems/` sichern. `/reload` und Hot-Unloa
 | `/ei status` | Initialisierung, Packmodus, SHA-1, Definitionen und persönliche Pack-URL |
 | `/ei pack` | Ressourcenpaket erneut anfordern |
 | `/ei give <Spieler> <ID> [Anzahl]` | eigenes Item vergeben |
+| `/ei spawn capybara [1–10] [adult\|baby]` | Capybaras zum Testen am eigenen Standort erzeugen |
 | `extraitems.admin` | Administration und Notfallzugang bei Packfehler |
+| `extraitems.breed.capybara` | Capybaras mit Süßbeeren füttern und vermehren |
 | `extraitems.plant.tomato` | Tomate pflanzen und mit Knochenmehl düngen |
 | `extraitems.plant.lettuce` | Salat pflanzen und düngen |
 | `extraitems.plant.onion` | Zwiebeln pflanzen und düngen |
@@ -200,6 +213,17 @@ Vor dem Update Welten und `plugins/ExtraItems/` sichern. `/reload` und Hot-Unloa
 | `extraitems.place.cheese_wheel` | Käserad platzieren |
 
 Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstücksschutz gilt.
+
+## Capybaras
+
+- Natürlicher Spawn: ausschließlich in den drei Badlands-Varianten, standardmäßig in Gruppen von zwei bis vier Tieren.
+- Futter und Zucht: Minecraft-Süßbeeren (`SWEET_BERRIES`). Zwei paarungsbereite Capybaras erzeugen ein Baby; dessen Fell wird überwiegend von einem Elternteil geerbt, mit kleiner Chance auf eine andere Variante.
+- Wachstum: 20 Minuten bis zum Erwachsenenalter; jede verfütterte Süßbeere verkürzt die Restzeit um zwei Minuten.
+- Verhalten: passive Vanilla-Wander- und Flucht-AI plus Gruppenanschluss, Ruhephasen, Wasseraufenthalt und gelegentliche Wassersuche.
+- Technik: Das eigene Modell wird von einer `ItemDisplay`-Entity dargestellt. Ein unsichtbares Schwein liefert serverseitig Bewegung, Hitbox und Zucht-AI, wird aber gegen Sattel- und Schweinefutter-Interaktionen abgesichert.
+- Konfiguration: `items/capybara/entity.yml`; der Pfad wird wie alle anderen Inhalte über `items.yml` geladen. Mit `enabled: false` kann das Modul deaktiviert werden.
+
+Die Umsetzung ist eine Vanilla-kompatible Spielannäherung, keine neue registrierte Client-Entity. Deshalb sind Fell und Altersmodell individuell, aber keine skelettbasierten Laufanimationen wie bei einem Clientmod möglich.
 
 ## Küchenmechaniken
 
@@ -229,7 +253,7 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.6.0.jar`.
+Ergebnis: `target/ExtraItems-0.7.0.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
 

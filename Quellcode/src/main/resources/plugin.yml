@@ -1,19 +1,22 @@
 name: ExtraItems
-version: '0.6.0'
+version: '0.7.0'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
-description: Modulare Vanilla-Items, Pflanzen, Küche, Pflicht-Ressourcenpaket und Rechte
+description: Modulare Vanilla-Items, Pflanzen, Küche, Capybaras, Pflicht-Ressourcenpaket und Rechte
 author: ExtraItems
 softdepend: [LuckPerms, WorldGuard, GriefPrevention, Nexo, ItemsAdder, Oraxen, CraftEngine]
 commands:
   extraitems:
     description: ExtraItems verwalten
     aliases: [ei]
-    usage: /ei give <Spieler> <Item> [Anzahl] | pack | status
+    usage: /ei give <Spieler> <Item> [Anzahl] | spawn capybara [Anzahl] [adult|baby] | pack | status
 permissions:
   extraitems.admin:
-    description: Items vergeben, Status abfragen und Notfallzugang bei Packfehlern
+    description: Items vergeben, Entities testen, Status abfragen und Notfallzugang bei Packfehlern
     default: op
+  extraitems.breed.capybara:
+    description: Capybaras mit Süßbeeren füttern und vermehren
+    default: true
   extraitems.plant.tomato:
     description: Tomatensamen pflanzen und Tomaten mit Knochenmehl düngen
     default: op

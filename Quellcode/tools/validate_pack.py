@@ -8,7 +8,7 @@ pack=root/'resourcepack'
 actual={str(p.relative_to(pack)).replace('\\','/') for p in pack.rglob('*') if p.is_file()}
 assert actual == set((root/'pack-files.txt').read_text().splitlines()), 'Manifest ist veraltet'
 meta=json.loads((pack/'pack.mcmeta').read_text())['pack']
-assert meta['min_format']==[75,0] and meta['max_format']==[88,0]
+assert meta['min_format']==[75,0] and meta['max_format']==[97,1]
 assert 'supported_formats' not in meta
 
 def referenced_models(model):
@@ -63,6 +63,15 @@ for crop in ('tomato','lettuce','onion'):
         assert (pack/f'assets/extraitems/models/block/{crop}_stage_{stage}.json').exists()
 for bites in range(10):
     assert (pack/f'assets/extraitems/models/block/cheese_wheel_{bites}.json').exists()
+for variant in ('brown','dark','patched'):
+    texture=pack/f'assets/extraitems/textures/entity/capybara_{variant}.png'
+    assert texture.exists(), f'Capybara-Fell fehlt: {variant}'
+    for age in ('adult','baby'):
+        name=f'capybara_{variant}_{age}'
+        assert (pack/f'assets/extraitems/items/{name}.json').exists(), name
+        model=json.loads((pack/f'assets/extraitems/models/entity/{name}.json').read_text())
+        assert len(model.get('elements',[])) >= 10, f'Capybara-Geometrie fehlt: {name}'
+        assert model.get('textures',{}).get('fur') == f'extraitems:entity/capybara_{variant}'
 ripe_model=json.loads((pack/'assets/extraitems/models/block/tomato_stage_3.json').read_text())
 assert ripe_model['textures'].get('ripe') == 'minecraft:block/red_concrete', 'Reife Textur fehlt'
-print(f'OK: {len(actual)} Pack-Dateien, 3 Saat-Sprites, 3 Pflanzen mit je 4 Stufen, 10 Käsestufen und 5 echte 3D-Handmodelle.')
+print(f'OK: {len(actual)} Pack-Dateien, 3 Saat-Sprites, 3 Pflanzen, 10 Käsestufen, 5 3D-Handmodelle und 6 Capybara-Modelle.')

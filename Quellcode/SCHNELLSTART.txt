@@ -1,7 +1,7 @@
-ExtraItems 0.6.0 — Schnellstart
+ExtraItems 0.7.0 — Schnellstart
 
 1. Server stoppen.
-2. ExtraItems-0.6.0.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
+2. ExtraItems-0.7.0.jar nach plugins/ kopieren; alte ExtraItems-JAR entfernen.
    Unterstützt: 1.21.11, 26.2 und Paper 26.3 Alpha; für 26.3 Java 25 verwenden.
 3. Server starten.
 4. Standardmäßig nutzt das Plugin:
@@ -23,6 +23,7 @@ Wichtig:
 
 Neue Item-Struktur:
   plugins/ExtraItems/items.yml
+  plugins/ExtraItems/items/capybara/entity.yml
   plugins/ExtraItems/items/tomato/item.yml
   plugins/ExtraItems/items/tomato/crop.yml
   plugins/ExtraItems/items/tomato_seeds/item.yml
@@ -44,6 +45,8 @@ Admin-Befehle:
   /ei give SPIELERNAME cheese_station 1
   /ei give SPIELERNAME seed_generator 1
   /ei give SPIELERNAME cheesy_schlemmer 1
+  /ei spawn capybara 4 adult
+  /ei spawn capybara 1 baby
 
 LuckPerms:
   lp group farmer permission set extraitems.plant.tomato true
@@ -57,6 +60,12 @@ LuckPerms:
   lp group cook permission set extraitems.use.cheese_station true
   lp group farmer permission set extraitems.use.seed_generator true
   lp group farmer permission set extraitems.craft.seed_generator true
+  lp group default permission set extraitems.breed.capybara true
+
+Capybaras:
+  Natürlicher Gruppenspawn nur in Badlands, Wooded Badlands und Eroded Badlands.
+  Süßbeeren locken, füttern und vermehren sie; Babys wachsen dadurch schneller.
+  Drei zufällige Felle und getrennte Erwachsenen-/Babymodelle sind enthalten.
 
 Käsestation automatisieren:
   Kiste -> Hopper oben/seitlich -> Käsestation -> Hopper direkt darunter

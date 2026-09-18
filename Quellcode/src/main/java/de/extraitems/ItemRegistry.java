@@ -2,6 +2,7 @@ package de.extraitems;
 
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,6 +27,13 @@ public final class ItemRegistry {
     }
     public record PlaceableFood(String id, String item, String permission, List<NamespacedKey> models,
                                 int nutrition, float saturation, boolean emptyHandOnly) {}
+    public record CustomEntity(String id, EntityType carrier, Material breedItem, String breedPermission,
+                               List<NamespacedKey> adultModels, List<NamespacedKey> babyModels,
+                               Set<String> spawnBiomes, int groupMin, int groupMax,
+                               int spawnIntervalSeconds, double spawnChance,
+                               int spawnDistanceMin, int spawnDistanceMax,
+                               int maxLoadedPerWorld, int maxNearby,
+                               int babyGrowthTicks, int feedGrowthTicks) {}
     public record RecipeSpec(NamespacedKey key, String result, int amount, String permission,
                              List<String> ingredients, List<String> shape, Map<Character, String> keys,
                              String tool, int toolDamage) {
@@ -35,7 +43,7 @@ public final class ItemRegistry {
 
     private static final Set<String> FUTURE_TYPES = Set.of("potion", "effect", "gui", "tree", "ore");
     private static final Set<String> ACTIVE_TYPES = Set.of(
-            "item", "tool", "crop", "recipe", "station", "seed_generator", "placeable_food");
+            "item", "tool", "crop", "recipe", "station", "seed_generator", "placeable_food", "entity");
     private final ExtraItemsPlugin plugin;
     private final NamespacedKey itemKey;
     private final Map<String, ItemStack> templates = new LinkedHashMap<>();
@@ -44,6 +52,7 @@ public final class ItemRegistry {
     private final Map<String, Station> stations = new LinkedHashMap<>();
     private final Map<String, SeedGenerator> seedGenerators = new LinkedHashMap<>();
     private final Map<String, PlaceableFood> placeableFoods = new LinkedHashMap<>();
+    private final Map<String, CustomEntity> entities = new LinkedHashMap<>();
     private final Map<NamespacedKey, RecipeSpec> recipes = new LinkedHashMap<>();
     private final int sourceCount;
     private final ExternalItemBridge external;
@@ -64,6 +73,7 @@ public final class ItemRegistry {
         loadType(definitions, "station", this::loadStation);
         loadType(definitions, "seed_generator", this::loadSeedGenerator);
         loadType(definitions, "placeable_food", this::loadPlaceableFood);
+        loadType(definitions, "entity", this::loadEntity);
         loadType(definitions, "recipe", this::loadRecipe);
 
         for (DefinitionFiles.Definition definition : definitions) {
@@ -214,10 +224,59 @@ public final class ItemRegistry {
         if (placeableFoods.putIfAbsent(id, food) != null) throw new IllegalArgumentException("Platzierbares Essen doppelt: " + id);
     }
 
+    private void loadEntity(DefinitionFiles.Definition definition) {
+        String id = definition.id();
+        ConfigurationSection c = definition.config();
+        EntityType carrier;
+        try {
+            carrier = EntityType.valueOf(c.getString("carrier", "PIG").trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException error) {
+            throw new IllegalArgumentException("Ungültige Trägerentity: " + id, error);
+        }
+        if (carrier != EntityType.PIG) {
+            throw new IllegalArgumentException("Dieses Modul unterstützt derzeit nur PIG als Trägerentity: " + id);
+        }
+        Material breedItem = Material.matchMaterial(c.getString("breed-material", ""));
+        if (breedItem == null || !breedItem.isItem() || breedItem.isAir()) {
+            throw new IllegalArgumentException("Ungültiges Zuchtitem: " + id);
+        }
+        List<NamespacedKey> adult = modelList(c, id, "adult-models", 1, 16);
+        List<NamespacedKey> baby = modelList(c, id, "baby-models", 1, 16);
+        if (adult.size() != baby.size()) {
+            throw new IllegalArgumentException("adult-models und baby-models benötigen gleich viele Varianten: " + id);
+        }
+        LinkedHashSet<String> biomes = new LinkedHashSet<>();
+        for (String raw : c.getStringList("spawn-biomes")) {
+            NamespacedKey biome = key(raw);
+            biomes.add(biome.toString());
+        }
+        if (biomes.isEmpty()) throw new IllegalArgumentException("spawn-biomes fehlt: " + id);
+        int groupMin = range(c.getInt("group-min", 2), 1, 16, id);
+        int distanceMin = range(c.getInt("spawn-distance-min", 24), 8, 128, id);
+        CustomEntity entity = new CustomEntity(id, carrier, breedItem,
+                permission(c.getString("breed-permission", "extraitems.breed." + id)),
+                adult, baby, Collections.unmodifiableSet(biomes), groupMin,
+                range(c.getInt("group-max", 4), groupMin, 16, id),
+                range(c.getInt("spawn-interval-seconds", 30), 5, 3600, id),
+                finiteDouble(c.getDouble("spawn-chance", .18), 0, 1, id),
+                distanceMin, range(c.getInt("spawn-distance-max", 48), distanceMin, 256, id),
+                range(c.getInt("max-loaded-per-world", 36), 1, 1000, id),
+                range(c.getInt("max-near-player", 8), 1, 128, id),
+                range(c.getInt("baby-growth-ticks", 24000), 1200, 240000, id),
+                range(c.getInt("feed-growth-ticks", 2400), 20, 24000, id));
+        if (entities.putIfAbsent(id, entity) != null) {
+            throw new IllegalArgumentException("Entity-ID doppelt: " + id);
+        }
+    }
+
     private List<NamespacedKey> modelList(ConfigurationSection c, String id, int min, int max) {
-        List<NamespacedKey> models = c.getStringList("models").stream().map(ItemRegistry::key).toList();
+        return modelList(c, id, "models", min, max);
+    }
+
+    private List<NamespacedKey> modelList(ConfigurationSection c, String id, String path, int min, int max) {
+        List<NamespacedKey> models = c.getStringList(path).stream().map(ItemRegistry::key).toList();
         if (models.size() < min || models.size() > max) {
-            throw new IllegalArgumentException(min + "–" + max + " Modelle erforderlich: " + id);
+            throw new IllegalArgumentException(path + ": " + min + "–" + max + " Modelle erforderlich: " + id);
         }
         return models;
     }
@@ -403,11 +462,13 @@ public final class ItemRegistry {
     public Collection<Station> stations() { return Collections.unmodifiableCollection(stations.values()); }
     public Collection<SeedGenerator> seedGenerators() { return Collections.unmodifiableCollection(seedGenerators.values()); }
     public Collection<PlaceableFood> placeableFoods() { return Collections.unmodifiableCollection(placeableFoods.values()); }
+    public Collection<CustomEntity> entities() { return Collections.unmodifiableCollection(entities.values()); }
     public Tool tool(String id) { return tools.get(id); }
     public Tool tool(ItemStack item) { String id = id(item); return id == null ? null : tools.get(id); }
     public Station station(String id) { return stations.get(id); }
     public SeedGenerator seedGenerator(String id) { return seedGenerators.get(id); }
     public PlaceableFood placeableFood(String id) { return placeableFoods.get(id); }
+    public CustomEntity entity(String id) { return entities.get(id); }
 
     public Crop cropForSeed(ItemStack item) {
         String id = id(item);

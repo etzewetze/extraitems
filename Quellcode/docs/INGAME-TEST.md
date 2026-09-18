@@ -63,5 +63,18 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Gemüse manuell trocknen | Tomate/Salat/Zwiebel bleiben jeweils 30 Sekunden im Eingang und ergeben 4/3/3 passende Samen. |
 | Gemüse während Trocknung entfernen/tauschen | Lauf bricht ohne Verlust ab; ein anderes Gemüse übernimmt nicht den alten Fortschritt. |
 | Kiste → Hopper → Samengenerator → Hopper | Gemüse wird nur oben/seitlich eingezogen, fertige Samen ausschließlich unten ausgegeben. |
+| `/ei spawn capybara 3 adult` | Drei sichtbare Capybaras mit Hitbox erscheinen; kein Schweinemodell scheint durch. |
+| `/ei spawn capybara 1 baby` | Eigenes kleineres Babymodell mit relativ größerem Kopf; keine bloße Erwachsene-Miniatur. |
+| Mehrere natürliche Spawnzyklen in Badlands | Gruppen aus zwei bis vier Tieren erscheinen innerhalb der konfigurierten Grenzen. |
+| Gleicher Test in Wooded/Eroded Badlands | Natürliche Gruppen können auch in beiden Varianten erscheinen. |
+| Warten in Plains und Nether | Keine natürlichen Capybara-Spawns. |
+| Mehrere Tiere vergleichen | Braunes, dunkles und schwarz geflecktes Fell treten zufällig auf; keine Missing Texture. |
+| Süßbeeren in Haupt- und Nebenhand halten | Capybaras folgen; Füttern verbraucht genau eine Beere. |
+| Zwei erwachsene Tiere mit Süßbeeren füttern | Herzen, Paarung und genau ein persistentes Baby mit Eltern-/Zufallsfell. |
+| Baby mit Süßbeere füttern | Wachstumszeit verkürzt sich; Erwachsenenmodell wechselt beim Heranwachsen genau einmal. |
+| Karotte/Kartoffel/Rote Bete/Sattel verwenden | Keine Schweinezucht und kein Sattel; Item wird nicht ungewollt verbraucht. |
+| Capybara verletzen und Wasser bereitstellen | Tier wacht auf und flieht; im Wasser schwimmt es und sucht gelegentlich nahe Wasserstellen. |
+| Chunk entladen, Server neu starten und zurückkehren | Tiere, Alter und Fell bleiben erhalten; genau ein sichtbares Modell pro Träger. |
+| Capybara töten | Modell verschwindet, kein Schweinefleisch und keine verwaiste Display-Entity bleiben zurück. |
 
 Die echte Grafik, Client-Handanimation, Reihenfolge mit Drittplugins und Verhalten unter hoher Spielerlast lassen sich mit reinen Unit-Tests nicht abnehmen. Erst nach dieser Prüfung produktiv einsetzen.

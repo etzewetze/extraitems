@@ -42,6 +42,40 @@ harvest-max: 3
 
 Itemdefinitionen werden unabhängig von der Reihenfolge in `items.yml` zuerst geladen. Danach folgen Pflanzen und Rezepte.
 
+## Entity
+
+```yaml
+type: entity
+id: capybara
+carrier: PIG
+breed-material: SWEET_BERRIES
+breed-permission: extraitems.breed.capybara
+adult-models:
+  - extraitems:capybara_brown_adult
+  - extraitems:capybara_dark_adult
+  - extraitems:capybara_patched_adult
+baby-models:
+  - extraitems:capybara_brown_baby
+  - extraitems:capybara_dark_baby
+  - extraitems:capybara_patched_baby
+spawn-biomes:
+  - minecraft:badlands
+  - minecraft:wooded_badlands
+  - minecraft:eroded_badlands
+group-min: 2
+group-max: 4
+spawn-interval-seconds: 30
+spawn-chance: 0.18
+spawn-distance-min: 24
+spawn-distance-max: 48
+max-loaded-per-world: 36
+max-near-player: 8
+baby-growth-ticks: 24000
+feed-growth-ticks: 2400
+```
+
+`adult-models` und `baby-models` müssen gleich viele Varianten enthalten. Beim natürlichen Spawn wird eine Variante zufällig gewählt; Nachwuchs erbt normalerweise das Fell eines Elternteils. Das aktuelle Vanilla-kompatible Entitymodul unterstützt `PIG` als unsichtbaren Träger. Die Trägerentity liefert Hitbox, Bewegung, Schwimmen, Flucht und Zucht-AI, während die angegebenen Itemmodelle sichtbar synchronisiert werden.
+
 ## Samengenerator
 
 ```yaml
@@ -133,6 +167,6 @@ Sicherheitsgrenzen: maximal 4096 Dateien, 16 MiB je Datei und 64 MiB entpackt je
 
 ## Erweiterungspunkte
 
-Die Loader-Pipeline verarbeitet Definitionen nach Typ. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator` und `placeable_food`. `potion`, `effect`, `gui`, `tree` und `ore` bleiben reserviert. Werden reservierte Typen verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
+Die Loader-Pipeline verarbeitet Definitionen nach Typ. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator`, `placeable_food` und `entity`. `potion`, `effect`, `gui`, `tree` und `ore` bleiben reserviert. Werden reservierte Typen verwendet, bricht der Start mit einer eindeutigen Meldung ab, statt die Datei stillschweigend falsch zu laden.
 
 Werkzeuge, Stationen, Samengeneratoren und platzierbares Essen liegen ebenfalls getrennt im jeweiligen Itemordner. Beispiele sind `items/knife/tool.yml`, `items/cheese_station/station.yml`, `items/seed_generator/generator.yml` und `items/cheese_wheel/placeable_food.yml`. Werkzeuge können über `attack-damage` und `attack-speed` eigene Haupt-Hand-Kampfwerte erhalten.
