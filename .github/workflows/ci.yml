@@ -60,7 +60,10 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           ./gradlew applyPatches --stacktrace
-          ./gradlew :paper-api:publishToMavenLocal --stacktrace
+          ./gradlew :paper-api:jar :paper-api:generatePomFileForMavenPublication --stacktrace
+          mvn -B org.apache.maven.plugins:maven-install-plugin:3.1.4:install-file \
+            -Dfile=paper-api/build/libs/paper-api-26.3.local-SNAPSHOT.jar \
+            -DpomFile=paper-api/build/publications/maven/pom-default.xml
       - name: Test against ${{ matrix.label }}
         working-directory: Quellcode
         run: mvn -B clean verify -Dserver.api.group=${{ matrix.api_group }} -Dserver.api.artifact=${{ matrix.api_artifact }} -Dserver.api.version=${{ matrix.api_version }}
