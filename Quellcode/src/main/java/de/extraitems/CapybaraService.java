@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
@@ -30,6 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * while a synchronized item display supplies the custom adult/baby model.
  */
 final class CapybaraService implements Listener {
+    private static final double NEARBY_CAP_RADIUS = 24;
     private static final Set<Material> BLOCKED_PIG_ITEMS = Set.of(
             Material.CARROT, Material.POTATO, Material.BEETROOT, Material.SADDLE);
 
@@ -47,6 +49,8 @@ final class CapybaraService implements Listener {
     private BukkitTask visualTask;
     private BukkitTask behaviourTask;
     private BukkitTask spawnTask;
+    private long naturalChecks;
+    private long naturalGroups;
 
     CapybaraService(ExtraItemsPlugin plugin, ItemRegistry items, ItemRegistry.CustomEntity definition) {
         this.plugin = plugin;
@@ -65,6 +69,7 @@ final class CapybaraService implements Listener {
         behaviourTask = Bukkit.getScheduler().runTaskTimer(plugin, this::updateBehaviour, 20L, 20L);
         long interval = definition.spawnIntervalSeconds() * 20L;
         spawnTask = Bukkit.getScheduler().runTaskTimer(plugin, this::attemptNaturalSpawns, interval, interval);
+        Bukkit.getScheduler().runTaskLater(plugin, this::attemptNearbyLoadedChunks, 40L);
     }
 
     void stop() {
@@ -81,6 +86,10 @@ final class CapybaraService implements Listener {
 
     int count() {
         return (int) capybaras.values().stream().filter(Entity::isValid).count();
+    }
+
+    String naturalStatus() {
+        return naturalGroups + " Gruppe(n) aus " + naturalChecks + " Spawnprüfung(en)";
     }
 
     int spawnAt(Location origin, int amount, boolean baby) {
@@ -319,34 +328,107 @@ final class CapybaraService implements Listener {
     private void attemptNaturalSpawns() {
         List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
         Collections.shuffle(players);
-        int attempts = Math.min(players.size(), 4);
-        for (int index = 0; index < attempts; index++) attemptNaturalSpawn(players.get(index));
+        for (Player player : players) attemptNaturalSpawn(player);
     }
 
     private void attemptNaturalSpawn(Player player) {
         if (player.getGameMode() == GameMode.SPECTATOR || player.getWorld().getEnvironment() != World.Environment.NORMAL) return;
+        naturalChecks++;
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        if (random.nextDouble() >= definition.spawnChance()) return;
+        if (!CapybaraPolicy.passesSpawnChance(definition.spawnChance(), random.nextDouble())) return;
         World world = player.getWorld();
         int worldCount = loadedIn(world);
         if (worldCount >= definition.maxLoadedPerWorld()) return;
 
-        double angle = random.nextDouble(Math.PI * 2);
-        int distance = random.nextInt(definition.spawnDistanceMin(), definition.spawnDistanceMax() + 1);
-        int x = player.getLocation().getBlockX() + (int) Math.round(Math.cos(angle) * distance);
-        int z = player.getLocation().getBlockZ() + (int) Math.round(Math.sin(angle) * distance);
-        Location center = surface(world, x, z);
-        if (center == null || nearbyCount(center, 24) >= definition.maxNearby()) return;
+        Location center = null;
+        for (int attempt = 0; attempt < CapybaraPolicy.candidateAttempts(false) && center == null; attempt++) {
+            double angle = random.nextDouble(Math.PI * 2);
+            int distance = random.nextInt(definition.spawnDistanceMin(), definition.spawnDistanceMax() + 1);
+            int x = player.getLocation().getBlockX() + (int) Math.round(Math.cos(angle) * distance);
+            int z = player.getLocation().getBlockZ() + (int) Math.round(Math.sin(angle) * distance);
+            Location candidate = surface(world, x, z);
+            if (candidate != null && nearbyCount(candidate, NEARBY_CAP_RADIUS) < definition.maxNearby()) {
+                center = candidate;
+            }
+        }
+        if (center == null) return;
+        spawnNaturalGroup(center, random);
+    }
+
+    private void attemptNearbyLoadedChunks() {
+        Set<String> visited = new HashSet<>();
+        int radius = Math.max(1, (definition.spawnDistanceMax() + 15) / 16);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getGameMode() == GameMode.SPECTATOR
+                    || player.getWorld().getEnvironment() != World.Environment.NORMAL) continue;
+            World world = player.getWorld();
+            int centerX = player.getLocation().getBlockX() >> 4;
+            int centerZ = player.getLocation().getBlockZ() >> 4;
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    int chunkX = centerX + dx;
+                    int chunkZ = centerZ + dz;
+                    if (!world.isChunkLoaded(chunkX, chunkZ)) continue;
+                    String key = world.getUID() + ":" + chunkX + ":" + chunkZ;
+                    if (visited.add(key)) attemptChunkSpawn(world.getChunkAt(chunkX, chunkZ));
+                }
+            }
+        }
+    }
+
+    private void attemptChunkSpawn(Chunk chunk) {
+        World world = chunk.getWorld();
+        if (world.getEnvironment() != World.Environment.NORMAL || !chunk.isLoaded()
+                || loadedIn(world) >= definition.maxLoadedPerWorld()
+                || !hasNearbyPlayer(chunk)) return;
+        naturalChecks++;
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (!CapybaraPolicy.passesSpawnChance(definition.spawnChance(), random.nextDouble())) return;
+
+        Location center = null;
+        for (int attempt = 0; attempt < CapybaraPolicy.candidateAttempts(true) && center == null; attempt++) {
+            int x = (chunk.getX() << 4) + random.nextInt(16);
+            int z = (chunk.getZ() << 4) + random.nextInt(16);
+            Location candidate = surface(world, x, z);
+            if (candidate != null && nearbyCount(candidate, NEARBY_CAP_RADIUS) < definition.maxNearby()) {
+                center = candidate;
+            }
+        }
+        if (center != null) spawnNaturalGroup(center, random);
+    }
+
+    private boolean hasNearbyPlayer(Chunk chunk) {
+        double centerX = (chunk.getX() << 4) + 8.0;
+        double centerZ = (chunk.getZ() << 4) + 8.0;
+        double radius = Math.max(64, definition.spawnDistanceMax() + 32);
+        double squared = radius * radius;
+        for (Player player : chunk.getWorld().getPlayers()) {
+            if (player.getGameMode() == GameMode.SPECTATOR) continue;
+            double dx = player.getLocation().getX() - centerX;
+            double dz = player.getLocation().getZ() - centerZ;
+            if (dx * dx + dz * dz <= squared) return true;
+        }
+        return false;
+    }
+
+    private void spawnNaturalGroup(Location center, ThreadLocalRandom random) {
+        World world = center.getWorld();
+        if (world == null) return;
+        int worldCount = loadedIn(world);
+        int close = nearbyCount(center, NEARBY_CAP_RADIUS);
 
         int available = Math.min(definition.maxLoadedPerWorld() - worldCount,
-                definition.maxNearby() - nearbyCount(center, 24));
+                definition.maxNearby() - close);
         int group = CapybaraPolicy.groupSize(definition.groupMin(), definition.groupMax(), available, random.nextInt());
+        int spawned = 0;
         for (int index = 0; index < group; index++) {
-            Location location = surface(world, x + random.nextInt(-3, 4), z + random.nextInt(-3, 4));
+            Location location = surface(world, center.getBlockX() + random.nextInt(-3, 4),
+                    center.getBlockZ() + random.nextInt(-3, 4));
             if (location == null) continue;
             boolean baby = group >= 3 && index == group - 1 && random.nextDouble() < .35;
-            spawnOne(location, baby);
+            if (spawnOne(location, baby) != null) spawned++;
         }
+        if (spawned > 0) naturalGroups++;
     }
 
     private Location surface(World world, int x, int z) {
@@ -500,7 +582,15 @@ final class CapybaraService implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void chunkLoad(ChunkLoadEvent event) {
-        Bukkit.getScheduler().runTask(plugin, () -> discover(event.getChunk()));
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            discover(event.getChunk());
+            attemptChunkSpawn(event.getChunk());
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void join(PlayerJoinEvent event) {
+        Bukkit.getScheduler().runTaskLater(plugin, this::attemptNearbyLoadedChunks, 40L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

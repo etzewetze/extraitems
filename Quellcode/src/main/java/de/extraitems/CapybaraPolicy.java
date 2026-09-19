@@ -25,4 +25,16 @@ final class CapybaraPolicy {
         int wanted = minimum + Math.floorMod(roll, maximum - minimum + 1);
         return Math.min(wanted, available);
     }
+
+    static int candidateAttempts(boolean loadedChunk) {
+        return loadedChunk ? 8 : 12;
+    }
+
+    static boolean passesSpawnChance(double chance, double roll) {
+        if (!Double.isFinite(chance) || chance < 0 || chance > 1
+                || !Double.isFinite(roll) || roll < 0 || roll >= 1) {
+            throw new IllegalArgumentException("Ungültiger Spawnwurf");
+        }
+        return roll < chance;
+    }
 }

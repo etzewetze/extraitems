@@ -1,5 +1,5 @@
 name: ExtraItems
-version: '0.7.0'
+version: '0.7.1'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
 description: Modulare Vanilla-Items, Pflanzen, Küche, Capybaras, Pflicht-Ressourcenpaket und Rechte

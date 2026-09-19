@@ -71,7 +71,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.7.0 • Capybaras, 3D-Küche und Integrationen • 1.21.11–26.3',
+    'description': 'ExtraItems 0.7.1 • Capybaras, 3D-Küche und Integrationen • 1.21.11–26.3',
     'min_format': [75, 0], 'max_format': [97, 1]
 }})
 
@@ -176,8 +176,10 @@ geometry(ASSETS / 'models/item/seed_generator.json', [
 
 item('old_but_gold_book', 'minecraft:item/enchanted_book')
 
-# Capybaras use a hidden vanilla carrier for AI and these block models for their visible body.
-# Adult and baby geometry are intentionally separate instead of merely scaling one model.
+# Capybaras use a hidden vanilla carrier for AI and these item models for their visible body.
+# Adult and baby geometry are intentionally separate instead of merely scaling one model. Their
+# live models use vanilla atlas textures so a missing custom atlas entry can never turn them into
+# the pink/black fallback cube. The generated PNGs remain artwork references only.
 capybara_adult = [
     cube([3, 4.5, 4], [13, 11.5, 16], 'fur'),
     cube([3.5, 5, .7], [12.5, 11.4, 6], 'fur'),
@@ -206,17 +208,39 @@ capybara_baby = [
     cube([4.8, 0, 11.5], [6.6, 3.8, 13.5], 'fur'),
     cube([9.4, 0, 11.5], [11.2, 3.8, 13.5], 'fur'),
 ]
+capybara_patches = {
+    'adult': [
+        cube([2.9, 7, 8.5], [3.05, 10.8, 13.5], 'patch'),
+        cube([6.5, 11.45, 8], [11.5, 11.6, 13], 'patch'),
+        cube([3.45, 7, 1.7], [3.6, 10.5, 4.8], 'patch'),
+    ],
+    'baby': [
+        cube([4.4, 5, 8], [4.55, 8, 12], 'patch'),
+        cube([7, 8.75, 8], [10.5, 8.9, 12], 'patch'),
+        cube([4.15, 5.2, 2.8], [4.3, 8.2, 5.8], 'patch'),
+    ],
+}
+capybara_fur = {
+    'brown': 'minecraft:block/brown_wool',
+    'dark': 'minecraft:block/brown_concrete',
+    'patched': 'minecraft:block/brown_wool',
+}
+legacy_entity_models = ASSETS / 'models/entity'
+for legacy in legacy_entity_models.glob('capybara_*.json'):
+    legacy.unlink()
 for variant in ('brown', 'dark', 'patched'):
     textures = {
-        'particle': f'extraitems:entity/capybara_{variant}',
-        'fur': f'extraitems:entity/capybara_{variant}',
+        'particle': capybara_fur[variant],
+        'fur': capybara_fur[variant],
+        'patch': 'minecraft:block/black_concrete',
         'eye': 'minecraft:block/black_concrete',
         'nose': 'minecraft:block/black_concrete',
     }
     for age, elements in (('adult', capybara_adult), ('baby', capybara_baby)):
         name = f'capybara_{variant}_{age}'
-        item(name, 'entity/' + name)
-        geometry(ASSETS / 'models/entity' / f'{name}.json', elements, textures)
+        visible_elements = elements + (capybara_patches[age] if variant == 'patched' else [])
+        item(name, 'item/' + name)
+        geometry(ASSETS / 'models/item' / f'{name}.json', visible_elements, textures)
 
 # Tomato crop: mature fruit uses a vanilla atlas texture for maximum robustness.
 for stage, height in enumerate((4, 8, 12, 12)):

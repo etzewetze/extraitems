@@ -1,6 +1,14 @@
-# ExtraItems 0.7.0
+# ExtraItems 0.7.1
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Behoben in 0.7.1
+
+- Natürliche Capybara-Spawns werden nun auch beim Laden bzw. Generieren geeigneter Badlands-Chunks geprüft.
+- Der periodische Spawn prüft alle Spieler und probiert bis zu zwölf geladene Positionen, statt nach einem ungeeigneten Zufallspunkt abzubrechen.
+- `/ei status` zeigt die Anzahl natürlicher Spawnprüfungen und erfolgreicher Gruppen an.
+- Alle sechs Capybara-Modelle liegen jetzt im standardisierten Item-Modellpfad und verwenden ausschließlich sichere Vanilla-Atlastexturen. Die gefleckte Variante besitzt echte schwarze Modellflächen statt einer möglicherweise fehlenden Entity-Textur.
+- Pack-Revision 11 ersetzt die fehlerhaften Modelle automatisch und erzwingt einen neuen Ressourcenpaket-Hash.
 
 ## Neu in 0.7.0
 
@@ -177,7 +185,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.7.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.7.1.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -253,7 +261,7 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.7.0.jar`.
+Ergebnis: `target/ExtraItems-0.7.1.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
 

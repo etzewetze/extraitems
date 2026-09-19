@@ -27,4 +27,18 @@ class CapybaraPolicyTest {
         assertThrows(IllegalArgumentException.class, () -> CapybaraPolicy.groupSize(0, 4, 3, 1));
         assertThrows(IllegalArgumentException.class, () -> CapybaraPolicy.inheritedVariant(0, 0, 0, 1));
     }
+
+    @Test void naturalSpawnRetriesMoreThanOneLocation() {
+        assertTrue(CapybaraPolicy.candidateAttempts(false) > 1);
+        assertTrue(CapybaraPolicy.candidateAttempts(true) > 1);
+        assertTrue(CapybaraPolicy.candidateAttempts(false) > CapybaraPolicy.candidateAttempts(true));
+    }
+
+    @Test void naturalSpawnChanceHasExactBoundaries() {
+        assertFalse(CapybaraPolicy.passesSpawnChance(0, 0));
+        assertTrue(CapybaraPolicy.passesSpawnChance(1, .999999));
+        assertTrue(CapybaraPolicy.passesSpawnChance(.18, .179999));
+        assertFalse(CapybaraPolicy.passesSpawnChance(.18, .18));
+        assertThrows(IllegalArgumentException.class, () -> CapybaraPolicy.passesSpawnChance(1.1, .5));
+    }
 }

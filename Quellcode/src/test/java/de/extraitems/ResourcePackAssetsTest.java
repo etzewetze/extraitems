@@ -98,15 +98,18 @@ class ResourcePackAssetsTest {
             for (String age : new String[]{"adult", "baby"}) {
                 String name = "capybara_" + variant + "_" + age;
                 String item = Files.readString(PACK.resolve("assets/extraitems/items/" + name + ".json"));
-                String model = Files.readString(PACK.resolve("assets/extraitems/models/entity/" + name + ".json"));
-                assertTrue(item.contains("extraitems:entity/" + name), name);
-                assertTrue(model.contains("extraitems:entity/capybara_" + variant), name);
+                String model = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + ".json"));
+                assertTrue(item.contains("extraitems:item/" + name), name);
+                assertTrue(model.contains("minecraft:block/"), name);
+                assertFalse(model.contains("extraitems:entity/"), name);
                 assertTrue(model.contains("\"elements\""), name);
                 assertTrue(model.contains("minecraft:block/black_concrete"), name);
             }
         }
-        String adult = Files.readString(PACK.resolve("assets/extraitems/models/entity/capybara_brown_adult.json"));
-        String baby = Files.readString(PACK.resolve("assets/extraitems/models/entity/capybara_brown_baby.json"));
+        String adult = Files.readString(PACK.resolve("assets/extraitems/models/item/capybara_brown_adult.json"));
+        String baby = Files.readString(PACK.resolve("assets/extraitems/models/item/capybara_brown_baby.json"));
+        String patched = Files.readString(PACK.resolve("assets/extraitems/models/item/capybara_patched_adult.json"));
         assertNotEquals(adult, baby);
+        assertTrue(patched.contains("\"texture\": \"#patch\""));
     }
 }

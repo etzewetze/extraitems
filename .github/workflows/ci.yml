@@ -84,13 +84,13 @@ jobs:
       - name: Assemble complete package
         run: |
           mkdir -p dist/Quellcode
-          cp Quellcode/target/ExtraItems-0.7.0.jar dist/
+          cp Quellcode/target/ExtraItems-0.7.1.jar dist/
           cp README.md SCHNELLSTART.txt ASSETS.md dist/
           rsync -a --exclude target Quellcode/ dist/Quellcode/
           cd dist
-          zip -r ExtraItems-0.7.0-Komplettpaket.zip ExtraItems-0.7.0.jar README.md SCHNELLSTART.txt ASSETS.md Quellcode
+          zip -r ExtraItems-0.7.1-Komplettpaket.zip ExtraItems-0.7.1.jar README.md SCHNELLSTART.txt ASSETS.md Quellcode
       - uses: actions/upload-artifact@v7
         with:
-          name: ExtraItems-0.7.0-Komplettpaket
-          path: dist/ExtraItems-0.7.0-Komplettpaket.zip
+          name: ExtraItems-0.7.1-Komplettpaket
+          path: dist/ExtraItems-0.7.1-Komplettpaket.zip
           if-no-files-found: error

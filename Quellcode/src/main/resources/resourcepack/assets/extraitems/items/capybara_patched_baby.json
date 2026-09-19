@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "extraitems:entity/capybara_patched_baby"
+    "model": "extraitems:item/capybara_patched_baby"
   }
 }

@@ -62,7 +62,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             if (capybaras != null) capybaras.start();
             operational = true;
             scheduleExternalRecipeRefresh();
-            getLogger().info("ExtraItems 0.7.0 bereit. Server " + Bukkit.getBukkitVersion()
+            getLogger().info("ExtraItems 0.7.1 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
                     + "; Definitionen " + items.sourceCount()
                     + "; Integrationen " + items.externalStatus());
@@ -144,7 +144,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.7.0 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.7.1 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));
@@ -155,6 +155,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
                     + " | Samengeneratoren: " + (seedGenerators == null ? 0 : seedGenerators.count())
                     + " | Käseräder: " + (placeableFoods == null ? 0 : placeableFoods.count())
                     + " | Capybaras (geladen): " + (capybaras == null ? 0 : capybaras.count()));
+            if (capybaras != null) sender.sendMessage("§7Natürliche Capybara-Spawns: " + capybaras.naturalStatus());
             sender.sendMessage("§7Integrationen: " + (items == null ? "nicht initialisiert" : items.externalStatus()));
             if (sender instanceof Player player && pack.ready() && pack.deliveryEnabled()) {
                 try {

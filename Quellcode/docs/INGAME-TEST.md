@@ -66,6 +66,8 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | `/ei spawn capybara 3 adult` | Drei sichtbare Capybaras mit Hitbox erscheinen; kein Schweinemodell scheint durch. |
 | `/ei spawn capybara 1 baby` | Eigenes kleineres Babymodell mit relativ größerem Kopf; keine bloße Erwachsene-Miniatur. |
 | Mehrere natürliche Spawnzyklen in Badlands | Gruppen aus zwei bis vier Tieren erscheinen innerhalb der konfigurierten Grenzen. |
+| Einen neuen oder entladenen Badlands-Chunk betreten | Beim Laden wird eine zusätzliche natürliche Spawnprüfung ausgeführt; ein ungeeigneter erster Block beendet die Suche nicht. |
+| `/ei status` nach mehreren Zyklen | Zeigt steigende Spawnprüfungen und nach erfolgreichem Spawn mindestens eine Gruppe an. |
 | Gleicher Test in Wooded/Eroded Badlands | Natürliche Gruppen können auch in beiden Varianten erscheinen. |
 | Warten in Plains und Nether | Keine natürlichen Capybara-Spawns. |
 | Mehrere Tiere vergleichen | Braunes, dunkles und schwarz geflecktes Fell treten zufällig auf; keine Missing Texture. |
