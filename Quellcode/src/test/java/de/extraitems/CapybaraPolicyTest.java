@@ -41,4 +41,20 @@ class CapybaraPolicyTest {
         assertFalse(CapybaraPolicy.passesSpawnChance(.18, .18));
         assertThrows(IllegalArgumentException.class, () -> CapybaraPolicy.passesSpawnChance(1.1, .5));
     }
+
+    @Test void animationUsesIdleWalkFramesAndSwimmingPose() {
+        assertEquals(-1, CapybaraPolicy.animationFrame(false, false, 0, 4, 2));
+        assertEquals(0, CapybaraPolicy.animationFrame(true, false, 0, 4, 2));
+        assertEquals(0, CapybaraPolicy.animationFrame(true, false, 3, 4, 2));
+        assertEquals(1, CapybaraPolicy.animationFrame(true, false, 4, 4, 2));
+        assertEquals(0, CapybaraPolicy.animationFrame(true, false, 8, 4, 2));
+        assertEquals(-2, CapybaraPolicy.animationFrame(true, true, 4, 4, 2));
+    }
+
+    @Test void invalidAnimationBoundsAreRejected() {
+        assertThrows(IllegalArgumentException.class,
+                () -> CapybaraPolicy.animationFrame(true, false, 0, 0, 2));
+        assertThrows(IllegalArgumentException.class,
+                () -> CapybaraPolicy.animationFrame(true, false, 0, 4, -1));
+    }
 }

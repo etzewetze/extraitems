@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.extraitems</groupId>
   <artifactId>extraitems</artifactId>
-  <version>0.7.1</version>
+  <version>0.8.0</version>
   <name>ExtraItems</name>
   <description>Modular Vanilla custom items and crops with mandatory resource pack</description>
 

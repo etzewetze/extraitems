@@ -58,6 +58,12 @@ baby-models:
   - extraitems:capybara_brown_baby
   - extraitems:capybara_dark_baby
   - extraitems:capybara_patched_baby
+animation:
+  walk-model-suffixes:
+    - _walk_1
+    - _walk_2
+  swim-model-suffix: _swim
+  step-ticks: 4
 spawn-biomes:
   - minecraft:badlands
   - minecraft:wooded_badlands
@@ -74,7 +80,7 @@ baby-growth-ticks: 24000
 feed-growth-ticks: 2400
 ```
 
-`adult-models` und `baby-models` müssen gleich viele Varianten enthalten. Beim natürlichen Spawn wird eine Variante zufällig gewählt; Nachwuchs erbt normalerweise das Fell eines Elternteils. Das aktuelle Vanilla-kompatible Entitymodul unterstützt `PIG` als unsichtbaren Träger. Die Trägerentity liefert Hitbox, Bewegung, Schwimmen, Flucht und Zucht-AI, während die angegebenen Itemmodelle sichtbar synchronisiert werden.
+`adult-models` und `baby-models` müssen gleich viele Varianten enthalten. Beim natürlichen Spawn wird eine Variante zufällig gewählt; Nachwuchs erbt normalerweise das Fell eines Elternteils. `animation.walk-model-suffixes` benennt die der Basis-ID angehängten Laufphasen, `swim-model-suffix` die Schwimmhaltung und `step-ticks` die Dauer einer Laufphase. Leere Suffixlisten lassen ein Modell statisch. Das aktuelle Vanilla-kompatible Entitymodul unterstützt `PIG` als unsichtbaren Träger. Die Trägerentity liefert Hitbox, Bewegung, Schwimmen, Flucht und Zucht-AI, während die angegebenen Itemmodelle sichtbar synchronisiert werden.
 
 ## Samengenerator
 

@@ -64,21 +64,24 @@ for crop in ('tomato','lettuce','onion'):
 for bites in range(10):
     assert (pack/f'assets/extraitems/models/block/cheese_wheel_{bites}.json').exists()
 for variant in ('brown','dark','patched'):
-    texture=pack/f'assets/extraitems/textures/entity/capybara_{variant}.png'
+    texture=pack/f'assets/extraitems/textures/item/capybara_{variant}.png'
     assert texture.exists(), f'Capybara-Fell fehlt: {variant}'
     for age in ('adult','baby'):
-        name=f'capybara_{variant}_{age}'
-        assert (pack/f'assets/extraitems/items/{name}.json').exists(), name
-        item_model=json.loads((pack/f'assets/extraitems/items/{name}.json').read_text())['model']
-        assert item_model.get('model') == f'extraitems:item/{name}', name
-        model=json.loads((pack/f'assets/extraitems/models/item/{name}.json').read_text())
-        assert len(model.get('elements',[])) >= 10, f'Capybara-Geometrie fehlt: {name}'
-        assert model.get('textures',{}).get('fur','').startswith('minecraft:block/'), name
-        assert all(not value.startswith('extraitems:entity/')
-                   for value in model.get('textures',{}).values()), name
+        base=f'capybara_{variant}_{age}'
+        for suffix in ('','_walk_1','_walk_2','_swim'):
+            name=base+suffix
+            assert (pack/f'assets/extraitems/items/{name}.json').exists(), name
+            item_model=json.loads((pack/f'assets/extraitems/items/{name}.json').read_text())['model']
+            assert item_model.get('model') == f'extraitems:item/{name}', name
+            model=json.loads((pack/f'assets/extraitems/models/item/{name}.json').read_text())
+            assert len(model.get('elements',[])) >= 10, f'Capybara-Geometrie fehlt: {name}'
+            assert model.get('textures',{}).get('fur') == f'extraitems:item/capybara_{variant}', name
+            assert all('wool' not in value for value in model.get('textures',{}).values()), name
+            if suffix:
+                assert any('rotation' in element for element in model['elements']), f'Animationspose fehlt: {name}'
 patched=json.loads((pack/'assets/extraitems/models/item/capybara_patched_adult.json').read_text())
 assert any(face.get('texture') == '#patch' for element in patched['elements']
            for face in element['faces'].values()), 'Schwarze Fellflecken fehlen'
 ripe_model=json.loads((pack/'assets/extraitems/models/block/tomato_stage_3.json').read_text())
 assert ripe_model['textures'].get('ripe') == 'minecraft:block/red_concrete', 'Reife Textur fehlt'
-print(f'OK: {len(actual)} Pack-Dateien, 3 Saat-Sprites, 3 Pflanzen, 10 Käsestufen, 5 3D-Handmodelle und 6 Capybara-Modelle.')
+print(f'OK: {len(actual)} Pack-Dateien, 3 Saat-Sprites, 3 Pflanzen, 10 Käsestufen, 5 3D-Handmodelle und 24 Capybara-Frames.')

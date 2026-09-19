@@ -87,23 +87,27 @@ class ResourcePackAssetsTest {
     }
 
     @Test
-    void capybaraHasThreeFursAndSeparateAdultAndBabyModels() throws Exception {
+    void capybaraHasCustomFurAndAnimatedAdultAndBabyModels() throws Exception {
         for (String variant : new String[]{"brown", "dark", "patched"}) {
             var image = ImageIO.read(PACK.resolve(
-                    "assets/extraitems/textures/entity/capybara_" + variant + ".png").toFile());
+                    "assets/extraitems/textures/item/capybara_" + variant + ".png").toFile());
             assertNotNull(image, variant);
-            assertEquals(32, image.getWidth(), variant);
-            assertEquals(32, image.getHeight(), variant);
+            assertEquals(64, image.getWidth(), variant);
+            assertEquals(64, image.getHeight(), variant);
             assertTrue(image.getColorModel().hasAlpha(), variant);
             for (String age : new String[]{"adult", "baby"}) {
-                String name = "capybara_" + variant + "_" + age;
-                String item = Files.readString(PACK.resolve("assets/extraitems/items/" + name + ".json"));
-                String model = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + ".json"));
-                assertTrue(item.contains("extraitems:item/" + name), name);
-                assertTrue(model.contains("minecraft:block/"), name);
-                assertFalse(model.contains("extraitems:entity/"), name);
-                assertTrue(model.contains("\"elements\""), name);
-                assertTrue(model.contains("minecraft:block/black_concrete"), name);
+                String base = "capybara_" + variant + "_" + age;
+                for (String suffix : new String[]{"", "_walk_1", "_walk_2", "_swim"}) {
+                    String name = base + suffix;
+                    String item = Files.readString(PACK.resolve("assets/extraitems/items/" + name + ".json"));
+                    String model = Files.readString(PACK.resolve("assets/extraitems/models/item/" + name + ".json"));
+                    assertTrue(item.contains("extraitems:item/" + name), name);
+                    assertTrue(model.contains("extraitems:item/capybara_" + variant), name);
+                    assertFalse(model.contains("minecraft:block/brown_wool"), name);
+                    assertFalse(model.contains("extraitems:entity/"), name);
+                    assertTrue(model.contains("\"elements\""), name);
+                    if (!suffix.isEmpty()) assertTrue(model.contains("\"rotation\""), name);
+                }
             }
         }
         String adult = Files.readString(PACK.resolve("assets/extraitems/models/item/capybara_brown_adult.json"));

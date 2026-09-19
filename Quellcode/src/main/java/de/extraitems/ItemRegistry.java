@@ -29,6 +29,8 @@ public final class ItemRegistry {
                                 int nutrition, float saturation, boolean emptyHandOnly) {}
     public record CustomEntity(String id, EntityType carrier, Material breedItem, String breedPermission,
                                List<NamespacedKey> adultModels, List<NamespacedKey> babyModels,
+                               List<String> walkModelSuffixes, String swimModelSuffix,
+                               int animationStepTicks,
                                Set<String> spawnBiomes, int groupMin, int groupMax,
                                int spawnIntervalSeconds, double spawnChance,
                                int spawnDistanceMin, int spawnDistanceMax,
@@ -245,6 +247,16 @@ public final class ItemRegistry {
         if (adult.size() != baby.size()) {
             throw new IllegalArgumentException("adult-models und baby-models benötigen gleich viele Varianten: " + id);
         }
+        List<String> rawWalkSuffixes = c.isList("animation.walk-model-suffixes")
+                ? c.getStringList("animation.walk-model-suffixes")
+                : id.equals("capybara") ? List.of("_walk_1", "_walk_2") : List.of();
+        List<String> walkSuffixes = rawWalkSuffixes.stream()
+                .map(suffix -> modelSuffix(suffix, id)).toList();
+        if (walkSuffixes.size() > 8) {
+            throw new IllegalArgumentException("animation.walk-model-suffixes benötigt höchstens 8 Frames: " + id);
+        }
+        String defaultSwimSuffix = id.equals("capybara") ? "_swim" : "";
+        String swimSuffix = modelSuffix(c.getString("animation.swim-model-suffix", defaultSwimSuffix), id);
         LinkedHashSet<String> biomes = new LinkedHashSet<>();
         for (String raw : c.getStringList("spawn-biomes")) {
             NamespacedKey biome = key(raw);
@@ -255,7 +267,9 @@ public final class ItemRegistry {
         int distanceMin = range(c.getInt("spawn-distance-min", 24), 8, 128, id);
         CustomEntity entity = new CustomEntity(id, carrier, breedItem,
                 permission(c.getString("breed-permission", "extraitems.breed." + id)),
-                adult, baby, Collections.unmodifiableSet(biomes), groupMin,
+                adult, baby, walkSuffixes, swimSuffix,
+                range(c.getInt("animation.step-ticks", 4), 1, 40, id),
+                Collections.unmodifiableSet(biomes), groupMin,
                 range(c.getInt("group-max", 4), groupMin, 16, id),
                 range(c.getInt("spawn-interval-seconds", 30), 5, 3600, id),
                 finiteDouble(c.getDouble("spawn-chance", .18), 0, 1, id),
@@ -559,6 +573,14 @@ public final class ItemRegistry {
     }
     static void checkId(String id) {
         if (id == null || !id.matches("[a-z0-9_]+")) throw new IllegalArgumentException("Ungültige ID: " + id);
+    }
+    private static String modelSuffix(String value, String id) {
+        if (value == null || value.isBlank()) return "";
+        String suffix = value.trim();
+        if (!suffix.matches("_[a-z0-9_]+")) {
+            throw new IllegalArgumentException("Ungültiger Animationsmodell-Suffix für " + id + ": " + suffix);
+        }
+        return suffix;
     }
     static int range(int value, int min, int max, String name) {
         if (value < min || value > max) throw new IllegalArgumentException(name + ": Wert außerhalb " + min + "–" + max);

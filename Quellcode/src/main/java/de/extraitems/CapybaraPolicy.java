@@ -37,4 +37,15 @@ final class CapybaraPolicy {
         }
         return roll < chance;
     }
+
+    /** -2 = swimming pose, -1 = idle pose, otherwise the zero-based walk frame. */
+    static int animationFrame(boolean moving, boolean swimming, long elapsedTicks,
+                              int stepTicks, int walkFrames) {
+        if (stepTicks < 1 || walkFrames < 0) {
+            throw new IllegalArgumentException("Ungültige Animationsgrenzen");
+        }
+        if (swimming) return -2;
+        if (!moving || walkFrames == 0) return -1;
+        return (int) Math.floorMod(elapsedTicks / stepTicks, walkFrames);
+    }
 }

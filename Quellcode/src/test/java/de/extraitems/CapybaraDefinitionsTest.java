@@ -29,6 +29,15 @@ class CapybaraDefinitionsTest {
         assertTrue(yaml.contains("feed-growth-ticks: 2400"));
     }
 
+    @Test void walkingAndSwimmingFramesAreConfigured() throws Exception {
+        String yaml = Files.readString(ENTITY);
+        assertTrue(yaml.contains("walk-model-suffixes:"));
+        assertTrue(yaml.contains("- _walk_1"));
+        assertTrue(yaml.contains("- _walk_2"));
+        assertTrue(yaml.contains("swim-model-suffix: _swim"));
+        assertTrue(yaml.contains("step-ticks: 4"));
+    }
+
     @Test void entityDefinitionIsBundledAndIndexed() throws Exception {
         assertTrue(Files.readString(Path.of("src/main/resources/items.yml"))
                 .contains("items/capybara/entity.yml"));

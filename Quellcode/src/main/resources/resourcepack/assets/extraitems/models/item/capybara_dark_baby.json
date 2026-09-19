@@ -2,9 +2,9 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "particle": "minecraft:block/brown_concrete",
-    "fur": "minecraft:block/brown_concrete",
-    "patch": "minecraft:block/black_concrete",
+    "particle": "extraitems:item/capybara_dark",
+    "fur": "extraitems:item/capybara_dark",
+    "patch": "extraitems:item/capybara_dark",
     "eye": "minecraft:block/black_concrete",
     "nose": "minecraft:block/black_concrete"
   },

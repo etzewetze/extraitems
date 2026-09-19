@@ -1,6 +1,14 @@
-# ExtraItems 0.7.1
+# ExtraItems 0.8.0
 
 ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
+
+## Neu und behoben in 0.8.0
+
+- Laufende Capybaras wechseln zwischen zwei versetzten Beinpositionen; im Wasser verwenden sie eine eigene Schwimmhaltung. Das ist eine Vanilla-kompatible Frameanimation ohne Clientmod.
+- Erwachsene und Babys besitzen insgesamt 24 getrennte Stand-, Lauf- und Schwimmmodelle.
+- Die drei Fellvarianten verwenden jetzt eigene 64×64-Pixel-Felltexturen aus dem zuverlässig geladenen Item-Atlas statt Vanilla-Wolle oder Beton.
+- Die Animationssuffixe und Geschwindigkeit sind in `items/capybara/entity.yml` konfigurierbar; bestehende 0.7.1-Dateien ohne Abschnitt erhalten automatisch die Capybara-Standardframes.
+- Pack-Revision 12 ersetzt die bisherigen Wollmodelle automatisch und erzwingt einen neuen Ressourcenpaket-Hash.
 
 ## Behoben in 0.7.1
 
@@ -185,7 +193,7 @@ Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem
 ## Installation und Update
 
 1. Server vollständig stoppen.
-2. `ExtraItems-0.7.1.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+2. `ExtraItems-0.8.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
 3. Server starten.
 4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
 5. `/ei status` prüfen.
@@ -228,10 +236,11 @@ Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstückssch
 - Futter und Zucht: Minecraft-Süßbeeren (`SWEET_BERRIES`). Zwei paarungsbereite Capybaras erzeugen ein Baby; dessen Fell wird überwiegend von einem Elternteil geerbt, mit kleiner Chance auf eine andere Variante.
 - Wachstum: 20 Minuten bis zum Erwachsenenalter; jede verfütterte Süßbeere verkürzt die Restzeit um zwei Minuten.
 - Verhalten: passive Vanilla-Wander- und Flucht-AI plus Gruppenanschluss, Ruhephasen, Wasseraufenthalt und gelegentliche Wassersuche.
+- Darstellung: Beim Laufen wechseln zwei echte Beinstellungen alle vier Ticks; im Wasser erscheint eine eigene Schwimmhaltung. Stand-, Lauf- und Schwimmframes existieren jeweils getrennt für Erwachsene und Babys.
 - Technik: Das eigene Modell wird von einer `ItemDisplay`-Entity dargestellt. Ein unsichtbares Schwein liefert serverseitig Bewegung, Hitbox und Zucht-AI, wird aber gegen Sattel- und Schweinefutter-Interaktionen abgesichert.
 - Konfiguration: `items/capybara/entity.yml`; der Pfad wird wie alle anderen Inhalte über `items.yml` geladen. Mit `enabled: false` kann das Modul deaktiviert werden.
 
-Die Umsetzung ist eine Vanilla-kompatible Spielannäherung, keine neue registrierte Client-Entity. Deshalb sind Fell und Altersmodell individuell, aber keine skelettbasierten Laufanimationen wie bei einem Clientmod möglich.
+Die Umsetzung ist eine Vanilla-kompatible Spielannäherung, keine neue registrierte Client-Entity. Die Bewegung wird deshalb durch Modellframes simuliert; eine stufenlose skelettbasierte Animation wie bei einem Clientmod ist technisch nicht möglich.
 
 ## Küchenmechaniken
 
@@ -261,7 +270,7 @@ cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.7.1.jar`.
+Ergebnis: `target/ExtraItems-0.8.0.jar`.
 
 Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
 

@@ -62,7 +62,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             if (capybaras != null) capybaras.start();
             operational = true;
             scheduleExternalRecipeRefresh();
-            getLogger().info("ExtraItems 0.7.1 bereit. Server " + Bukkit.getBukkitVersion()
+            getLogger().info("ExtraItems 0.8.0 bereit. Server " + Bukkit.getBukkitVersion()
                     + "; Java " + Runtime.version().feature()
                     + "; Definitionen " + items.sourceCount()
                     + "; Integrationen " + items.externalStatus());
@@ -144,7 +144,7 @@ public final class ExtraItemsPlugin extends JavaPlugin implements TabExecutor, L
             return true;
         }
         if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
-            sender.sendMessage("§aExtraItems 0.7.1 | " + Bukkit.getBukkitVersion()
+            sender.sendMessage("§aExtraItems 0.8.0 | " + Bukkit.getBukkitVersion()
                     + " | Java " + Runtime.version().feature());
             sender.sendMessage("§7Inhalte: " + (operational ? "bereit" : "FEHLER")
                     + " | Pack: " + (pack.ready() ? pack.modeName() + " bereit" : pack.error()));

@@ -15,6 +15,15 @@ baby-models:
   - extraitems:capybara_dark_baby
   - extraitems:capybara_patched_baby
 
+# Vanilla-kompatible Frameanimation: Das Plugin wechselt beim Laufen zwischen zwei echten
+# Beinstellungen. Im Wasser wird eine eigene Schwimmhaltung verwendet.
+animation:
+  walk-model-suffixes:
+    - _walk_1
+    - _walk_2
+  swim-model-suffix: _swim
+  step-ticks: 4
+
 spawn-biomes:
   - minecraft:badlands
   - minecraft:wooded_badlands

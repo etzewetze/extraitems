@@ -27,6 +27,13 @@ def cube(start, end, texture):
         for side in ('north', 'south', 'east', 'west', 'up', 'down')
     }}
 
+def rotated_cube(start, end, texture, origin, angle):
+    element = cube(start, end, texture)
+    element['rotation'] = {
+        'origin': origin, 'axis': 'x', 'angle': angle, 'rescale': False
+    }
+    return element
+
 def item(name, model):
     write(ASSETS / 'items' / f'{name}.json', {
         'model': {'type': 'minecraft:model', 'model': model if ':' in model else 'extraitems:' + model}
@@ -71,7 +78,7 @@ def geometry(path, elements, textures, display=None):
     write(path, obj)
 
 write(PACK / 'pack.mcmeta', {'pack': {
-    'description': 'ExtraItems 0.7.1 • Capybaras, 3D-Küche und Integrationen • 1.21.11–26.3',
+    'description': 'ExtraItems 0.8.0 • Animierte Capybaras, 3D-Küche und Integrationen • 1.21.11–26.3',
     'min_format': [75, 0], 'max_format': [97, 1]
 }})
 
@@ -176,11 +183,10 @@ geometry(ASSETS / 'models/item/seed_generator.json', [
 
 item('old_but_gold_book', 'minecraft:item/enchanted_book')
 
-# Capybaras use a hidden vanilla carrier for AI and these item models for their visible body.
-# Adult and baby geometry are intentionally separate instead of merely scaling one model. Their
-# live models use vanilla atlas textures so a missing custom atlas entry can never turn them into
-# the pink/black fallback cube. The generated PNGs remain artwork references only.
-capybara_adult = [
+# Capybaras use a hidden vanilla carrier for AI and frame-swapped item models for their visible
+# body. Adult and baby geometry are intentionally separate instead of merely scaling one model.
+# All custom fur lives in the proven item atlas, which keeps it compatible with vanilla clients.
+capybara_adult_body = [
     cube([3, 4.5, 4], [13, 11.5, 16], 'fur'),
     cube([3.5, 5, .7], [12.5, 11.4, 6], 'fur'),
     cube([5, 5.2, .25], [11, 8.8, 2.2], 'fur'),
@@ -189,12 +195,8 @@ capybara_adult = [
     cube([4.15, 8.1, .35], [5.35, 9.35, .75], 'eye'),
     cube([10.65, 8.1, .35], [11.85, 9.35, .75], 'eye'),
     cube([6.5, 6.2, .05], [9.5, 8.1, .5], 'nose'),
-    cube([3.5, 0, 5], [6, 5.5, 8], 'fur'),
-    cube([10, 0, 5], [12.5, 5.5, 8], 'fur'),
-    cube([3.5, 0, 12.5], [6, 5.5, 15.5], 'fur'),
-    cube([10, 0, 12.5], [12.5, 5.5, 15.5], 'fur'),
 ]
-capybara_baby = [
+capybara_baby_body = [
     cube([4.5, 3, 6], [11.5, 8.8, 14], 'fur'),
     cube([4.2, 3.6, 2], [11.8, 9.4, 7], 'fur'),
     cube([5.4, 3.9, 1.5], [10.6, 7, 3.4], 'fur'),
@@ -203,11 +205,33 @@ capybara_baby = [
     cube([4.85, 6.6, 1.65], [5.9, 7.7, 2.05], 'eye'),
     cube([10.1, 6.6, 1.65], [11.15, 7.7, 2.05], 'eye'),
     cube([6.7, 4.7, 1.3], [9.3, 6.4, 1.75], 'nose'),
-    cube([4.8, 0, 6.5], [6.6, 3.8, 8.5], 'fur'),
-    cube([9.4, 0, 6.5], [11.2, 3.8, 8.5], 'fur'),
-    cube([4.8, 0, 11.5], [6.6, 3.8, 13.5], 'fur'),
-    cube([9.4, 0, 11.5], [11.2, 3.8, 13.5], 'fur'),
 ]
+
+capybara_leg_specs = {
+    'adult': [
+        ([3.5, 0, 5], [6, 5.5, 8]), ([10, 0, 5], [12.5, 5.5, 8]),
+        ([3.5, 0, 12.5], [6, 5.5, 15.5]), ([10, 0, 12.5], [12.5, 5.5, 15.5]),
+    ],
+    'baby': [
+        ([4.8, 0, 6.5], [6.6, 3.8, 8.5]), ([9.4, 0, 6.5], [11.2, 3.8, 8.5]),
+        ([4.8, 0, 11.5], [6.6, 3.8, 13.5]), ([9.4, 0, 11.5], [11.2, 3.8, 13.5]),
+    ],
+}
+
+def capybara_legs(age, pose):
+    specs = capybara_leg_specs[age]
+    if pose == 'idle':
+        return [cube(start, end, 'fur') for start, end in specs]
+    angles = {
+        'walk_1': (22.5, -22.5, -22.5, 22.5),
+        'walk_2': (-22.5, 22.5, 22.5, -22.5),
+        'swim': (45, 45, 45, 45),
+    }[pose]
+    return [
+        rotated_cube(start, end, 'fur',
+                     [(start[0] + end[0]) / 2, end[1], (start[2] + end[2]) / 2], angle)
+        for (start, end), angle in zip(specs, angles)
+    ]
 capybara_patches = {
     'adult': [
         cube([2.9, 7, 8.5], [3.05, 10.8, 13.5], 'patch'),
@@ -220,11 +244,8 @@ capybara_patches = {
         cube([4.15, 5.2, 2.8], [4.3, 8.2, 5.8], 'patch'),
     ],
 }
-capybara_fur = {
-    'brown': 'minecraft:block/brown_wool',
-    'dark': 'minecraft:block/brown_concrete',
-    'patched': 'minecraft:block/brown_wool',
-}
+capybara_fur = {variant: f'extraitems:item/capybara_{variant}'
+                 for variant in ('brown', 'dark', 'patched')}
 legacy_entity_models = ASSETS / 'models/entity'
 for legacy in legacy_entity_models.glob('capybara_*.json'):
     legacy.unlink()
@@ -232,15 +253,20 @@ for variant in ('brown', 'dark', 'patched'):
     textures = {
         'particle': capybara_fur[variant],
         'fur': capybara_fur[variant],
-        'patch': 'minecraft:block/black_concrete',
+        'patch': capybara_fur['dark'],
         'eye': 'minecraft:block/black_concrete',
         'nose': 'minecraft:block/black_concrete',
     }
-    for age, elements in (('adult', capybara_adult), ('baby', capybara_baby)):
-        name = f'capybara_{variant}_{age}'
-        visible_elements = elements + (capybara_patches[age] if variant == 'patched' else [])
-        item(name, 'item/' + name)
-        geometry(ASSETS / 'models/item' / f'{name}.json', visible_elements, textures)
+    for age, body in (('adult', capybara_adult_body), ('baby', capybara_baby_body)):
+        base_name = f'capybara_{variant}_{age}'
+        for pose, suffix in (('idle', ''), ('walk_1', '_walk_1'),
+                             ('walk_2', '_walk_2'), ('swim', '_swim')):
+            name = base_name + suffix
+            visible_elements = body + capybara_legs(age, pose)
+            if variant == 'patched':
+                visible_elements += capybara_patches[age]
+            item(name, 'item/' + name)
+            geometry(ASSETS / 'models/item' / f'{name}.json', visible_elements, textures)
 
 # Tomato crop: mature fruit uses a vanilla atlas texture for maximum robustness.
 for stage, height in enumerate((4, 8, 12, 12)):
@@ -321,4 +347,4 @@ item('cheese_wheel', 'block/cheese_wheel_0')
 
 paths = sorted(str(path.relative_to(PACK)).replace('\\', '/') for path in PACK.rglob('*') if path.is_file())
 (ROOT / 'pack-files.txt').write_text('\n'.join(paths) + '\n', encoding='utf-8')
-print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 2 Maschinen, 10 Käsestufen, 3 Capybara-Felle und getrennte Erwachsenen-/Babymodelle.')
+print(f'{len(paths)} Pack-Dateien; 3 Pflanzen, 2 Maschinen, 10 Käsestufen, 3 Capybara-Felle und 24 animierte Capybara-Frames.')

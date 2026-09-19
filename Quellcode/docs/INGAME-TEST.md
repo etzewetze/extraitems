@@ -71,6 +71,9 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Gleicher Test in Wooded/Eroded Badlands | Natürliche Gruppen können auch in beiden Varianten erscheinen. |
 | Warten in Plains und Nether | Keine natürlichen Capybara-Spawns. |
 | Mehrere Tiere vergleichen | Braunes, dunkles und schwarz geflecktes Fell treten zufällig auf; keine Missing Texture. |
+| Capybara stehen lassen und anschließend laufen lassen | Im Stand bleiben die Beine ruhig; beim Laufen wechseln sichtbar zwei diagonal versetzte Beinpositionen, ohne dass das Modell pink wird. |
+| Capybara ins Wasser führen | Das Modell wechselt auf die nach hinten gestellte Schwimmhaltung und nach Verlassen des Wassers wieder auf Stand/Lauf. |
+| Fell aus der Nähe betrachten | Eigene braune bzw. dunkle Pixel-Fellstruktur statt sichtbarer Woll-, Beton- oder Stoffstruktur. |
 | Süßbeeren in Haupt- und Nebenhand halten | Capybaras folgen; Füttern verbraucht genau eine Beere. |
 | Zwei erwachsene Tiere mit Süßbeeren füttern | Herzen, Paarung und genau ein persistentes Baby mit Eltern-/Zufallsfell. |
 | Baby mit Süßbeere füttern | Wachstumszeit verkürzt sich; Erwachsenenmodell wechselt beim Heranwachsen genau einmal. |

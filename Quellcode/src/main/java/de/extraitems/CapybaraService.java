@@ -49,6 +49,7 @@ final class CapybaraService implements Listener {
     private BukkitTask visualTask;
     private BukkitTask behaviourTask;
     private BukkitTask spawnTask;
+    private long animationTicks;
     private long naturalChecks;
     private long naturalGroups;
 
@@ -194,13 +195,31 @@ final class CapybaraService implements Listener {
             renderedModels.remove(owner);
         }
         int variant = variant(pig);
-        NamespacedKey model = pig.isAdult()
+        NamespacedKey baseModel = pig.isAdult()
                 ? definition.adultModels().get(variant) : definition.babyModels().get(variant);
+        NamespacedKey model = animatedModel(pig, baseModel);
         String state = model.toString();
         if (!state.equals(renderedModels.get(owner))) {
             display.setItemStack(items.model(model));
             renderedModels.put(owner, state);
         }
+    }
+
+    private NamespacedKey animatedModel(Pig pig, NamespacedKey baseModel) {
+        Vector velocity = pig.getVelocity();
+        boolean moving = pig.hasAI() && velocity.getX() * velocity.getX()
+                + velocity.getZ() * velocity.getZ() > .0004;
+        int frames = definition.walkModelSuffixes().size();
+        long cycle = (long) definition.animationStepTicks() * Math.max(1, frames);
+        long offset = Math.floorMod(pig.getUniqueId().getLeastSignificantBits(), cycle);
+        int frame = CapybaraPolicy.animationFrame(moving, pig.isInWater(), animationTicks + offset,
+                definition.animationStepTicks(), frames);
+        String suffix;
+        if (frame == -2) suffix = definition.swimModelSuffix();
+        else if (frame >= 0) suffix = definition.walkModelSuffixes().get(frame);
+        else suffix = "";
+        if (suffix.isEmpty()) return baseModel;
+        return ItemRegistry.key(baseModel.getNamespace() + ":" + baseModel.getKey() + suffix);
     }
 
     private Location visualLocation(Pig pig) {
@@ -210,6 +229,7 @@ final class CapybaraService implements Listener {
     }
 
     private void updateVisuals() {
+        animationTicks += 2;
         Iterator<Map.Entry<UUID, Pig>> iterator = capybaras.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<UUID, Pig> entry = iterator.next();
