@@ -355,12 +355,21 @@ final class CapybaraService implements Listener {
         int y = world.getHighestBlockYAt(x, z, HeightMap.MOTION_BLOCKING_NO_LEAVES);
         Block ground = world.getBlockAt(x, y, z);
         Location location = new Location(world, x + .5, y + 1, z + .5);
-        if (!definition.spawnBiomes().contains(ground.getBiome().getKeyOrThrow().toString())
+        if (!definition.spawnBiomes().contains(biomeKey(ground))
                 || !ground.getType().isSolid() || ground.isLiquid()
                 || !location.getBlock().isPassable() || location.getBlock().isLiquid()
                 || !location.clone().add(0, 1, 0).getBlock().isPassable()
                 || !world.getWorldBorder().isInside(location)) return null;
         return location;
+    }
+
+    /**
+     * Kept behind one compatibility boundary because Keyed#getKeyOrThrow is not present in the
+     * pinned 26.3 alpha API while Keyed#getKey still exists on every supported server line.
+     */
+    @SuppressWarnings("deprecation")
+    private static String biomeKey(Block block) {
+        return block.getBiome().getKey().toString();
     }
 
     private int loadedIn(World world) {

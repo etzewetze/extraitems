@@ -419,7 +419,7 @@ public final class ItemRegistry {
         if (custom != null) return "extraitems:" + custom;
         String externalToken = external.stateToken(item);
         if (externalToken != null) return externalToken;
-        return item.getType().getKey().toString();
+        return materialKey(item.getType());
     }
 
     public String ingredientId(ItemStack item, Collection<String> expected) {
@@ -580,5 +580,8 @@ public final class ItemRegistry {
         if (key == null) throw new IllegalArgumentException("Ungültiger Modellschlüssel: " + value);
         return key;
     }
+    /** Compatibility boundary for APIs predating Keyed#getKeyOrThrow. */
+    @SuppressWarnings("deprecation")
+    private static String materialKey(Material material) { return material.getKey().toString(); }
     static String color(String value) { return ChatColor.translateAlternateColorCodes('&', value); }
 }
