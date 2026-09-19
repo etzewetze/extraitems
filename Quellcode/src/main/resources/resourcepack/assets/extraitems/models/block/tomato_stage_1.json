@@ -1,11 +1,12 @@
 {
+  "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
     "particle": "minecraft:block/green_wool",
     "stem": "minecraft:block/lime_terracotta",
     "leaf": "minecraft:block/green_wool",
     "unripe": "minecraft:block/lime_concrete",
-    "tomato": "extraitems:item/tomato"
+    "ripe": "minecraft:block/red_concrete"
   },
   "elements": [
     {

@@ -1,13 +1,13 @@
 {
   "pack": {
-    "description": "ExtraItems • Tomaten & Pflanzen • 1.21.11–26.2",
+    "description": "ExtraItems 0.8.0 • Animierte Capybaras, 3D-Küche und Integrationen • 1.21.11–26.3",
     "min_format": [
       75,
       0
     ],
     "max_format": [
-      88,
-      0
+      97,
+      1
     ]
   }
 }

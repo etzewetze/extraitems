@@ -1,0 +1,7 @@
+type: item
+id: onion_seeds
+material: BEETROOT_SEEDS
+name: '&fZwiebelsamen'
+model: extraitems:onion_seeds
+lore:
+  - '&7Schwarze Samen mit Zwiebelzeichen.'

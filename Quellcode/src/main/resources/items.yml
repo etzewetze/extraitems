@@ -1,40 +1,37 @@
+# Zentrale Dateiliste. Jede Definition liegt getrennt im angegebenen Ordner.
 # IDs bleiben dauerhaft gleich: Sie werden in Item-PDC und Welt-Chunks gespeichert.
-items:
-  tomato:
-    material: APPLE
-    name: '&cTomate'
-    model: extraitems:tomato
-    lore: ['&7Frisch vom Strauch.', '&7Auch ohne Anbaurecht essbar.']
-    # Natürliche APPLE-Konsumierbarkeit; nur Nährwerte werden geändert.
-    food:
-      nutrition: 4
-      saturation: 0.3
-  tomato_seeds:
-    material: PAPER
-    name: '&aTomatensamen'
-    model: extraitems:tomato_seeds
-    lore: ['&7Rechtsklick auf Ackerboden zum Pflanzen.']
-crops:
-  tomato:
-    seed: tomato_seeds
-    produce: tomato
-    plant-permission: extraitems.plant.tomato
-    models: [extraitems:tomato_stage_0, extraitems:tomato_stage_1, extraitems:tomato_stage_2, extraitems:tomato_stage_3]
-    seconds-per-stage: 180
-    regrow-stage: 1
-    minimum-light: 9
-    require-hydrated-farmland: true
-    bonemeal: true
-    harvest-min: 1
-    harvest-max: 3
-recipes:
-  tomato_seed_starter:
-    result: tomato_seeds
-    amount: 2
-    permission: extraitems.craft.tomato_seeds
-    ingredients: [minecraft:wheat_seeds, minecraft:beetroot]
-  tomato_to_seeds:
-    result: tomato_seeds
-    amount: 4
-    permission: extraitems.craft.tomato_seeds
-    ingredients: [extraitems:tomato]
+schema-version: 2
+sources:
+  - items/capybara/entity.yml
+  - items/tomato/item.yml
+  - items/tomato/crop.yml
+  - items/tomato_seeds/item.yml
+  - items/tomato_seeds/recipes/starter.yml
+  - items/lettuce/item.yml
+  - items/lettuce/crop.yml
+  - items/lettuce_seeds/item.yml
+  - items/lettuce_seeds/recipes/starter.yml
+  - items/onion/item.yml
+  - items/onion/crop.yml
+  - items/onion_seeds/item.yml
+  - items/onion_seeds/recipes/starter.yml
+  - items/old_but_gold_book/item.yml
+  - items/old_but_gold_book/recipes/craft.yml
+  - items/knife/tool.yml
+  - items/knife/recipes/craft.yml
+  - items/burger_bun/item.yml
+  - items/burger_bun/recipes/cut_bread.yml
+  - items/schlemmer_burger/item.yml
+  - items/schlemmer_burger/recipes/craft.yml
+  - items/cheesy_schlemmer/item.yml
+  - items/cheesy_schlemmer/recipes/craft.yml
+  - items/cheese_station/item.yml
+  - items/cheese_station/station.yml
+  - items/cheese_station/recipes/craft.yml
+  - items/cheese_wheel/item.yml
+  - items/cheese_wheel/placeable_food.yml
+  - items/cheese_slice/item.yml
+  - items/cheese_slice/recipes/cut_wheel.yml
+  - items/seed_generator/item.yml
+  - items/seed_generator/generator.yml
+  - items/seed_generator/recipes/craft.yml

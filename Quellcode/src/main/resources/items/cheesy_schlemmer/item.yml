@@ -1,0 +1,11 @@
+type: item
+id: cheesy_schlemmer
+material: COOKED_BEEF
+name: '&eCheesy Schlemmer'
+model: extraitems:cheesy_schlemmer
+lore:
+  - '&7Buns, Käse, Tomate, Salat und Rindersteak.'
+  - '&7Füllt die komplette Hungerleiste und sättigt zusätzlich.'
+food:
+  nutrition: 20
+  saturation: 4.0

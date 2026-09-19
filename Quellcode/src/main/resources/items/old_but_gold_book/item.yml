@@ -1,0 +1,9 @@
+type: item
+id: old_but_gold_book
+material: ENCHANTED_BOOK
+name: '&6Verzauberung: Old but Gold'
+model: extraitems:old_but_gold_book
+glint: true
+lore:
+  - '&7Nur auf ExtraItems-Messer anwendbar.'
+  - '&7Macht das Messer unzerstörbar.'

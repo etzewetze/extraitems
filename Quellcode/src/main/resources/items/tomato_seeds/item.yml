@@ -1,0 +1,7 @@
+type: item
+id: tomato_seeds
+material: PAPER
+name: '&aTomatensamen'
+model: extraitems:tomato_seeds
+lore:
+  - '&7Rechtsklick auf Ackerboden zum Pflanzen.'

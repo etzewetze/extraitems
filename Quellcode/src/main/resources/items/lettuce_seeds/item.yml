@@ -1,0 +1,7 @@
+type: item
+id: lettuce_seeds
+material: WHEAT_SEEDS
+name: '&aSalatsamen'
+model: extraitems:lettuce_seeds
+lore:
+  - '&7Dunkle Samen mit grünem Blattzeichen.'

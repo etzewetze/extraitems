@@ -1,0 +1,17 @@
+type: crop
+id: tomato
+seed: tomato_seeds
+produce: tomato
+plant-permission: extraitems.plant.tomato
+models:
+  - extraitems:tomato_stage_0
+  - extraitems:tomato_stage_1
+  - extraitems:tomato_stage_2
+  - extraitems:tomato_stage_3
+seconds-per-stage: 180
+regrow-stage: 1
+minimum-light: 9
+require-hydrated-farmland: true
+bonemeal: true
+harvest-min: 1
+harvest-max: 3

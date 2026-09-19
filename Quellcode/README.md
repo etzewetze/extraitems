@@ -1,181 +1,279 @@
-# ExtraItems 0.1.0
+# ExtraItems 0.8.0
 
-Ein serverseitiges Plugin für eigene Vanilla-Items und Pflanzen. Diese erste Version liefert eine vollständige Tomatenpflanze mit Ressourcenpaket, Pflichtdownload, Crafting-Rechten und Speicherung in der Welt. Spieler benötigen Minecraft **Java Edition** und das Ressourcenpaket, keine Mods.
+ExtraItems ist ein serverseitiges Paper-/Spigot-Plugin für eigene Vanilla-Items und Pflanzen. Spieler benötigen keine Mods, sondern nur das automatisch angeforderte Ressourcenpaket.
 
-## Enthalten
+## Neu und behoben in 0.8.0
 
-- Tomaten als essbares Item; Tomatensamen als eigenes Item.
-- Vier native 3D-Wachstumsmodelle: Keimling, junge Pflanze, unreife und reife Tomatenpflanze.
-- Pflanzen auf Ackerboden, Licht-/Bewässerungsprüfung, Knochenmehl, Ernten und Nachwachsen.
-- Getrennte Berechtigungen für Pflanzen und Craften. Essen und Ernten benötigen kein Anbaurecht; Grundstücksschutz gilt weiterhin.
-- Pflicht-Ressourcenpaket mit eingebautem HTTP-Downloadserver, automatisch berechnetem SHA-1 und Ladebestätigung je Anfrage.
-- Timeout und Kick bei Ablehnung, Fehlern oder verworfenem Paket. Während des Ladens sind normale Bewegung und Spielaktionen gesperrt.
-- Konfigurierbare Items, Pflanzen und formlose Rezepte; deutsches Feedback.
-- Speicherung je Chunk, Wiederherstellung der Darstellungs- und Interaktions-Entities, begrenzte Pflanzenzahl.
+- Laufende Capybaras wechseln zwischen zwei versetzten Beinpositionen; im Wasser verwenden sie eine eigene Schwimmhaltung. Das ist eine Vanilla-kompatible Frameanimation ohne Clientmod.
+- Erwachsene und Babys besitzen insgesamt 24 getrennte Stand-, Lauf- und Schwimmmodelle.
+- Die drei Fellvarianten verwenden jetzt eigene 64×64-Pixel-Felltexturen aus dem zuverlässig geladenen Item-Atlas statt Vanilla-Wolle oder Beton.
+- Die Animationssuffixe und Geschwindigkeit sind in `items/capybara/entity.yml` konfigurierbar; bestehende 0.7.1-Dateien ohne Abschnitt erhalten automatisch die Capybara-Standardframes.
+- Pack-Revision 12 ersetzt die bisherigen Wollmodelle automatisch und erzwingt einen neuen Ressourcenpaket-Hash.
 
-Eigene Erzblöcke, Erz-Weltgenerierung, Baumgeneratoren, Möbel, GUIs und ein Importer für Nexo/Oraxen/ItemsAdder sind **nicht Teil von 0.1.0**. Die erste Version ist auf den gewünschten Tomaten-Anfang ausgelegt; die getrennten Klassen für Items, Rezepte, Pflanzen und Paketauslieferung bilden die Grundlage für weitere Module.
+## Behoben in 0.7.1
 
-## Versionen und Java
+- Natürliche Capybara-Spawns werden nun auch beim Laden bzw. Generieren geeigneter Badlands-Chunks geprüft.
+- Der periodische Spawn prüft alle Spieler und probiert bis zu zwölf geladene Positionen, statt nach einem ungeeigneten Zufallspunkt abzubrechen.
+- `/ei status` zeigt die Anzahl natürlicher Spawnprüfungen und erfolgreicher Gruppen an.
+- Alle sechs Capybara-Modelle liegen jetzt im standardisierten Item-Modellpfad und verwenden ausschließlich sichere Vanilla-Atlastexturen. Die gefleckte Variante besitzt echte schwarze Modellflächen statt einer möglicherweise fehlenden Entity-Textur.
+- Pack-Revision 11 ersetzt die fehlerhaften Modelle automatisch und erzwingt einen neuen Ressourcenpaket-Hash.
 
-| Ziel | Server-Java | Stand |
-|---|---|---|
-| Paper / Spigot 1.21.11 | Java 21 | Basis-API des JARs |
-| Paper / Spigot 26.1.x | Java 25 bei Paper | Gemeinsame API; keine eigenen Internals |
-| Paper / Spigot 26.2 | Java 25 bei Paper | Zusätzliches Build-Ziel zur API-Prüfung |
-| 1.20 bis 1.21.10 | — | Nicht unterstützt; `api-version: 1.21.11` |
-| Spätere Versionen | Nach Serveranforderung | Erst nach erneuter API-, Pack- und Ingame-Prüfung zusagen |
+## Neu in 0.7.0
 
-Das JAR verwendet Java-21-Bytecode (`--release 21`) und ausschließlich öffentliche Bukkit/Spigot-APIs. Java-21-Bytecode kann unter Java 25 laufen; damit wird aber die Java-Anforderung des Servers nicht auf 21 herabgesetzt. Die niedrigste konkrete Versionsangabe aus dem Auftrag, 1.21.11, wurde als Untergrenze verwendet.
+- Capybaras spawnen natürlich in Gruppen in `badlands`, `wooded_badlands` und `eroded_badlands`.
+- Drei zufällige Fellvarianten (warmbraun, dunkel und schwarz gefleckt) besitzen jeweils ein eigenes Erwachsenen- und Babymodell.
+- Süßbeeren locken Capybaras an und versetzen erwachsene Tiere in Paarungsbereitschaft. Babys wachsen durch Füttern schneller.
+- Die Tiere wandern, schwimmen, suchen gelegentlich Wasser, ruhen, halten Anschluss an ihre Gruppe und fliehen bei Schaden. Ein unsichtbarer Vanilla-Träger übernimmt Hitbox und Tier-AI; Spieler benötigen weiterhin keinen Clientmod.
+- Capybaras und ihre Fell-/Altersdaten bleiben über Chunk-Unload und Neustarts erhalten. Sie lassen kein Schweinefleisch fallen und können nicht gesattelt werden.
+- `/ei spawn capybara [1–10] [adult|baby]` ermöglicht gezielte Ingame-Tests.
 
-Das Pack deklariert Formate **75.0 bis 88.0** für 1.21.11 bis 26.2. Der Server und seine Clients sollten dieselbe Minecraft-Version verwenden. ViaVersion/ViaBackwards, Geyser/Bedrock, Folia und modifizierte Clients werden nicht zugesagt. `VALIDIERUNG.md` trennt ausgeführte Prüfungen von noch offenen Ingame-Tests.
+## Neu in 0.6.0
 
-## Installieren
+- Nexo-Maker-Exporte im CraftEngine-Format lassen sich als unveränderte ZIP-Datei oder als entpackter Ordner unter `plugins/ExtraItems/` ablegen und mit nur einem Pfad in `items.yml` laden.
+- Normale CraftEngine-Items werden beim Start in native ExtraItems-Items umgewandelt. Konfiguration, Texturen und Modellgenerierung werden automatisch in das ausgelieferte Ressourcenpaket eingebunden; das Originalpaket wird nicht verändert.
+- Importpfade, ZIP-Inhalte, Größen und Asset-Konflikte werden geprüft. Ein Import darf keine vorhandene ExtraItems-Ressource unbemerkt überschreiben.
+- Das hochgeladene Beispielitem dient nur als Formatprobe und wird nicht mitgeliefert.
 
-1. Den Server vollständig stoppen. `ExtraItems-0.1.0.jar` nach `plugins/` kopieren.
-2. Server starten und wieder stoppen. Das Plugin erzeugt `plugins/ExtraItems/config.yml`, `items.yml`, den Ordner `resourcepack/` und `generated/extraitems.zip`.
-3. In `plugins/ExtraItems/config.yml` die **von den Spielern erreichbare** Downloadadresse eintragen:
+## Neu in 0.5.1
 
-   ```yaml
-   resource-pack:
-     public-url: 'http://DEINE-SERVER-IP:8123/extraitems.zip'
-     prompt: 'Dieser Server benötigt ExtraItems. Bitte Ressourcenpaket laden.'
-     timeout-seconds: 120
-     http:
-       enabled: true
-       bind: '0.0.0.0'
-       port: 8123
-   ```
+- Minecraft 26.3 wird über die aktuelle Paper-API unterstützt. Solange Paper noch kein 26.3-API-Artefakt veröffentlicht, baut die CI die API reproduzierbar aus dem offiziellen, fest angehefteten Paper-Quellstand und prüft sie unter Java 25.
+- Das Ressourcenpaket akzeptiert nun die Formate 75.0 bis 97.1 und deckt damit Minecraft 1.21.11 bis 26.3 ab.
+- Die Untergrenze 1.21.11 und der Java-21-Bytecode bleiben erhalten.
+- Hinweis: Paper führt den 26.3-Port derzeit noch im Alpha-Kanal. Vor dem Produktiveinsatz ist deshalb ein echter Test mit dem verwendeten Paper-26.3-Build erforderlich.
 
-4. TCP-Port **8123** beim Hoster bzw. in Firewall und gegebenenfalls Router freigeben und zum Minecraft-Server weiterleiten. In Docker zusätzlich den Port veröffentlichen. `0.0.0.0` ist nur die Bind-Adresse; sie gehört **nicht** in `public-url`. Auch `localhost` funktioniert für entfernte Spieler nicht. Eine Minecraft-SRV-Adresse ersetzt diese HTTP-Konfiguration nicht.
-5. Server neu starten. Die URL im Browser eines anderen Rechners öffnen: Es muss direkt eine ZIP-Datei heruntergeladen werden. In dieser ZIP liegt `pack.mcmeta` direkt im Wurzelverzeichnis.
-6. In der Serverliste unter „Bearbeiten“ die Server-Ressourcenpakete auf „Abfragen“ oder „Aktiviert“ setzen. Beitreten und bestätigen. `/ei status` zeigt den Zustand; `/ei pack` fordert das Pack erneut an.
+## Neu in 0.5.0
 
-Solange `public-url` leer ist oder die Initialisierung fehlschlägt, werden Spieler nicht freigeschaltet. Die Konsole bleibt für die Einrichtung verfügbar. Das ist beabsichtigt, weil das Paket verpflichtend ist. Es gibt keinen Permission-Bypass für das Pack.
+- Die Käsestation lässt den Milcheimer während der gesamten Reifezeit sichtbar im Eingang. Herausnehmen bricht den Vorgang ohne Verlust ab; erst beim erfolgreichen Abschluss entstehen Käserad und leerer Eimer.
+- Neuer platzierbarer Samengenerator mit GUI und Hopper-Unterstützung: Tomate ergibt vier, Salat und Zwiebel jeweils drei Samen nach 30 Sekunden Trocknung.
+- Die direkte Umwandlung von Tomate zu Samen wird beim Update automatisch aus `items.yml` entfernt. Die Starterrezepte bleiben für den Einstieg in neue Welten erhalten.
+- Das Eisenmesser verursacht 9 Angriffsschaden bei 2,4 Angriffen pro Sekunde und verbraucht bei einem Treffer einen Einsatz. `Old but Gold` verhindert weiterhin jeden Verschleiß.
 
-### Hoster ohne zusätzlichen Port / HTTPS
+## Neu in 0.4.0
 
-`http.enabled: false` setzen. Die **exakte** Datei `plugins/ExtraItems/generated/extraitems.zip` auf einen eigenen HTTPS-Webserver oder statischen Dateihost hochladen und dessen direkte Download-URL als `public-url` eintragen. Keine Loginseite, Vorschauseite oder zeitlich befristete Downloadadresse verwenden. Die ZIP nicht nachträglich anders komprimieren: Der automatisch gesendete Hash bezieht sich auf die vom Plugin erzeugten Bytes. Nach jeder Änderung das neu erzeugte Pack erneut hochladen. Alternativ kann ein vorhandener HTTPS-Reverse-Proxy auf den eingebauten Downloadserver zeigen.
+- Das Eisenmesser hat jetzt das gewünschte 3×3-Rezept: mittlere Reihe `Stick | Eisenbarren | ·`, darunter `· | Steinknopf | ·`; alle übrigen Felder bleiben leer.
 
-ExtraItems fügt sein Pack zur Client-Paketliste hinzu. Ein weiteres Serverpack darf ExtraItems-Assets nicht überschreiben. Gleichzeitiger Einsatz anderer Pflichtpack-Plugins muss gemeinsam geprüft werden.
+## Neu in 0.3.2
 
-## Rechte an Gruppen vergeben
+- Zwiebel, Buns, Messer und beide Burger zeigen das vorhandene Icon im Inventar, aber echte native 3D-Kubusmodelle in Hand, Drop und Itemrahmen.
+- Käsestationen speichern den Reifezustand jetzt vor der Inventaränderung und verwenden danach das Live-Inventar; Milcheimer werden zuverlässig verbraucht, Käserad und leerer Eimer ausgegeben.
+- Custom-Rezepte nutzen eine robuste Material-Vorauswahl und prüfen anschließend die exakte ExtraItems-ID; dadurch funktionieren Schlemmer- und Cheesy-Schlemmer-Burger auch nach Metadaten-Updates.
 
-ExtraItems prüft Bukkit-Permissions. Die Gruppen verwaltet dein Rechteplugin, zum Beispiel LuckPerms; ExtraItems legt keine Benutzergruppen an.
+## Neu in 0.3.1
 
-| Permission | Erlaubt | Standard |
-|---|---|---|
-| `extraitems.plant.tomato` | Tomaten pflanzen und mit Knochenmehl düngen | OP |
-| `extraitems.craft.tomato_seeds` | Beide Samenrezepte benutzen | OP |
-| `extraitems.admin` | Items geben und Status abfragen | OP |
-| Keine | Tomaten essen, reife Pflanzen ernten, eigene Packanfrage wiederholen | Alle Spieler mit geladenem Pack |
+- Neues Käsestationsrezept: oben mittig Fass; mittlere Reihe beliebige Holzbretter, Werkbank, beliebige Holzbretter; unten links und rechts je ein Stock.
+- Moderne Käsestations-GUI mit dunklem Rahmen, markiertem Eingang, zwei Ausgängen, fünfteiliger Fortschrittsanzeige, Prozentwert und Restzeit.
+- Neuer `Cheesy Schlemmer` aus Buns, Käsescheibe, Tomate, Salat und gebratenem Rindfleisch.
+- Angepasste Nahrung: Tomate/Salat/Zwiebel je 1,5 Keulen, Buns 0,5 Keule und Schlemmer Burger 9 Keulen.
+- Zwiebel, Buns, Messer und beide Burger verwenden eigene, zuverlässig extrudierte Pixelmodelle ohne externe Vanilla-Texturverweise.
+- Der Cheesy Schlemmer füllt die vollständige Vanilla-Leiste und gibt zusätzliche Sättigung. Mehr als zehn sichtbare Hungerkeulen kann Minecraft nicht darstellen.
 
-Beispiel für LuckPerms, in der Serverkonsole ohne führenden Schrägstrich:
+## Neu in 0.3.0
+
+- Eigene Tomaten-, Salat- und Zwiebelsamen-Symbole sowie je vier 3D-Wachstumsstufen.
+- Salat und Zwiebeln können auf Ackerboden gepflanzt, mit Knochenmehl beschleunigt und geerntet werden.
+- Eisenmesser mit 3D-Modell: Grundhaltbarkeit 192 Schnitte. `Haltbarkeit I–III` ergänzt exakt 64 Schnitte je Stufe; Reparatur durch `Mending` bleibt möglich.
+- Das eigene Amboss-Upgrade `Old but Gold` funktioniert ausschließlich auf dem ExtraItems-Messer und macht es unzerstörbar.
+- Messer + Brot ergibt Burger Buns; Messer + Käserad ergibt zehn essbare Käsescheiben.
+- Schlemmer-Burger aus Buns, Salat, Zwiebel und gebratenem Rindfleisch.
+- Platzierbare Käsestation mit zwei Ausgängen, 60 Sekunden Reifezeit und Hopper-Automatisierung.
+- Platzierbares Käserad mit zehn Portionen. Es ist nur platziert essbar und wird beim Abbauen wie Kuchen zerstört.
+
+## Behoben seit 0.2.1
+
+- Die reife vierte Tomatenstufe verwendet jetzt eine sichere Vanilla-Blocktextur und erscheint nicht mehr als pink-schwarzes Fehlermodell.
+- Die Tomate besitzt ein echtes Quader-Modell für Inventar, Hand und gedroppte Items.
+- Die Tomaten-PNG hat jetzt die mipmap-taugliche Zweierpotenzgröße 256×256 statt 1254×1254.
+- Bei einer neuen Pack-Revision aktualisiert das Plugin seine mitgelieferten Standardassets automatisch. Geänderte alte Dateien werden vorher unter `resourcepack-backups/` gesichert.
+
+## Neu in 0.2.0
+
+- Jede Definition liegt in einer eigenen YAML-Datei und einem übersichtlichen Item-Ordner.
+- `items.yml` ist nur noch der zentrale Index mit den Pfaden zu diesen Dateien.
+- Alte kombinierte `items.yml`-Dateien werden beim Start automatisch gesichert und aufgeteilt.
+- Definitionen melden Fehler mit dem genauen Dateipfad.
+- Die Typen `potion`, `effect`, `gui`, `tree` und `ore` sind für spätere Module reserviert. Implementiert sind `item`, `tool`, `crop`, `recipe`, `station`, `seed_generator`, `placeable_food` und `entity`.
+- Ressourcenpaket-Modi sind jetzt eindeutig: `self-host`, `external` oder `disabled`.
+- `self-host` bildet die Downloadadresse automatisch aus dem Hostnamen bzw. der IP, mit der ein Spieler beitritt.
+- Administratoren können bei einer kaputten Pack-Konfiguration per Notfallzugang beitreten und `/ei status` verwenden.
+
+## Ordnerstruktur
+
+Nach dem ersten Start:
 
 ```text
-lp creategroup farmer
-lp group farmer permission set extraitems.plant.tomato true
-lp group farmer permission set extraitems.craft.tomato_seeds true
-lp user SPIELERNAME parent add farmer
+plugins/ExtraItems/
+├── config.yml
+├── items.yml
+├── items.legacy.yml          # nur nach Migration von 0.1.0
+├── generated/
+│   ├── extraitems.zip
+│   └── imported-resourcepack/ # automatisch erzeugter Import-Overlay
+├── imports/                   # optional: ZIPs oder entpackte Exporte
+├── resourcepack/
+└── items/
+    ├── capybara/
+    │   └── entity.yml
+    ├── tomato/
+    │   ├── item.yml
+    │   └── crop.yml
+    ├── tomato_seeds/
+        ├── item.yml
+        └── recipes/
+            └── starter.yml
+    ├── lettuce/              # item.yml + crop.yml
+    ├── onion/                # item.yml + crop.yml
+    ├── knife/                # tool.yml + Rezept
+    ├── cheese_station/       # Item, Station und Rezept
+    ├── seed_generator/       # Item, Trocknungsdefinition und Rezept
+    └── cheese_wheel/         # Item und platzierbares Essen
 ```
 
-Zum Prüfen einen Spieler ohne OP und ohne übergeordnete `*`-Rechte verwenden. Pflanzrecht und Craftrecht sind unabhängig: Eine Gruppe kann Samen herstellen dürfen, ohne sie pflanzen zu dürfen. Für weitere konfigurierte Pflanzen/Rezepte stehen die Nodes direkt in `items.yml`; sie müssen nicht zusätzlich in `plugin.yml` stehen.
+`items.yml`:
 
-## Tomaten spielen
-
-Als Administrator:
-
-```text
-/ei give SPIELERNAME tomato_seeds 16
-/ei give SPIELERNAME tomato 16
+```yaml
+schema-version: 2
+sources:
+  - items/tomato/item.yml
+  - items/tomato/crop.yml
+  - items/tomato_seeds/item.yml
+  - items/tomato_seeds/recipes/starter.yml
+  - items/seed_generator/item.yml
+  - items/seed_generator/generator.yml
+  - imports/mein_craftengine_export.zip
 ```
 
-Als Spieler mit Craftrecht:
+Native Quelldateien enthalten mindestens `type` und `id`. Alternativ darf ein Pfad auf eine Nexo-Maker-CraftEngine-ZIP oder deren entpackten Ordner zeigen. Importierte IDs werden automatisch als `<namespace>_<itempfad>` registriert, beispielsweise `gems:green_gem` als `gems_green_gem`. Relative Pfade dürfen den Pluginordner nicht verlassen; doppelte Dateien und doppelte Definitionen werden abgelehnt. Einzelheiten und kopierbare Beispiele stehen in [docs/DEFINITIONEN.md](docs/DEFINITIONEN.md).
 
-| Zutaten, beliebige Anordnung | Ergebnis |
+## Ressourcenpaket einrichten
+
+### Eingebautes Hosting ohne manuell eingetragene Webadresse
+
+Standard:
+
+```yaml
+resource-pack:
+  required: true
+  allow-admin-bypass-on-error: true
+  mode: self-host
+  self-host:
+    bind: '0.0.0.0'
+    port: 8123
+    public-host: auto
+    scheme: http
+    advertised-port: 8123
+```
+
+`public-host: auto` verwendet automatisch dieselbe Domain oder IP, über die sich der jeweilige Spieler mit Minecraft verbindet. `localhost` wird dadurch für entfernte Spieler nicht mehr erzeugt.
+
+TCP-Port 8123 muss trotzdem beim Hoster, in der Firewall und gegebenenfalls im Router erreichbar sein. Ein Vanilla-Client lädt Server-Ressourcenpakete per HTTP(S)-URL; das Plugin kann die ZIP nicht als normale Minecraft-Pakete durch dieselbe Verbindung senden. Wenn nur Port 80/443 erlaubt ist, einen HTTPS-Reverse-Proxy oder externen Dateihost verwenden.
+
+### Externes Hosting
+
+```yaml
+resource-pack:
+  required: true
+  mode: external
+  external-url: 'https://cdn.example.org/extraitems.zip'
+```
+
+Die URL muss direkt die unveränderte Datei `plugins/ExtraItems/generated/extraitems.zip` liefern.
+
+### Paket vorübergehend deaktivieren
+
+```yaml
+resource-pack:
+  required: false
+  mode: disabled
+```
+
+`disabled` zusammen mit `required: true` ist absichtlich ein Konfigurationsfehler. Ohne geladenes Pack sehen eigene Modelle falsch aus.
+
+Bei einem Fehler dürfen Spieler mit `extraitems.admin` standardmäßig trotzdem beitreten. Sie erhalten eine deutliche Warnung und können `/ei status` ausführen. Normale Spieler bleiben im Pflichtmodus gesperrt.
+
+## Installation und Update
+
+1. Server vollständig stoppen.
+2. `ExtraItems-0.8.0.jar` nach `plugins/` kopieren und die alte JAR entfernen.
+3. Server starten.
+4. Bei einem Update wird die alte kombinierte `items.yml` einmalig als `items.legacy.yml` gesichert und in Unterdateien migriert. Ein vorhandener modularer Index behält eigene Pfade und erhält automatisch neue Standardpfade; davor entsteht `items.before-bundled-update.yml`. Veraltete Standard-Packdateien werden aktualisiert; vorherige geänderte Varianten bleiben unter `resourcepack-backups/` erhalten.
+5. `/ei status` prüfen.
+6. Bei `self-host` die dort angezeigte Pack-URL von einem anderen Rechner öffnen; es muss direkt eine ZIP laden.
+7. Mit einem Nicht-OP-Spieler Ressourcenpaket, Rechte, Pflanzen und Rezepte testen.
+
+Vor dem Update Welten und `plugins/ExtraItems/` sichern. `/reload` und Hot-Unload werden nicht unterstützt.
+
+## Befehle und Rechte
+
+| Befehl/Recht | Bedeutung |
 |---|---|
-| 1 Weizensamen + 1 Rote Bete | 2 Tomatensamen |
-| 1 ExtraItems-Tomate | 4 Tomatensamen |
+| `/ei status` | Initialisierung, Packmodus, SHA-1, Definitionen und persönliche Pack-URL |
+| `/ei pack` | Ressourcenpaket erneut anfordern |
+| `/ei give <Spieler> <ID> [Anzahl]` | eigenes Item vergeben |
+| `/ei spawn capybara [1–10] [adult\|baby]` | Capybaras zum Testen am eigenen Standort erzeugen |
+| `extraitems.admin` | Administration und Notfallzugang bei Packfehler |
+| `extraitems.breed.capybara` | Capybaras mit Süßbeeren füttern und vermehren |
+| `extraitems.plant.tomato` | Tomate pflanzen und mit Knochenmehl düngen |
+| `extraitems.plant.lettuce` | Salat pflanzen und düngen |
+| `extraitems.plant.onion` | Zwiebeln pflanzen und düngen |
+| `extraitems.craft.tomato_seeds` | Tomatensamen herstellen |
+| `extraitems.craft.knife` | Eisenmesser herstellen |
+| `extraitems.craft.burger_bun` | Burger Buns schneiden |
+| `extraitems.craft.cheese_slice` | Käserad schneiden |
+| `extraitems.craft.schlemmer_burger` | Schlemmer-Burger herstellen |
+| `extraitems.craft.cheesy_schlemmer` | Cheesy Schlemmer herstellen |
+| `extraitems.craft.cheese_station` | Käsestation herstellen |
+| `extraitems.craft.seed_generator` | Samengenerator herstellen |
+| `extraitems.craft.old_but_gold` | Old-but-Gold-Buch herstellen |
+| `extraitems.use.cheese_station` | Käsestation öffnen |
+| `extraitems.use.seed_generator` | Samengenerator öffnen |
+| `extraitems.place.cheese_wheel` | Käserad platzieren |
 
-Mit Tomatensamen in der Hand **oben auf Ackerboden rechtsklicken**. Es muss Luft über dem Ackerboden sein. Standardmäßig wächst die Pflanze bei Lichtlevel 9 oder höher und feuchtem Ackerboden alle 180 Sekunden um eine Stufe. Nach etwa 9 Minuten aktiver Wachstumszeit ist sie reif. Ein Knochenmehl erhöht die Stufe um eins; dafür gilt das Pflanzrecht. Pflanzen wachsen nur in geladenen Chunks, solange der Server läuft, und unter passenden Bedingungen. Bei Serverlag entsprechen 20 Ticks mehr als einer realen Sekunde.
+Essen und das Ernten reifer Pflanzen benötigen kein Craftrecht. Grundstücksschutz gilt.
 
-Rechtsklick auf die reife Pflanze gibt **1–3 Tomaten** und setzt sie auf Stufe 1 zurück. Linksklick entfernt sie: im Survival gibt es einen Samen zurück, bei reifen Pflanzen zusätzlich Tomaten. Creative-Abbau lässt keine Items fallen. Zum Entfernen des Ackerbodens zuerst die Pflanze entfernen. Pflanzen und ihr Ackerboden werden vor Wasser, Kolben, Explosionen und Zertrampeln geschützt; automatische Ernte per Wasser ist in 0.1.0 nicht vorgesehen.
+## Capybaras
 
-Tomaten essen sich wie Vanilla-Nahrung bei Hunger; sie geben 4 Nahrungspunkte (= 2 Hungerkeulen) und einen Sättigungsmodifikator von 0,3. Es gibt dafür kein Anbau- oder Craftrecht.
+- Natürlicher Spawn: ausschließlich in den drei Badlands-Varianten, standardmäßig in Gruppen von zwei bis vier Tieren.
+- Futter und Zucht: Minecraft-Süßbeeren (`SWEET_BERRIES`). Zwei paarungsbereite Capybaras erzeugen ein Baby; dessen Fell wird überwiegend von einem Elternteil geerbt, mit kleiner Chance auf eine andere Variante.
+- Wachstum: 20 Minuten bis zum Erwachsenenalter; jede verfütterte Süßbeere verkürzt die Restzeit um zwei Minuten.
+- Verhalten: passive Vanilla-Wander- und Flucht-AI plus Gruppenanschluss, Ruhephasen, Wasseraufenthalt und gelegentliche Wassersuche.
+- Darstellung: Beim Laufen wechseln zwei echte Beinstellungen alle vier Ticks; im Wasser erscheint eine eigene Schwimmhaltung. Stand-, Lauf- und Schwimmframes existieren jeweils getrennt für Erwachsene und Babys.
+- Technik: Das eigene Modell wird von einer `ItemDisplay`-Entity dargestellt. Ein unsichtbares Schwein liefert serverseitig Bewegung, Hitbox und Zucht-AI, wird aber gegen Sattel- und Schweinefutter-Interaktionen abgesichert.
+- Konfiguration: `items/capybara/entity.yml`; der Pfad wird wie alle anderen Inhalte über `items.yml` geladen. Mit `enabled: false` kann das Modul deaktiviert werden.
 
-## Crafting und Schutzgebiete
+Die Umsetzung ist eine Vanilla-kompatible Spielannäherung, keine neue registrierte Client-Entity. Die Bewegung wird deshalb durch Modellframes simuliert; eine stufenlose skelettbasierte Animation wie bei einem Clientmod ist technisch nicht möglich.
 
-Die Rezeptvorschau **und** der tatsächliche Craft-Vorgang prüfen Rechte. Das gilt auch bei Shift-Klick und Hotbar-Klick. Automatische Crafter haben keine Spielergruppe und dürfen diese Rezepte nicht ausführen. ExtraItems-Items können nicht als ihre Vanilla-Grundmaterialien in normalen Werkbankrezepten verwendet werden.
+## Küchenmechaniken
 
-Custom-Rezeptzutaten verwenden exakte Item-Metadaten. Eine am Amboss umbenannte Tomate ist weiterhin essbar, passt aber nicht mehr in das exakte Samenrezept. Standard-Tomaten funktionieren. Nur PDC-Markierungen kennzeichnen echte ExtraItems-Items; ein umbenannter normaler Apfel wird keine Tomate.
+- Messerrezept (Werkbank): mittlere Reihe `Stock | Eisenbarren | ·`, darunter `· | Steinknopf | ·`; alle anderen Felder bleiben leer.
+- Burger Buns: ein Brot und ein Messer formlos in das Craftingfeld legen.
+- Käse schneiden: ein Käserad und ein Messer ergeben zehn Scheiben.
+- `Old but Gold`: das hergestellte Buch im Amboss rechts neben das Messer legen; Kosten: 5 Level.
+- Käsestation: Milcheimer manuell in den Eingang legen. Er bleibt dort 60 Sekunden sichtbar; Herausnehmen bricht den Vorgang ab. Erst bei freiem Käse- und Eimerausgang wird er verbraucht. Alternativ eine Kiste über einen Hopper stellen und den Hopper oben oder seitlich an die Station setzen. Ein Hopper direkt darunter zieht Käseräder und leere Eimer heraus.
+- Stationsrezept: `· Fass ·` / `Bretter Werkbank Bretter` / `Stock · Stock`; jede Holzbrettart ist erlaubt.
+- Samengenerator: Tomate, Salat oder Zwiebel links einlegen; nach 30 Sekunden erscheinen rechts 4/3/3 Samen. Rezept: `Glas Lagerfeuer Glas` / `Bretter Fass Bretter` / `Stock · Stock`.
+- Messer im Kampf: 9 Schaden bei 2,4 Angriffen pro Sekunde; jeder erfolgreiche Nahkampftreffer verbraucht einen Einsatz.
+- Cheesy Schlemmer: Buns + Käsescheibe + Tomate + Salat + gebratenes Rindfleisch.
+- Das Käserad mit Rechtsklick auf einen soliden Block stellen und mit leerer Hand essen. Jede der zehn Portionen füllt eine Hungerkeule. Beim Abbauen gibt es keinen Drop.
 
-Pflanzen sendet ein Bukkit-`BlockPlaceEvent`; Ernten, Düngen und Abbau senden ein Bukkit-`BlockBreakEvent`. Dabei wird der unsichtbare `STRUCTURE_VOID`-Träger als Block verwendet. Schutzplugins können diese Events abbrechen. Das ist eine generische Integration, keine getestete WorldGuard-/GriefPrevention-Spezialintegration. Ernten braucht daher in einem Schutzgebiet die dort geltende **Abbauberechtigung**. Plugins, die nur natürliche Ereignisse unterstützen oder beim Break-Event schon externe Nebenwirkungen ausführen, müssen im Testserver geprüft werden. Der Vanilla-Spawnschutz wird ebenfalls berücksichtigt.
+## Versionen und Build
 
-## Weitere Pflanzen und Texturen
+- API-Untergrenze: Paper/Spigot 1.21.11.
+- Java-Bytecode: Java 21.
+- Der CI-Build prüft 1.21.11 mit Java 21, 26.2 mit Java 25 und Paper 26.3 Alpha mit Java 25.
+- Minecraft 26.3 verwendet Ressourcenpaketformat 97.1; Paper 26.3 ist zum Stand dieser Version noch Alpha.
+- Zukünftige Minecraft-Versionen benötigen eine erneute API- und Ingame-Prüfung.
 
-`items.yml` enthält drei Bereiche: `items`, `crops`, `recipes`. Eine weitere Pflanze erhält eigene Item-IDs für Frucht und Samen, eine Crop-ID, eine Permission, Wachstumsmodelle und Rezepte. Die vorhandene Tomate dient als kopierbares Beispiel. Gegenwärtig gilt für alle Pflanzen derselbe Ackerboden-/Wachstumsablauf; Bäume und Erze benötigen eigene Logik.
-
-Eigene PNGs kommen nach `plugins/ExtraItems/resourcepack/assets/extraitems/textures/`. Die JSONs unter `items/` verweisen auf Modelle unter `models/`. IDs und Dateinamen müssen klein geschrieben sein. Die enthaltenen JSON-Modelle können in Blockbench als Java-Modelle bearbeitet werden. PNGs und JSON-Modelle reichen; `.obj`/`.fbx` und Mods sind nicht erforderlich. Siehe `ASSETS.md`.
-
-Beim Start exportiert das Plugin fehlende Standarddateien, überschreibt bestehende Dateien aber nicht. Anschließend baut es das gesamte `resourcepack/` neu und berechnet den Hash. Änderungen benötigen einen vollständigen Serverneustart; `/reload` und Hot-Unload mit Pluginmanagern werden nicht unterstützt. Beim Bearbeiten des Quellprojekts nach neuen Assets `python3 tools/build_models.py` bzw. das Manifest aktualisieren, dann neu bauen. Achtung: `build_models.py` erzeugt die Standardmodell-JSONs neu und überschreibt Änderungen an diesen Dateien.
-
-## Speicherung und Betrieb
-
-Pflanzenposition, Crop-ID, Wachstumsstufe und Fortschritt liegen im PersistentDataContainer des jeweiligen Welt-Chunks. Item-IDs liegen im PDC der ItemStacks. Zu jeder Pflanze gehören ein persistentes `ItemDisplay` und eine `Interaction`-Entity. Keine Datenbank und kein zusätzlicher Plugin-Download sind nötig. Der Ressourcenpackserver läuft auf eigenen Threads; Bukkit-Weltzugriffe bleiben im Serverthread.
-
-Die Daten werden mit den normalen Welt-Chunks gespeichert. Für Backups: vollständige Welten inklusive Entities **und** `plugins/ExtraItems/` sichern, vorzugsweise bei gestopptem Server oder nach einer koordinierten Serversicherung. Ein harter Prozessabbruch kann seit der letzten Weltspeicherung entstandenen Fortschritt verlieren, genau wie andere noch nicht gespeicherte Weltänderungen.
-
-Beim Laden eines Chunks stellt das Plugin fehlende Entities wieder her und bereinigt doppelte eigene Entities. Sind Einträge beschädigt oder Crop-IDs aus der Konfiguration entfernt worden, lässt das Plugin diese Chunk-Daten unangetastet und meldet den Fehler. Fehlende Definitionen wiederherstellen. Bereits verwendete IDs daher nicht umbenennen oder löschen. WorldEdit-/WorldGuard-Regionkopien transportieren diese Chunk-Daten nicht zuverlässig. Pflanzenfelder über das Plugin neu anlegen. Wird ein Träger extern überschrieben, räumt das Plugin seine Darstellung ohne Drops auf.
-
-Standardlimits: 64 Pflanzen je Chunk und insgesamt 10.000 geladene Pflanzen. Das sind Schutzgrenzen, keine Leistungsgarantie; jede Pflanze erzeugt zwei Entities. Große Farmen vorab unter realer Spielerlast messen. Folia wird nicht unterstützt.
-
-## Selbst bauen
-
-Maven 3.9+ und JDK 21+ installieren. Im Projektordner:
+Lokaler Build:
 
 ```sh
+cd Quellcode
 mvn clean verify
 ```
 
-Ergebnis: `target/ExtraItems-0.1.0.jar`. Das fertige JAR enthält alle Standard-Packdateien. Zum Prüfen gegen die neuere API mit JDK 25:
+Ergebnis: `target/ExtraItems-0.8.0.jar`.
 
-```sh
-mvn clean verify -Dspigot.version=26.2-R0.1-SNAPSHOT
-```
+Automatisierte Tests ersetzen keinen Test mit einem echten Minecraft-Client. Die Checkliste dafür steht in [docs/INGAME-TEST.md](docs/INGAME-TEST.md).
 
-Für das auszuliefernde JAR anschließend wieder ohne Versions-Override gegen 1.21.11 bauen. Eine erfolgreiche Kompilierung ist kein vollständiger Ingame-Kompatibilitätstest. Python ist zum normalen Maven-Build nicht nötig; die Modell-JSONs und das Manifest liegen bereits im Projekt.
+## Optionale Provider-Integrationen
 
-Optionale Pack-Strukturprüfung:
-
-```sh
-python3 tools/validate_pack.py
-```
-
-## Fehler finden
-
-| Problem | Prüfen |
-|---|---|
-| Sofortiger Kick beim ersten Beitritt | `public-url` gesetzt? Konsole und `/ei status` prüfen. |
-| Download schlägt fehl | URL von außerhalb erreichbar? TCP-Port offen? Direkte ZIP statt Webseite? Bei HTTPS-Hosting exakt die generierte ZIP hochgeladen? |
-| Paket wird immer abgelehnt | Serverliste → Bearbeiten → Ressourcenpakete auf „Abfragen“ oder „Aktiviert“. |
-| Tomate sieht wie Apfel aus | Pack bestätigt? Andere Packs überschreiben Assets? Native Clientversion verwenden. |
-| Pflanze wächst nicht | Chunk geladen, Licht ≥ 9, Acker feucht, Server läuft? Testweise Knochenmehl mit Pflanzrecht. |
-| Pflanzen/Craften klappt für jeden | OP, LuckPerms-Vererbung und Wildcard-Rechte prüfen. |
-| Ernten im Claim geht nicht | Schutzplugin benötigt Abbaurecht, da ein Break-Event geprüft wird. |
-| Rezept zeigt kein Ergebnis | Rechte, Standard-Item-Metadaten und Zutaten prüfen. Umbenannte Tomaten passen nicht in ExactChoice. |
-| HTTP-Port belegt | Anderen freien Port konfigurieren und URL/Weiterleitung entsprechend ändern. |
-
-## Quellen für Versions- und API-Entscheidungen
-
-Abruf: 14. September 2026.
-
-- [Paper-Versionen, offizieller Downloadservice](https://fill.papermc.io/v3/projects/paper)
-- [Paper: Java-Anforderungen](https://docs.papermc.io/paper/getting-started/)
-- [Minecraft 1.21.11: Ressourcenpaketformat 75.0](https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-11)
-- [Minecraft 26.2: Ressourcenpaketformat 88.0](https://www.minecraft.net/en-us/article/minecraft-java-edition-26-2)
-- [Minecraft 1.21.9: min_format/max_format](https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-9)
-- [Spigot: Player-Ressourcenpaket-API](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Player.html)
-- [Spigot: Ladebestätigung und Pack-ID](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/player/PlayerResourcePackStatusEvent.html)
-- [Spigot: ItemMeta und eigene Item-Modelle](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/ItemMeta.html)
-- [LuckPerms: Permission-Befehle](https://luckperms.net/wiki/Permission-Commands)
-
-Die Pack-Prüfung beruht auf dem vom Client gemeldeten Ladezustand. Ein Server kann lokale Dateien eines Spielers nicht direkt durchsuchen und einen absichtlich manipulierten Client nicht allein durch diese Meldung verlässlich überprüfen. Normale Vanilla-Clients verwenden den SHA-1 zum Caching und werden bei erfolgreichem Laden freigeschaltet.
+Externe Item-IDs können in Rezeptdateien als `nexo:id`, `itemsadder:id`, `oraxen:id` oder `craftengine:id` genutzt werden. Zusätzlich lassen sich Nexo-Maker-Exporte im CraftEngine-Format ohne installiertes CraftEngine als native ExtraItems-Items importieren. Siehe [docs/INTEGRATIONEN.md](docs/INTEGRATIONEN.md). Die Provider bleiben optionale Laufzeit-Abhängigkeiten.

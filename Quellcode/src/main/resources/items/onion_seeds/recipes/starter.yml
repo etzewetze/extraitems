@@ -1,0 +1,8 @@
+type: recipe
+id: onion_seeds_starter
+result: onion_seeds
+amount: 2
+permission: extraitems.craft.onion_seeds
+ingredients:
+  - minecraft:wheat_seeds
+  - minecraft:allium

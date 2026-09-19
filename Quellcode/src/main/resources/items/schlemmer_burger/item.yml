@@ -1,0 +1,10 @@
+type: item
+id: schlemmer_burger
+material: COOKED_BEEF
+name: '&6Schlemmer Burger'
+model: extraitems:schlemmer_burger
+lore:
+  - '&7Buns, Salat, Zwiebeln und Rindersteak.'
+food:
+  nutrition: 18
+  saturation: 1.8

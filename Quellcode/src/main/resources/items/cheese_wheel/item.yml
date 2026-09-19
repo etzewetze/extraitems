@@ -1,0 +1,8 @@
+type: item
+id: cheese_wheel
+material: PAPER
+name: '&eKäserad'
+model: extraitems:cheese_wheel
+lore:
+  - '&7Platzieren und in zehn Portionen essen.'
+  - '&7Nicht direkt aus der Hand essbar.'

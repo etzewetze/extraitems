@@ -1,0 +1,18 @@
+type: placeable_food
+id: cheese_wheel
+item: cheese_wheel
+place-permission: extraitems.place.cheese_wheel
+models:
+  - extraitems:cheese_wheel_0
+  - extraitems:cheese_wheel_1
+  - extraitems:cheese_wheel_2
+  - extraitems:cheese_wheel_3
+  - extraitems:cheese_wheel_4
+  - extraitems:cheese_wheel_5
+  - extraitems:cheese_wheel_6
+  - extraitems:cheese_wheel_7
+  - extraitems:cheese_wheel_8
+  - extraitems:cheese_wheel_9
+nutrition-per-portion: 2
+saturation-per-portion: 0.3
+empty-hand-only: true
