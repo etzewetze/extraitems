@@ -92,8 +92,8 @@ final class CheeseStationService implements Listener {
     private ItemStack decoration(Material material, String name, List<String> lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
-        meta.setLore(lore);
+        LegacyBukkitApi.displayName(meta, name);
+        LegacyBukkitApi.lore(meta, lore);
         meta.getPersistentDataContainer().set(fillerKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
@@ -109,8 +109,9 @@ final class CheeseStationService implements Listener {
         int percent = progressPercent(readyAt, station.processSeconds());
         ItemStack item = new ItemStack(Material.CLOCK);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(seconds == 0 ? "§6§lAusgabe wird vorbereitet" : "§e§lKäse reift: " + percent + "%");
-        meta.setLore(List.of("§7Verbleibend: §f" + seconds + " Sekunden",
+        LegacyBukkitApi.displayName(meta,
+                seconds == 0 ? "§6§lAusgabe wird vorbereitet" : "§e§lKäse reift: " + percent + "%");
+        LegacyBukkitApi.lore(meta, List.of("§7Verbleibend: §f" + seconds + " Sekunden",
                 "§7Der Milcheimer muss im Eingang bleiben.", "§8Fortschritt wird jede Sekunde aktualisiert."));
         meta.getPersistentDataContainer().set(fillerKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
@@ -302,7 +303,7 @@ final class CheeseStationService implements Listener {
         ItemRegistry.Station definition = items.stationForItem(event.getItemInHand());
         if (definition == null || !(event.getBlockPlaced().getState() instanceof Barrel barrel)) return;
         barrel.getPersistentDataContainer().set(stationKey, PersistentDataType.STRING, definition.id());
-        barrel.setCustomName("§3§lKäsestation §8• §fKäserei");
+        LegacyBukkitApi.customName(barrel, "§3§lKäsestation §8• §fKäserei");
         barrel.update(true, false);
         register(event.getBlockPlaced());
         event.getBlockPlaced().getWorld().playSound(event.getBlockPlaced().getLocation(), Sound.BLOCK_BARREL_OPEN, .8f, 1.2f);

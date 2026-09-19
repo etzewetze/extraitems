@@ -54,6 +54,7 @@
         <configuration>
           <compilerArgs>
             <arg>-Xlint:deprecation</arg>
+            <arg>-Xlint:removal</arg>
           </compilerArgs>
         </configuration>
       </plugin>

@@ -118,10 +118,10 @@ final class ToolService implements Listener {
         meta.getPersistentDataContainer().set(oldGoldKey, PersistentDataType.BYTE, (byte) 1);
         meta.setUnbreakable(true);
         meta.setEnchantmentGlintOverride(true);
-        List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
+        List<String> lore = meta.hasLore() ? new ArrayList<>(LegacyBukkitApi.lore(meta)) : new ArrayList<>();
         lore.removeIf(OLD_GOLD_LORE::equals);
         lore.add(OLD_GOLD_LORE);
-        meta.setLore(lore);
+        LegacyBukkitApi.lore(meta, lore);
         item.setItemMeta(meta);
         refresh(item);
     }

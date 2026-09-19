@@ -97,8 +97,8 @@ final class SeedGeneratorService implements Listener {
     private ItemStack decoration(Material material, String name, List<String> lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
-        meta.setLore(lore);
+        LegacyBukkitApi.displayName(meta, name);
+        LegacyBukkitApi.lore(meta, lore);
         meta.getPersistentDataContainer().set(fillerKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
@@ -335,7 +335,7 @@ final class SeedGeneratorService implements Listener {
         ItemRegistry.SeedGenerator definition = items.seedGeneratorForItem(event.getItemInHand());
         if (definition == null || !(event.getBlockPlaced().getState() instanceof Barrel barrel)) return;
         barrel.getPersistentDataContainer().set(generatorKey, PersistentDataType.STRING, definition.id());
-        barrel.setCustomName("§2§lSamengenerator §8• §fTrocknung");
+        LegacyBukkitApi.customName(barrel, "§2§lSamengenerator §8• §fTrocknung");
         barrel.update(true, false);
         register(event.getBlockPlaced());
         event.getBlockPlaced().getWorld().playSound(event.getBlockPlaced().getLocation(),

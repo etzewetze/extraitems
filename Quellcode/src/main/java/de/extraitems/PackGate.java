@@ -29,6 +29,7 @@ final class PackGate implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    @SuppressWarnings({"deprecation", "removal"})
     public void login(PlayerLoginEvent event) {
         joiningAddresses.put(event.getPlayer().getUniqueId(), event.getHostname());
     }
@@ -131,7 +132,7 @@ final class PackGate implements Listener {
         }
     }
 
-    private void kick(Player player, String key) { player.kickPlayer(plugin.text(key)); }
+    private void kick(Player player, String key) { LegacyBukkitApi.kick(player, plugin.text(key)); }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void move(PlayerMoveEvent event) {

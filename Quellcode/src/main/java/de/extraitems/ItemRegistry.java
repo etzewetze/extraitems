@@ -130,8 +130,8 @@ public final class ItemRegistry {
         }
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(color(c.getString("name", id)));
-        meta.setLore(c.getStringList("lore").stream().map(ItemRegistry::color).toList());
+        LegacyBukkitApi.displayName(meta, color(c.getString("name", id)));
+        LegacyBukkitApi.lore(meta, c.getStringList("lore").stream().map(ItemRegistry::color).toList());
         meta.setItemModel(key(c.getString("model", "extraitems:" + id)));
         meta.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, id);
         if (c.getBoolean("glint", false)) meta.setEnchantmentGlintOverride(true);
@@ -583,5 +583,5 @@ public final class ItemRegistry {
     /** Compatibility boundary for APIs predating Keyed#getKeyOrThrow. */
     @SuppressWarnings("deprecation")
     private static String materialKey(Material material) { return material.getKey().toString(); }
-    static String color(String value) { return ChatColor.translateAlternateColorCodes('&', value); }
+    static String color(String value) { return LegacyBukkitApi.color(value); }
 }

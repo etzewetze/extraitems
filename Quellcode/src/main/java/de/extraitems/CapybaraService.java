@@ -248,7 +248,6 @@ final class CapybaraService implements Listener {
             if (inWater) {
                 Vector velocity = pig.getVelocity();
                 pig.setVelocity(new Vector(velocity.getX(), Math.max(velocity.getY(), .055), velocity.getZ()));
-                pig.setSwimming(true);
             }
             if (pig.hasAI() && pig.isAdult() && !pig.isLoveMode() && !pig.isLeashed()
                     && pig.isOnGround() && random.nextDouble() < .005) {
