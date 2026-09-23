@@ -1,0 +1,8 @@
+type: recipe
+id: tomato_seed_starter
+result: tomato_seeds
+amount: 2
+permission: extraitems.craft.tomato_seeds
+ingredients:
+  - minecraft:wheat_seeds
+  - minecraft:beetroot

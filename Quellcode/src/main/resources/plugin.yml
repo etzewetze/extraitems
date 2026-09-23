@@ -1,22 +1,73 @@
 name: ExtraItems
-version: '0.1.0'
+version: '0.8.0'
 main: de.extraitems.ExtraItemsPlugin
 api-version: '1.21.11'
-description: Eigene Vanilla-Pflanzen, Pflicht-Ressourcenpaket und Item-Rechte
+description: Modulare Vanilla-Items, Pflanzen, Küche, Capybaras, Pflicht-Ressourcenpaket und Rechte
 author: ExtraItems
-softdepend: [LuckPerms, WorldGuard, GriefPrevention]
+softdepend: [LuckPerms, WorldGuard, GriefPrevention, Nexo, ItemsAdder, Oraxen, CraftEngine]
 commands:
   extraitems:
     description: ExtraItems verwalten
     aliases: [ei]
-    usage: /ei give <Spieler> <Item> [Anzahl] | pack | status
+    usage: /ei give <Spieler> <Item> [Anzahl] | spawn capybara [Anzahl] [adult|baby] | pack | status
 permissions:
   extraitems.admin:
-    description: Items vergeben und Status abfragen
+    description: Items vergeben, Entities testen, Status abfragen und Notfallzugang bei Packfehlern
     default: op
+  extraitems.breed.capybara:
+    description: Capybaras mit Süßbeeren füttern und vermehren
+    default: true
   extraitems.plant.tomato:
     description: Tomatensamen pflanzen und Tomaten mit Knochenmehl düngen
     default: op
+  extraitems.plant.lettuce:
+    description: Salatsamen pflanzen und düngen
+    default: op
+  extraitems.plant.onion:
+    description: Zwiebelsamen pflanzen und düngen
+    default: op
+  extraitems.place.cheese_wheel:
+    description: Käseräder platzieren
+    default: true
+  extraitems.use.cheese_station:
+    description: Käsestationen öffnen und verwenden
+    default: op
+  extraitems.use.seed_generator:
+    description: Samengenerator öffnen und verwenden
+    default: op
+  extraitems.craft.knife:
+    description: Eisenmesser herstellen
+    default: op
+  extraitems.craft.burger_bun:
+    description: Brot mit dem Messer in Burgerbrötchen schneiden
+    default: op
+  extraitems.craft.cheese_slice:
+    description: Käserad mit dem Messer in Scheiben schneiden
+    default: op
+  extraitems.craft.schlemmer_burger:
+    description: Schlemmer-Burger herstellen
+    default: op
+  extraitems.craft.cheesy_schlemmer:
+    description: Cheesy Schlemmer herstellen
+    default: op
+  extraitems.craft.cheese_station:
+    description: Käsestation herstellen
+    default: op
+  extraitems.craft.seed_generator:
+    description: Samengenerator herstellen
+    default: op
+  extraitems.craft.external:
+    description: Externe Nexo-, ItemsAdder-, Oraxen- oder CraftEngine-Rezepte herstellen
+    default: op
+  extraitems.craft.old_but_gold:
+    description: Old-but-Gold-Buch herstellen
+    default: op
   extraitems.craft.tomato_seeds:
     description: Tomatensamen herstellen
+    default: op
+  extraitems.craft.lettuce_seeds:
+    description: Salatsamen herstellen
+    default: op
+  extraitems.craft.onion_seeds:
+    description: Zwiebelsamen herstellen
     default: op

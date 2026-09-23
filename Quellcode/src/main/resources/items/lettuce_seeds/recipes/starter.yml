@@ -1,0 +1,8 @@
+type: recipe
+id: lettuce_seeds_starter
+result: lettuce_seeds
+amount: 2
+permission: extraitems.craft.lettuce_seeds
+ingredients:
+  - minecraft:wheat_seeds
+  - minecraft:oak_leaves

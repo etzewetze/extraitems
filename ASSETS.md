@@ -1,6 +1,6 @@
 # Texturen und Modelle
 
-`src/main/resources/resourcepack/assets/extraitems/textures/item/tomato.png` ist die finale Tomatentextur mit echtem Alphakanal. Sie wurde mit dem eingebauten Imagegen-Werkzeug erstellt. Das Original bleibt unverändert im Paket. Es ist eine hochauflösende PNG mit grober Pixeloptik, keine handgezeichnete 16×16-Datei. Bei hohen Mipmap-Einstellungen kann Minecraft die Mipmap-Stufe für diesen Atlas reduzieren.
+`src/main/resources/resourcepack/assets/extraitems/textures/item/tomato.png` ist eine 256×256-PNG mit echtem Alphakanal und grober Pixeloptik. Die Zweierpotenzgröße ist mipmap- und atlas-tauglich. Die frühere 1254×1254-Datei konnte beim Laden des Texturatlas die pink-schwarze Fehlerdarstellung auslösen.
 
 Verwendeter Erzeugungsprompt:
 
@@ -8,4 +8,12 @@ Verwendeter Erzeugungsprompt:
 
 Eine spätere Exportvariante wurde wegen fehlender Transparenz verworfen und ist nicht enthalten.
 
-Die vier Pflanzenmodelle sind native Minecraft-JSON-Modelle. `tools/build_models.py` erzeugt ihre Stängel, Blätter und Früchte aus Quadern. Sie können in Blockbench als Java-Block-/Item-Modell geöffnet werden; `.obj`- oder `.fbx`-Dateien und Clientmods sind nicht nötig. Minecraft liefert die referenzierten Vanilla-Texturen selbst; diese werden nicht als kopierte Dateien mitgeliefert. Das Samensymbol verwendet zunächst die Vanilla-Weizensamentextur, mit eigener Item-ID und eigenem Namen.
+Pflanzen, Käsescheibe, Käsestation, Samengenerator und Käseräder sind native Minecraft-JSON-Quader-Modelle. Die reifen Tomaten verwenden `minecraft:block/red_concrete`, damit die letzte Wachstumsstufe nicht von einer eigenen Atlastextur abhängig ist. Zwiebel, Messer, Buns, Schlemmer Burger und Cheesy Schlemmer behalten ab 0.3.2 ihre vorhandenen transparenten Sprites im Inventar; per `minecraft:display_context` wechseln Hand, Drop und Itemrahmen auf echte native Quader-Modelle. `tools/build_models.py` erzeugt alle Modellverknüpfungen reproduzierbar; Clientmods sind nicht nötig.
+
+Tomaten-, Salat- und Zwiebelsamen besitzen jeweils eine eigene 256×256-RGBA-PNG. Sie wurden im Modus `stylized-concept` als grobe Minecraft-Pixelgrafik auf transparentem Hintergrund erzeugt: Tomatensamen mit rotem Frucht-/Blatt-Hinweis, dunkle Salatsamen mit grünem Blatt und schwarze Zwiebelsamen mit heller Zwiebel und grünem Austrieb. Die Dateien liegen unter `assets/extraitems/textures/item/*_seeds.png`.
+
+Die fünf neuen bzw. reparierten Sprites wurden ebenfalls mit dem eingebauten ImageGen im Modus `stylized-concept` erstellt: einzelne Zwiebel, offene Burger Buns, diagonales Eisen-Küchenmesser, Schlemmer Burger ohne Käse/Tomate und Cheesy Schlemmer mit Käse/Tomate ohne Zwiebel. Vorgaben waren grobe Minecraft-Pixel, transparente Hintergründe, keine Schrift und jeweils genau ein Item. Finale Pfade: `textures/item/onion.png`, `burger_bun.png`, `knife.png`, `schlemmer_burger.png` und `cheesy_schlemmer.png`.
+
+Capybaras verwenden ab 0.8.0 drei eigene 64×64-RGBA-Felltexturen aus dem bewährten `textures/item/`-Atlas: warmes Kastanienbraun, dunkles Umber und Kastanienbraun mit unregelmäßigen schwarzen Flecken. Sie wurden als nahtlose, gleichmäßig beleuchtete Minecraft-Pixel-Fellflächen ohne Tierumriss, Gesicht, Schrift, Stoff- oder Wollstruktur erzeugt und anschließend mit Nearest-Neighbor auf eine Zweierpotenz normalisiert. Die Modelle referenzieren `extraitems:item/capybara_brown`, `capybara_dark` und `capybara_patched`; zusätzliche Fleckflächen verwenden die dunkle Felltextur. Nur die winzigen Augen- und Nasenflächen bleiben für klaren Kontrast einfarbig schwarz. Damit bleibt der bereits funktionierende Item-Atlas erhalten, ohne nach sichtbarer Vanilla-Wolle auszusehen.
+
+Für jede der drei Varianten existieren getrennte Erwachsenen- und Babygeometrien sowie Stand-, zwei Lauf- und eine Schwimmhaltung. `tools/build_models.py` erzeugt daraus 24 native Modellframes. Beim Laufen werden die diagonal gegenüberliegenden Beine mit ±22,5 Grad ausgelenkt; die Pluginlogik wechselt die Frames alle vier Ticks. Das bleibt vollständig Vanilla-kompatibel, ist aber bewusst eine Frame- statt einer skelettbasierten Animation.

@@ -1,0 +1,17 @@
+type: crop
+id: lettuce
+seed: lettuce_seeds
+produce: lettuce
+plant-permission: extraitems.plant.lettuce
+models:
+  - extraitems:lettuce_stage_0
+  - extraitems:lettuce_stage_1
+  - extraitems:lettuce_stage_2
+  - extraitems:lettuce_stage_3
+seconds-per-stage: 180
+regrow-stage: 0
+minimum-light: 9
+require-hydrated-farmland: true
+bonemeal: true
+harvest-min: 1
+harvest-max: 2

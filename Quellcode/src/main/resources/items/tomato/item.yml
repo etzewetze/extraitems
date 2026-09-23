@@ -1,0 +1,11 @@
+type: item
+id: tomato
+material: APPLE
+name: '&cTomate'
+model: extraitems:tomato
+lore:
+  - '&7Frisch vom Strauch.'
+  - '&7Auch ohne Anbaurecht essbar.'
+food:
+  nutrition: 3
+  saturation: 0.3

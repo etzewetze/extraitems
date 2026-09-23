@@ -1,0 +1,42 @@
+type: entity
+id: capybara
+
+# Der unsichtbare Vanilla-Träger liefert Hitbox, Bewegung, Schwimmen, Flucht und Zucht-AI.
+carrier: PIG
+breed-material: SWEET_BERRIES
+breed-permission: extraitems.breed.capybara
+
+adult-models:
+  - extraitems:capybara_brown_adult
+  - extraitems:capybara_dark_adult
+  - extraitems:capybara_patched_adult
+baby-models:
+  - extraitems:capybara_brown_baby
+  - extraitems:capybara_dark_baby
+  - extraitems:capybara_patched_baby
+
+# Vanilla-kompatible Frameanimation: Das Plugin wechselt beim Laufen zwischen zwei echten
+# Beinstellungen. Im Wasser wird eine eigene Schwimmhaltung verwendet.
+animation:
+  walk-model-suffixes:
+    - _walk_1
+    - _walk_2
+  swim-model-suffix: _swim
+  step-ticks: 4
+
+spawn-biomes:
+  - minecraft:badlands
+  - minecraft:wooded_badlands
+  - minecraft:eroded_badlands
+group-min: 2
+group-max: 4
+spawn-interval-seconds: 30
+spawn-chance: 0.18
+spawn-distance-min: 24
+spawn-distance-max: 48
+max-loaded-per-world: 36
+max-near-player: 8
+
+# 20 Minuten bis zum Erwachsenwerden; eine Süßbeere spart zwei Minuten.
+baby-growth-ticks: 24000
+feed-growth-ticks: 2400

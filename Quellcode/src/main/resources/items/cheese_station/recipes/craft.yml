@@ -1,0 +1,14 @@
+type: recipe
+id: cheese_station
+result: cheese_station
+amount: 1
+permission: extraitems.craft.cheese_station
+shape:
+  - ' B '
+  - 'PCP'
+  - 'S S'
+keys:
+  B: minecraft:barrel
+  P: 'minecraft:#planks'
+  C: minecraft:crafting_table
+  S: minecraft:stick

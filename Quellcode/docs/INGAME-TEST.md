@@ -1,6 +1,6 @@
 # Abnahme auf einem separaten Testserver
 
-Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die Komponententests. Für belastbare Freigabe dieselben Schritte auf Paper 1.21.11 und Paper 26.2 mit jeweils passendem Vanilla-Java-Client durchführen. Als zweiten Account einen Spieler ohne OP und ohne Wildcard-Rechte nutzen. Grundstücksschutz zusätzlich mit den auf dem Zielserver tatsächlich eingesetzten Plugins prüfen.
+Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die Komponententests. Für belastbare Freigabe dieselben Schritte auf Paper 1.21.11, Paper 26.2 und einem aktuellen Paper-26.3-Alpha-Build mit jeweils passendem Vanilla-Java-Client durchführen. Als zweiten Account einen Spieler ohne OP und ohne Wildcard-Rechte nutzen. Grundstücksschutz zusätzlich mit den auf dem Zielserver tatsächlich eingesetzten Plugins prüfen.
 
 | Test | Erwartung |
 |---|---|
@@ -28,12 +28,58 @@ Noch nicht ausgeführt. Diese Prüfung ergänzt den automatischen Build und die 
 | Samenrezept mit Craftrecht | Exakte Zutaten und konfigurierte Menge. |
 | Automatischer Crafter mit beiden Samenrezepten | Kein Craft und kein Verbrauch. |
 | Tomate statt Apfel in Golden-Apple-Rezept | Kein Vanilla-Craft mit dem Custom-Item. |
-| Tomate essen ohne Anbau-/Craftrecht | Essen bei Hunger möglich, 4 Nahrungspunkte. |
+| Tomate/Salat/Zwiebel essen | Jeweils 3 Nahrungspunkte = 1,5 Hungerkeulen. |
+| Burger Buns essen | 1 Nahrungspunkt = 0,5 Hungerkeule. |
 | Stop/Start mit unreifen Pflanzen und Samen im Inventar | IDs, Position, Stufe und Fortschritt bleiben erhalten. |
 | Chunk entladen und später laden | Eine Darstellung und eine Hitbox je Pflanze; keine Duplikate. |
 | Weltwechsel / zusätzliche Welt entladen und laden | Pflanzen werden dem richtigen Welt-UUID/Chunk zugeordnet. |
 | Chunklimit erreichen | Weitere Aussaat abgelehnt, ohne Samenverbrauch. |
 | `/ei give` bei vollem Inventar | Kein unkontrollierter Bodendrop; Meldung nennt nicht vergebene Menge. |
 | Originalmodelle und Tomaten auf beiden Clients | Keine Missing-Texture-Flächen, brauchbare Skalierung/Hitbox, transparenter Hintergrund. |
+| Tomaten-, Salat- und Zwiebelsamen nebeneinander | Drei eindeutig unterschiedliche Symbole, keine Vanilla-Samenanzeige. |
+| Salat/Zwiebel pflanzen, düngen und ernten | Je vier sichtbare Stufen; definierte Erntemenge; Nachwuchs ab Stufe 0. |
+| Messerrezept in der Werkbank | Mitte links Stock, Mitte Eisen, unten Mitte Steinknopf ergibt ein Eisenmesser; alle übrigen Felder leer. |
+| Messer + Brot normal und per Shift-Klick | Buns entstehen; Zutaten und exakt ein Messereinsatz pro Brot werden verbraucht. |
+| Messer mit Haltbarkeit I/II/III | Insgesamt exakt 256/320/384 Brote schneidbar. |
+| Mending-Messer mit Erfahrung reparieren | Schaden sinkt, eigenes Modell und ID bleiben erhalten. |
+| Old-but-Gold-Buch auf anderes Item | Amboss zeigt kein Ergebnis. |
+| Old-but-Gold-Buch auf Messer | Kostet 5 Level; Messer bleibt dauerhaft unzerstörbar. |
+| Messer im Nahkampf | Voller Treffer zeigt 9 Angriffsschaden und eine deutlich schnellere 2,4-Angriffsgeschwindigkeit; ein Einsatz wird verbraucht. |
+| Schlemmer-Burger herstellen und droppen | Rezept benötigt nur Buns, Salat, Zwiebel und gebratenes Rind; extrudiertes Pixelmodell sichtbar; füllt 9 Keulen. |
+| Cheesy Schlemmer herstellen und droppen | Buns, Käsescheibe, Tomate, Salat und gebratenes Rind; kein Zwiebelbedarf; eigene Textur; füllt maximal die zehn Vanilla-Keulen plus Sättigung. |
+| Käsestation manuell | Milcheimer bleibt während der 60 Sekunden im Eingang; erst danach erscheinen Käserad und leerer Eimer getrennt. |
+| Milcheimer während Reife herausnehmen | Vorgang bricht beim nächsten Stationstick ab; Eimer bleibt beim Spieler, kein Käse entsteht und ein neuer Eimer startet bei 0 %. |
+| Käse- oder Eimerausgang voll | Verarbeitung wartet bei 100 %, ohne den Milcheimer zu verlieren; nach Freimachen entstehen beide Ausgaben genau einmal. |
+| Käsestations-GUI | Dunkler Rahmen, farbig markierter Eingang/Ausgang, fünfteiliger Balken, Prozent und Restzeit aktualisieren sich. |
+| Käsestationsrezept mit verschiedenen Brettern | Positionen entsprechen `·Fass· / Bretter-Werkbank-Bretter / Stock-·-Stock`; alle Brettarten funktionieren. |
+| Kiste → Hopper → Station → Hopper | Milcheimer wird oben/seitlich eingezogen; beide Ausgaben landen ausschließlich unten. |
+| Neustart während der Reifezeit | Verbleibende Reifezeit und Station bleiben erhalten. |
+| Käserad in der Hand benutzen | Nicht essbar. |
+| Käserad platzieren und leerhändig essen | Zehn sichtbare Portionen; jede füllt 2 Nahrungspunkte. |
+| Käserad abbauen oder Unterlage entfernen | Rad verschwindet vollständig und droppt nichts. |
+| Messer + Käserad | Zehn Käsescheiben entstehen; ein Messereinsatz wird verbraucht. |
+| Käsescheibe essen | In der Hand essbar; füllt genau eine Hungerkeule. |
+| Samengenerator-Rezept | `Glas-Lagerfeuer-Glas / Bretter-Fass-Bretter / Stock-·-Stock`; alle Brettarten funktionieren. |
+| Gemüse manuell trocknen | Tomate/Salat/Zwiebel bleiben jeweils 30 Sekunden im Eingang und ergeben 4/3/3 passende Samen. |
+| Gemüse während Trocknung entfernen/tauschen | Lauf bricht ohne Verlust ab; ein anderes Gemüse übernimmt nicht den alten Fortschritt. |
+| Kiste → Hopper → Samengenerator → Hopper | Gemüse wird nur oben/seitlich eingezogen, fertige Samen ausschließlich unten ausgegeben. |
+| `/ei spawn capybara 3 adult` | Drei sichtbare Capybaras mit Hitbox erscheinen; kein Schweinemodell scheint durch. |
+| `/ei spawn capybara 1 baby` | Eigenes kleineres Babymodell mit relativ größerem Kopf; keine bloße Erwachsene-Miniatur. |
+| Mehrere natürliche Spawnzyklen in Badlands | Gruppen aus zwei bis vier Tieren erscheinen innerhalb der konfigurierten Grenzen. |
+| Einen neuen oder entladenen Badlands-Chunk betreten | Beim Laden wird eine zusätzliche natürliche Spawnprüfung ausgeführt; ein ungeeigneter erster Block beendet die Suche nicht. |
+| `/ei status` nach mehreren Zyklen | Zeigt steigende Spawnprüfungen und nach erfolgreichem Spawn mindestens eine Gruppe an. |
+| Gleicher Test in Wooded/Eroded Badlands | Natürliche Gruppen können auch in beiden Varianten erscheinen. |
+| Warten in Plains und Nether | Keine natürlichen Capybara-Spawns. |
+| Mehrere Tiere vergleichen | Braunes, dunkles und schwarz geflecktes Fell treten zufällig auf; keine Missing Texture. |
+| Capybara stehen lassen und anschließend laufen lassen | Im Stand bleiben die Beine ruhig; beim Laufen wechseln sichtbar zwei diagonal versetzte Beinpositionen, ohne dass das Modell pink wird. |
+| Capybara ins Wasser führen | Das Modell wechselt auf die nach hinten gestellte Schwimmhaltung und nach Verlassen des Wassers wieder auf Stand/Lauf. |
+| Fell aus der Nähe betrachten | Eigene braune bzw. dunkle Pixel-Fellstruktur statt sichtbarer Woll-, Beton- oder Stoffstruktur. |
+| Süßbeeren in Haupt- und Nebenhand halten | Capybaras folgen; Füttern verbraucht genau eine Beere. |
+| Zwei erwachsene Tiere mit Süßbeeren füttern | Herzen, Paarung und genau ein persistentes Baby mit Eltern-/Zufallsfell. |
+| Baby mit Süßbeere füttern | Wachstumszeit verkürzt sich; Erwachsenenmodell wechselt beim Heranwachsen genau einmal. |
+| Karotte/Kartoffel/Rote Bete/Sattel verwenden | Keine Schweinezucht und kein Sattel; Item wird nicht ungewollt verbraucht. |
+| Capybara verletzen und Wasser bereitstellen | Tier wacht auf und flieht; im Wasser schwimmt es und sucht gelegentlich nahe Wasserstellen. |
+| Chunk entladen, Server neu starten und zurückkehren | Tiere, Alter und Fell bleiben erhalten; genau ein sichtbares Modell pro Träger. |
+| Capybara töten | Modell verschwindet, kein Schweinefleisch und keine verwaiste Display-Entity bleiben zurück. |
 
 Die echte Grafik, Client-Handanimation, Reihenfolge mit Drittplugins und Verhalten unter hoher Spielerlast lassen sich mit reinen Unit-Tests nicht abnehmen. Erst nach dieser Prüfung produktiv einsetzen.

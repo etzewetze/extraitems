@@ -1,0 +1,9 @@
+type: recipe
+id: cut_burger_bun
+result: burger_bun
+amount: 1
+permission: extraitems.craft.burger_bun
+ingredients:
+  - minecraft:bread
+tool: knife
+tool-damage: 1

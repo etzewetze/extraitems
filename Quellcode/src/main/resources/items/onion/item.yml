@@ -1,0 +1,10 @@
+type: item
+id: onion
+material: BAKED_POTATO
+name: '&fZwiebel'
+model: extraitems:onion
+lore:
+  - '&7Kräftig im Geschmack.'
+food:
+  nutrition: 3
+  saturation: 0.3

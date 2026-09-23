@@ -1,0 +1,15 @@
+type: seed_generator
+id: seed_generator
+item: seed_generator
+use-permission: extraitems.use.seed_generator
+process-seconds: 30
+conversions:
+  tomato:
+    output: tomato_seeds
+    amount: 4
+  lettuce:
+    output: lettuce_seeds
+    amount: 3
+  onion:
+    output: onion_seeds
+    amount: 3
